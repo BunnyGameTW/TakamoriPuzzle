@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 8
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b22f7f59a176084a9dad9198ed78ba6, type: 3}
+  m_Name: TAKAMORIPuzzleScripts
+  m_EditorClassIdentifier: 
+  sheets:
+  - name: all
+    list:
+    - episodeId: 1
+      levelId: 1
+      contentId: 1
+      unlockLevelId: 0
+      chioceId: 020000000500000000000000
+    - episodeId: 1
+      levelId: 2
+      contentId: 2
+      unlockLevelId: 0
+      chioceId: 030000000400000000000000
+    - episodeId: 1
+      levelId: 3
+      contentId: 3
+      unlockLevelId: 8
+      chioceId: 000000000000000000000000
+    - episodeId: 1
+      levelId: 4
+      contentId: 4
+      unlockLevelId: 8
+      chioceId: 000000000000000000000000
+    - episodeId: 1
+      levelId: 5
+      contentId: 5
+      unlockLevelId: 0
+      chioceId: 060000000700000000000000
+    - episodeId: 1
+      levelId: 6
+      contentId: 6
+      unlockLevelId: 8
+      chioceId: 000000000000000000000000
+    - episodeId: 1
+      levelId: 7
+      contentId: 7
+      unlockLevelId: 8
+      chioceId: 000000000000000000000000
+    - episodeId: 1
+      levelId: 8
+      contentId: 8
+      unlockLevelId: 0
+      chioceId: 000000000000000000000000
+    - episodeId: 2
+      levelId: 1
+      contentId: 9
+      unlockLevelId: 1
+      chioceId: 000000000000000000000000
+    - episodeId: 2
+      levelId: 2
+      contentId: 10
+      unlockLevelId: 2
+      chioceId: 000000000000000000000000
+    - episodeId: 2
+      levelId: 3
+      contentId: 11
+      unlockLevelId: 3
+      chioceId: 000000000000000000000000
