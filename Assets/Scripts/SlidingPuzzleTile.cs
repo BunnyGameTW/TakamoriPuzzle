@@ -26,12 +26,18 @@ public class SlidingPuzzleTile : MonoBehaviour
         isCorrectGrid = checkGridCorrect();
     }
 
-    // 外部呼叫 --------------------------------------------------------------------------------------------------------------
+    // 初始化
+    public void init(Vector2Int gridPos, Sprite sprite, Vector2 boxColliderSize) {
+        SpriteRenderer tmepSpriteRenderer = this.GetComponent<SpriteRenderer>();
+        BoxCollider2D tmepBoxCollider2D = this.GetComponent<BoxCollider2D>();
 
-    /** 設定目標格子位置 */
-    public void setGoalGridPos(Vector2Int pos) {
-        goalGridPos = pos;
+        tmepSpriteRenderer.sprite = sprite;
+        tmepBoxCollider2D.size = boxColliderSize;
+        setGoalGridPos(gridPos);
+        setNowGridPos(gridPos);
     }
+
+    // 外部呼叫 --------------------------------------------------------------------------------------------------------------
 
     /** 設定目前格子位置 */
     public void setNowGridPos(Vector2Int pos) {
@@ -54,6 +60,11 @@ public class SlidingPuzzleTile : MonoBehaviour
     }
 
     // 內部呼叫 --------------------------------------------------------------------------------------------------------------
+
+    /** 設定目標格子位置 */
+    private void setGoalGridPos(Vector2Int pos) {
+        goalGridPos = pos;
+    }
 
     /** 檢查格子是否在正確的位置 */
     private bool checkGridCorrect() {
