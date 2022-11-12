@@ -132,42 +132,46 @@ public class SlidingPuzzle : MonoBehaviour
 
     /** 洗謎題盤面 */
     private void jugglePuzzle() {
-        int juggleCount = 4 * puzzleGridX * puzzleGridY; // 洗牌次數
+        int juggleCount = puzzleGridX * puzzleGridY; // 洗牌次數
         int count, randX, randY;
         GameObject tmepObject = tileObjectArray[puzzleGridX - 1, 0]; // 右下角為空格
         SlidingPuzzleTile tmepTile;
 
         emptyTile = tmepObject.GetComponent<SlidingPuzzleTile>();
         emptyTile.gameObject.SetActive(false);
-        //Debug.Log(emptyTile.getNowGridPos());
 
         count = 0;
         while(count < juggleCount) {
             randX = UnityEngine.Random.Range(0, puzzleGridX);
             randY = UnityEngine.Random.Range(0, puzzleGridY);
             tmepTile = tileObjectArray[randX, randY].GetComponent<SlidingPuzzleTile>();
-            if (moveTileToEmptyPos(tmepTile)) {
+            if (tmepTile != emptyTile) {
+                exchangeTilePos(tmepTile, emptyTile);
                 count++;
             }
 		}
     }
 
+    /** 互換方塊位置 */
+    private void exchangeTilePos(SlidingPuzzleTile tileA, SlidingPuzzleTile tileB) {
+        GameObject tempObject = tileB.gameObject;
+        Vector2Int tempPos = tileB.getNowGridPos();
+        Vector2Int targetPos = tileA.getNowGridPos();
+
+        tileObjectArray[tempPos.x, tempPos.y] = tileA.gameObject;
+        tileObjectArray[targetPos.x, targetPos.y] = tempObject;
+
+        tileA.transform.localPosition = tilePosArray[tempPos.x, tempPos.y];
+        tileB.transform.localPosition = tilePosArray[targetPos.x, targetPos.y];
+        
+        tileA.setNowGridPos(tempPos);
+        tileB.setNowGridPos(targetPos);
+    }
+
     /** 移動方塊到空位置 */
     private bool moveTileToEmptyPos(SlidingPuzzleTile thisTile) {
         if (checkTileCanMove(thisTile)) {
-            GameObject tempObject = emptyTile.gameObject;
-            Vector2Int tempPos = emptyTile.getNowGridPos();
-            Vector2Int targetPos = thisTile.getNowGridPos();
-
-            tileObjectArray[tempPos.x, tempPos.y] = thisTile.gameObject;
-            tileObjectArray[targetPos.x, targetPos.y] = tempObject;
-
-            thisTile.transform.localPosition = tilePosArray[tempPos.x, tempPos.y];
-            emptyTile.transform.localPosition = tilePosArray[targetPos.x, targetPos.y];
-            
-            thisTile.setNowGridPos(tempPos);
-            emptyTile.setNowGridPos(targetPos);
-            //Debug.Log(emptyTile.getNowGridPos());
+            exchangeTilePos(thisTile, emptyTile);
             return true;
         }
         return false;
