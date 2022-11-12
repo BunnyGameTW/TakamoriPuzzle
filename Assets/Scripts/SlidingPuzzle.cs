@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SlidingPuzzle : MonoBehaviour
 {
-    public Texture2D puzzleImage;       // 謎題貼圖
+    public Sprite puzzleImage;       // 謎題貼圖
 	public int puzzleGridX = 3;         // 格子X軸數量
 	public int puzzleGridY = 3;         // 格子Y軸數量
     public float tileBetweenPx = 1.0f;  // 方塊之間間隔
@@ -36,7 +36,7 @@ public class SlidingPuzzle : MonoBehaviour
     }
 
     // 初始化
-    public void init(Texture2D image, int gridX, int gridY) {
+    public void init(Sprite image, int gridX, int gridY) {
         puzzleImage = image;
         puzzleGridX = gridX;
         puzzleGridY = gridY;
@@ -94,39 +94,38 @@ public class SlidingPuzzle : MonoBehaviour
     /** 創造謎題方塊 */
     private void createPuzzleTiles()
     {
+        float gridWidth = puzzleImage.rect.width/puzzleGridX;
+        float gridHeight = puzzleImage.rect.height/puzzleGridY;
+        Vector2 gridUnit = new Vector2(gridWidth/puzzleImage.pixelsPerUnit, gridHeight/puzzleImage.pixelsPerUnit);
+        Vector3 scale = this.transform.localScale;
 	    Vector3 position;
-        SpriteRenderer tileSpriteRenderer = tile.GetComponent<SpriteRenderer>();
         GameObject tmepObject;
         SlidingPuzzleTile tmepTile;
-        float gridWidth = puzzleImage.width/puzzleGridX;
-        float gridHeight = puzzleImage.height/puzzleGridY;
 
         tileObjectArray = new GameObject[puzzleGridX, puzzleGridY];
         tilePosArray = new Vector3[puzzleGridX, puzzleGridY];
 
         for(int j = 0; j < puzzleGridX; j++){
 			for(int i = 0; i < puzzleGridY; i++) {
-                position = new Vector3((i - (puzzleGridX - 1) * 0.5f) * tileSpriteRenderer.size.x / puzzleGridX, 
-                                        (j - (puzzleGridY - 1) * 0.5f) * tileSpriteRenderer.size.y / puzzleGridY, 
+                Sprite tempSprite = Sprite.Create(
+                    puzzleImage.texture,
+                    new Rect(i * gridWidth, j * gridHeight, gridWidth, gridHeight),
+                    new Vector2(0.5f, 0.5f)
+                );
+
+                position = new Vector3((i - (puzzleGridX - 1) * 0.5f) * gridUnit.x, 
+                                        (j - (puzzleGridY - 1) * 0.5f) * gridUnit.y, 
                                         0.0f);
-                tmepObject = Instantiate(tile, position, Quaternion.identity) as GameObject;
+                tmepObject = Instantiate(tile, Vector3.zero, Quaternion.identity) as GameObject;
+                tmepObject.transform.localScale = scale;
 				tmepObject.gameObject.transform.parent = this.transform;
+
                 tilePosArray[i,j] = position;
                 tileObjectArray[i,j] = tmepObject;
+                tmepObject.transform.localPosition = position;
 
                 tmepTile = tmepObject.GetComponent<SlidingPuzzleTile>();
-                tmepTile.init(
-                    new Vector2Int(i,j),
-                    Sprite.Create(
-                        puzzleImage,
-                        new Rect(i * gridWidth, j * gridHeight, gridWidth, gridHeight),
-                        new Vector2(0.5f, 0.5f)
-                    ),
-                    new Vector2(
-                        tileSpriteRenderer.size.x / puzzleGridX,
-                        tileSpriteRenderer.size.y / puzzleGridY
-                    )
-                );
+                tmepTile.init(new Vector2Int(i,j), tempSprite, gridUnit);
             }
         }
     }
@@ -163,8 +162,8 @@ public class SlidingPuzzle : MonoBehaviour
             tileObjectArray[tempPos.x, tempPos.y] = thisTile.gameObject;
             tileObjectArray[targetPos.x, targetPos.y] = tempObject;
 
-            thisTile.transform.position = tilePosArray[tempPos.x, tempPos.y];
-            emptyTile.transform.position = tilePosArray[targetPos.x, targetPos.y];
+            thisTile.transform.localPosition = tilePosArray[tempPos.x, tempPos.y];
+            emptyTile.transform.localPosition = tilePosArray[targetPos.x, targetPos.y];
             
             thisTile.setNowGridPos(tempPos);
             emptyTile.setNowGridPos(targetPos);
