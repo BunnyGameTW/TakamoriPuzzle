@@ -266,6 +266,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3740127201255843198, guid: a28cb70f604468a41b8466fd369f6812, type: 3}
+      propertyPath: tileBetweenPx
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 4733997539448486287, guid: a28cb70f604468a41b8466fd369f6812, type: 3}
       propertyPath: m_Name
       value: SlidingPuzzle

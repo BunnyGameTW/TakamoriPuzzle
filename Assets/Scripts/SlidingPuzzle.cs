@@ -7,7 +7,7 @@ public class SlidingPuzzle : MonoBehaviour
     public Sprite puzzleImage;       // 謎題貼圖
 	public int puzzleGridX = 3;         // 格子X軸數量
 	public int puzzleGridY = 3;         // 格子Y軸數量
-    public float tileBetweenPx = 1.0f;  // 方塊之間間隔
+    public float tileBetweenPx = 3.0f;  // 方塊之間間隔
     public GameObject tile;             // 方塊預置物
 
     private GameObject[,] tileObjectArray;      // 方塊物件清單
@@ -109,7 +109,12 @@ public class SlidingPuzzle : MonoBehaviour
 			for(int i = 0; i < puzzleGridY; i++) {
                 Sprite tempSprite = Sprite.Create(
                     puzzleImage.texture,
-                    new Rect(i * gridWidth, j * gridHeight, gridWidth, gridHeight),
+                    new Rect(
+                        i * gridWidth + tileBetweenPx * 0.5f,
+                        j * gridHeight + tileBetweenPx * 0.5f,
+                        gridWidth - tileBetweenPx,
+                        gridHeight - tileBetweenPx
+                    ),
                     new Vector2(0.5f, 0.5f)
                 );
 
