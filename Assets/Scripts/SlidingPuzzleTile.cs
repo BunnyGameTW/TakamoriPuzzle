@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class SlidingPuzzleTile : MonoBehaviour
 {
-    private Vector2Int goalGridPos = new Vector2Int();    // 目標格子位置
-	private Vector2Int nowGridPos = new Vector2Int();     // 目前格子位置
+    private Vector2Int goalGridPos = new Vector2Int();  // 目標格子位置
+	private Vector2Int nowGridPos = new Vector2Int();   // 目前格子位置
+    Coroutine tweenEvent = null;                        // 補間事件
     
     // 生命週期 --------------------------------------------------------------------------------------------------------------
     // Start is called before the first frame update
@@ -48,10 +49,38 @@ public class SlidingPuzzleTile : MonoBehaviour
         return (nowGridPos == goalGridPos);
     }
 
+    /** 執行捕間位移 */
+    public void runPositionTween(Vector3 targetPos, float time) {
+        if (tweenEvent == null) {
+            tweenEvent = StartCoroutine(updatePositionTween(targetPos, time)); 
+        }
+        else {
+            StopCoroutine(tweenEvent);
+            tweenEvent = StartCoroutine(updatePositionTween(targetPos, time));
+        }
+    }
+
     // 內部呼叫 --------------------------------------------------------------------------------------------------------------
 
     /** 設定目標格子位置 */
     private void setGoalGridPos(Vector2Int pos) {
         goalGridPos = pos;
+    }
+
+    /** 更新捕間位移 */
+    private IEnumerator updatePositionTween(Vector3 targetPos, float time) {
+        float tweenTime = 0;
+        while(this.transform.localPosition != targetPos) {
+			yield return null;
+            tweenTime += Time.deltaTime;
+			this.transform.localPosition = Vector3.Lerp(this.transform.localPosition, targetPos, CubicEaseOut(tweenTime/time));
+		}
+        tweenEvent = null;
+        yield return null;
+    }
+
+    // CubicOut
+    private float CubicEaseOut(float t) {
+        return ((t = t - 1) * t * t + 1);
     }
 }

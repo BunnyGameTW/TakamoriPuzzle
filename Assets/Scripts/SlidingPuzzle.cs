@@ -132,7 +132,7 @@ public class SlidingPuzzle : MonoBehaviour
 
     /** 洗謎題盤面 */
     private void jugglePuzzle() {
-        int juggleCount = puzzleGridX * puzzleGridY; // 洗牌次數
+        int juggleCount = 2 * puzzleGridX * puzzleGridY; // 洗牌次數
         int count, randX, randY;
         GameObject tmepObject = tileObjectArray[puzzleGridX - 1, 0]; // 右下角為空格
         SlidingPuzzleTile tmepTile;
@@ -145,33 +145,47 @@ public class SlidingPuzzle : MonoBehaviour
             randX = UnityEngine.Random.Range(0, puzzleGridX);
             randY = UnityEngine.Random.Range(0, puzzleGridY);
             tmepTile = tileObjectArray[randX, randY].GetComponent<SlidingPuzzleTile>();
-            if (tmepTile != emptyTile) {
+            if (checkTileCanMove(tmepTile)) {
                 exchangeTilePos(tmepTile, emptyTile);
+                exchangeTileData(tmepTile, emptyTile);
                 count++;
             }
 		}
     }
 
-    /** 互換方塊位置 */
-    private void exchangeTilePos(SlidingPuzzleTile tileA, SlidingPuzzleTile tileB) {
+    /** 互換方塊資料 */
+    private void exchangeTileData(SlidingPuzzleTile tileA, SlidingPuzzleTile tileB) {
         GameObject tempObject = tileB.gameObject;
         Vector2Int tempPos = tileB.getNowGridPos();
         Vector2Int targetPos = tileA.getNowGridPos();
 
         tileObjectArray[tempPos.x, tempPos.y] = tileA.gameObject;
         tileObjectArray[targetPos.x, targetPos.y] = tempObject;
-
-        tileA.transform.localPosition = tilePosArray[tempPos.x, tempPos.y];
-        tileB.transform.localPosition = tilePosArray[targetPos.x, targetPos.y];
         
         tileA.setNowGridPos(tempPos);
         tileB.setNowGridPos(targetPos);
     }
 
+    /** 互換方塊位置 */
+    private void exchangeTilePos(SlidingPuzzleTile tileA, SlidingPuzzleTile tileB, bool isTween = false) {
+        GameObject tempObject = tileB.gameObject;
+        Vector2Int tempPos = tileB.getNowGridPos();
+        Vector2Int targetPos = tileA.getNowGridPos();
+
+        if (isTween) {
+            tileA.runPositionTween(tilePosArray[tempPos.x, tempPos.y], 1.0f);
+        }
+        else {
+            tileA.transform.localPosition = tilePosArray[tempPos.x, tempPos.y];
+        }
+        tileB.transform.localPosition = tilePosArray[targetPos.x, targetPos.y];
+    }
+
     /** 移動方塊到空位置 */
     private bool moveTileToEmptyPos(SlidingPuzzleTile thisTile) {
         if (checkTileCanMove(thisTile)) {
-            exchangeTilePos(thisTile, emptyTile);
+            exchangeTilePos(thisTile, emptyTile, true);
+            exchangeTileData(thisTile, emptyTile);
             return true;
         }
         return false;
