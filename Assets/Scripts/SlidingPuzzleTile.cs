@@ -51,13 +51,18 @@ public class SlidingPuzzleTile : MonoBehaviour
 
     /** 執行捕間位移 */
     public void runPositionTween(Vector3 targetPos, float time) {
-        if (tweenEvent == null) {
-            tweenEvent = StartCoroutine(updatePositionTween(targetPos, time)); 
-        }
-        else {
+        if (tweenEvent != null) {
             StopCoroutine(tweenEvent);
-            tweenEvent = StartCoroutine(updatePositionTween(targetPos, time));
         }
+        tweenEvent = StartCoroutine(updatePositionTween(targetPos, time));
+    }
+
+    /** 執行淡入 */
+    public void runFadeIn(float time) {
+        if (tweenEvent != null) {
+            StopCoroutine(tweenEvent);
+        }
+        tweenEvent = StartCoroutine(updateFadeInTween(time));
     }
 
     // 內部呼叫 --------------------------------------------------------------------------------------------------------------
@@ -73,14 +78,25 @@ public class SlidingPuzzleTile : MonoBehaviour
         while(this.transform.localPosition != targetPos) {
 			yield return null;
             tweenTime += Time.deltaTime;
-			this.transform.localPosition = Vector3.Lerp(this.transform.localPosition, targetPos, CubicEaseOut(tweenTime/time));
+			this.transform.localPosition = Vector3.Lerp(this.transform.localPosition, targetPos, Easing.CubicOut(tweenTime/time));
 		}
         tweenEvent = null;
         yield return null;
     }
 
-    // CubicOut
-    private float CubicEaseOut(float t) {
-        return ((t = t - 1) * t * t + 1);
+    /** 更新捕間淡入 */
+    private IEnumerator updateFadeInTween(float time) {
+        float tweenTime = 0;
+        SpriteRenderer tmepSpriteRenderer = this.GetComponent<SpriteRenderer>();
+        Color tempColor = tmepSpriteRenderer.color;
+        Color targetColor = tmepSpriteRenderer.color;
+        tempColor.a = 0;
+        while(tweenTime < time) {
+			yield return null;
+            tweenTime += Time.deltaTime;
+			tmepSpriteRenderer.color = Color.Lerp(tempColor, targetColor, Easing.QuartInOut(tweenTime/time));
+		}
+        tweenEvent = null;
+        yield return null;
     }
 }

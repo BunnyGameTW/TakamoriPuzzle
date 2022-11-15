@@ -54,6 +54,7 @@ public class SlidingPuzzle : MonoBehaviour
     public void finishPuzzle() {
         isPuzzleActive = false;
         emptyTile.gameObject.SetActive(true);
+        emptyTile.runFadeIn(0.75f);
         Debug.Log("Puzzle complete!");
     }
 
