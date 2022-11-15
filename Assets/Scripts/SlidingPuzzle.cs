@@ -139,7 +139,9 @@ public class SlidingPuzzle : MonoBehaviour
     /** 洗謎題盤面 */
     private void jugglePuzzle() {
         int juggleCount = 2 * puzzleGridX * puzzleGridY; // 洗牌次數
-        int count, randX, randY;
+        int count;
+        Vector2Int randTile = new Vector2Int(0, 0);
+        Vector2Int beforeTile = new Vector2Int(-1, -1);
         GameObject tmepObject = tileObjectArray[puzzleGridX - 1, 0]; // 右下角為空格
         SlidingPuzzleTile tmepTile;
 
@@ -148,10 +150,11 @@ public class SlidingPuzzle : MonoBehaviour
 
         count = 0;
         while(count < juggleCount) {
-            randX = UnityEngine.Random.Range(0, puzzleGridX);
-            randY = UnityEngine.Random.Range(0, puzzleGridY);
-            tmepTile = tileObjectArray[randX, randY].GetComponent<SlidingPuzzleTile>();
-            if (checkTileCanMove(tmepTile)) {
+            randTile.x = UnityEngine.Random.Range(0, puzzleGridX);
+            randTile.y = UnityEngine.Random.Range(0, puzzleGridY);
+            tmepTile = tileObjectArray[randTile.x, randTile.y].GetComponent<SlidingPuzzleTile>();
+            if (randTile != beforeTile && checkTileCanMove(tmepTile)) {
+                beforeTile = emptyTile.getNowGridPos();
                 exchangeTilePos(tmepTile, emptyTile);
                 exchangeTileData(tmepTile, emptyTile);
                 count++;
