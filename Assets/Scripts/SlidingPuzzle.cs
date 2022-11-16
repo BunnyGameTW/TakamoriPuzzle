@@ -54,8 +54,9 @@ public class SlidingPuzzle : MonoBehaviour
     public void finishPuzzle() {
         isPuzzleActive = false;
         emptyTile.gameObject.SetActive(true);
-        emptyTile.runFadeIn(0.75f);
-        Debug.Log("Puzzle complete!");
+        emptyTile.runFadeIn(0.75f, () => {
+            Debug.Log("Puzzle complete!");
+        });
     }
 
     // 觸碰處理 --------------------------------------------------------------------------------------------------------------
@@ -83,9 +84,13 @@ public class SlidingPuzzle : MonoBehaviour
         }
         SlidingPuzzleTile tmepTile = hit.transform.gameObject.GetComponent<SlidingPuzzleTile>();
         if (tmepTile) {
-            moveTileToEmptyPos(tmepTile);
+            moveTileToEmptyPos(tmepTile, () => {
+                if (!isPuzzleActive) {
+                    finishPuzzle();
+                }
+            });
             if (checkPuzzleComplete()) {
-                finishPuzzle();
+                isPuzzleActive = false;
             }
         }
     }
@@ -176,13 +181,13 @@ public class SlidingPuzzle : MonoBehaviour
     }
 
     /** 互換方塊位置 */
-    private void exchangeTilePos(SlidingPuzzleTile tileA, SlidingPuzzleTile tileB, bool isTween = false) {
+    private void exchangeTilePos(SlidingPuzzleTile tileA, SlidingPuzzleTile tileB, bool isTween = false, System.Action callback = null) {
         GameObject tempObject = tileB.gameObject;
         Vector2Int tempPos = tileB.getNowGridPos();
         Vector2Int targetPos = tileA.getNowGridPos();
 
         if (isTween) {
-            tileA.runPositionTween(tilePosArray[tempPos.x, tempPos.y], 1.0f);
+            tileA.runPositionTween(tilePosArray[tempPos.x, tempPos.y], 1.0f, callback);
         }
         else {
             tileA.transform.localPosition = tilePosArray[tempPos.x, tempPos.y];
@@ -191,9 +196,9 @@ public class SlidingPuzzle : MonoBehaviour
     }
 
     /** 移動方塊到空位置 */
-    private bool moveTileToEmptyPos(SlidingPuzzleTile thisTile) {
+    private bool moveTileToEmptyPos(SlidingPuzzleTile thisTile, System.Action callback = null) {
         if (checkTileCanMove(thisTile)) {
-            exchangeTilePos(thisTile, emptyTile, true);
+            exchangeTilePos(thisTile, emptyTile, true, callback);
             exchangeTileData(thisTile, emptyTile);
             return true;
         }

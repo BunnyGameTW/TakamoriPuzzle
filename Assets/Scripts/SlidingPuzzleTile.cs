@@ -50,19 +50,19 @@ public class SlidingPuzzleTile : MonoBehaviour
     }
 
     /** 執行捕間位移 */
-    public void runPositionTween(Vector3 targetPos, float time) {
+    public void runPositionTween(Vector3 targetPos, float time, System.Action callback = null) {
         if (tweenEvent != null) {
             StopCoroutine(tweenEvent);
         }
-        tweenEvent = StartCoroutine(updatePositionTween(targetPos, time));
+        tweenEvent = StartCoroutine(updatePositionTween(targetPos, time, callback));
     }
 
     /** 執行淡入 */
-    public void runFadeIn(float time) {
+    public void runFadeIn(float time, System.Action callback = null) {
         if (tweenEvent != null) {
             StopCoroutine(tweenEvent);
         }
-        tweenEvent = StartCoroutine(updateFadeInTween(time));
+        tweenEvent = StartCoroutine(updateFadeInTween(time, callback));
     }
 
     // 內部呼叫 --------------------------------------------------------------------------------------------------------------
@@ -73,7 +73,7 @@ public class SlidingPuzzleTile : MonoBehaviour
     }
 
     /** 更新捕間位移 */
-    private IEnumerator updatePositionTween(Vector3 targetPos, float time) {
+    private IEnumerator updatePositionTween(Vector3 targetPos, float time, System.Action callback) {
         float tweenTime = 0;
         while(this.transform.localPosition != targetPos) {
 			yield return null;
@@ -81,11 +81,14 @@ public class SlidingPuzzleTile : MonoBehaviour
 			this.transform.localPosition = Vector3.Lerp(this.transform.localPosition, targetPos, Easing.CubicOut(tweenTime/time));
 		}
         tweenEvent = null;
+        if (callback != null) {
+            callback();
+        }
         yield return null;
     }
 
     /** 更新捕間淡入 */
-    private IEnumerator updateFadeInTween(float time) {
+    private IEnumerator updateFadeInTween(float time, System.Action callback) {
         float tweenTime = 0;
         SpriteRenderer tmepSpriteRenderer = this.GetComponent<SpriteRenderer>();
         Color tempColor = tmepSpriteRenderer.color;
@@ -97,6 +100,9 @@ public class SlidingPuzzleTile : MonoBehaviour
 			tmepSpriteRenderer.color = Color.Lerp(tempColor, targetColor, Easing.QuartInOut(tweenTime/time));
 		}
         tweenEvent = null;
+        if (callback != null) {
+            callback();
+        }
         yield return null;
     }
 }
