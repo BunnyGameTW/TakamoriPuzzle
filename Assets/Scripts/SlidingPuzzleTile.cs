@@ -94,6 +94,7 @@ public class SlidingPuzzleTile : MonoBehaviour
         Color tempColor = tmepSpriteRenderer.color;
         Color targetColor = tmepSpriteRenderer.color;
         tempColor.a = 0;
+        tmepSpriteRenderer.color = tempColor;
         while(tweenTime < time) {
 			yield return null;
             tweenTime += Time.deltaTime;

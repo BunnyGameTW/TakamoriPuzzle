@@ -31,8 +31,12 @@ public class SlidingPuzzle : MonoBehaviour
         if (!isPuzzleActive) {
             return;
         }
-        onMouseDown();
-        onTouchDown();
+        //判斷平台
+		#if !UNITY_EDITOR && (UNITY_IOS || UNITY_ANDROID)
+            onTouchDown();
+		#else
+            onMouseDown();
+		#endif
     }
 
     // 初始化
@@ -64,17 +68,28 @@ public class SlidingPuzzle : MonoBehaviour
     /** 滑鼠觸碰 */
     void onMouseDown() {
         if (Input.GetMouseButtonDown(0)) {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction);
-            if (hit) {
-                handleTileHit(hit);
-            }
+            handleRaycast(Input.mousePosition);
         }
     }
 
     /** 手機觸碰 */
     void onTouchDown() {
-        // TODO: 手機觸碰
+        if (Input.touchCount != 1) {
+            return;
+        }
+        Touch touch = Input.GetTouch(0);
+        if (touch.phase == TouchPhase.Began) {
+            handleRaycast(touch.position);
+        }
+    }
+
+    /** 處理觸碰 */
+    private void handleRaycast(Vector3 position) {
+        Ray ray = Camera.main.ScreenPointToRay(position);
+        RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction);
+        if (hit) {
+            handleTileHit(hit);
+        }
     }
 
     /** 處理方塊碰撞 */
