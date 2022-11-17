@@ -62,15 +62,13 @@ public class SlidingPuzzle : MonoBehaviour
     // 結束遊戲
     public void finishPuzzle() {
         isPuzzleActive = false;
-        emptyTile.gameObject.SetActive(true);
-        emptyTile.runFadeIn(0.75f, () => {
+        StartCoroutine(runFinishEffect(() => {
             Debug.Log("Puzzle complete!");
             clearPuzzleTile();
-            this.GetComponent<SpriteRenderer>().enabled = true;
             if (finishCallback != null) {
                 finishCallback();
             }
-        });
+        }));
     }
 
     // 觸碰處理 --------------------------------------------------------------------------------------------------------------
@@ -275,5 +273,22 @@ public class SlidingPuzzle : MonoBehaviour
                 tileObjectArray[i, j] = null;
             }
         }
+    }
+
+    /** 結束效果 */
+    private IEnumerator runFinishEffect(System.Action callback = null) {
+        emptyTile.gameObject.SetActive(true);
+        yield return emptyTile.updateFadeInTween(0.75f);
+        this.GetComponent<SpriteRenderer>().enabled = true;
+        yield return updateFadeInTween(0.25f);
+
+        if (callback != null) {
+            callback();
+        }
+    }
+
+    /** 更新補間淡入 */
+    private IEnumerator updateFadeInTween(float time, System.Action callback = null) {
+        yield return SpriteTween.updateFadeInTween(this.gameObject, time, EASE_TYPE.QuartInOut, callback);
     }
 }
