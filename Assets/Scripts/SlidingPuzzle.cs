@@ -10,19 +10,25 @@ public class SlidingPuzzle : MonoBehaviour
     public float tileBetweenPx = 3.0f;  // 方塊之間間隔
     public GameObject tile;             // 方塊預置物
 
-    private GameObject[,] tileObjectArray;      // 方塊物件清單
-	private Vector3[,] tilePosArray;            // 方塊座標陣列
-	private SlidingPuzzleTile emptyTile;        // 空方塊
-    private bool isPuzzleActive = false;        // 謎題是否開始
+    private GameObject[,] tileObjectArray;          // 方塊物件清單
+	private Vector3[,] tilePosArray;                // 方塊座標陣列
+	private SlidingPuzzleTile emptyTile;            // 空方塊
+    private bool isPuzzleActive = false;            // 謎題是否開始
+    private System.Action finishCallback = null;    // 謎題完成callback
 
     // 生命週期 --------------------------------------------------------------------------------------------------------------
+
     // Start is called before the first frame update
     void Start()
     {
         isPuzzleActive = false;
-        if (puzzleImage) {
-            startPuzzle();
-        }
+        this.GetComponent<SpriteRenderer>().enabled = false;
+
+        // ---------------------------------------
+        // TODO: 測試用，之後由更外層的manager控制遊戲開始
+        init(puzzleImage, 3, 3);
+        startPuzzle();
+        // ---------------------------------------
     }
 
     // Update is called once per frame
@@ -40,11 +46,10 @@ public class SlidingPuzzle : MonoBehaviour
     }
 
     // 初始化
-    public void init(Sprite image, int gridX, int gridY) {
+    public void init(Sprite image, int gridX = 3, int gridY = 3) {
         puzzleImage = image;
         puzzleGridX = gridX;
         puzzleGridY = gridY;
-        startPuzzle();
     }
 
     // 開始遊戲
@@ -60,6 +65,11 @@ public class SlidingPuzzle : MonoBehaviour
         emptyTile.gameObject.SetActive(true);
         emptyTile.runFadeIn(0.75f, () => {
             Debug.Log("Puzzle complete!");
+            clearPuzzleTile();
+            this.GetComponent<SpriteRenderer>().enabled = true;
+            if (finishCallback != null) {
+                finishCallback();
+            }
         });
     }
 
@@ -109,6 +119,13 @@ public class SlidingPuzzle : MonoBehaviour
             }
         }
     }
+    
+    // 外部呼叫 --------------------------------------------------------------------------------------------------------------
+
+    /** 設定謎題完成callback */
+    public void setFinishPuzzleCallback(System.Action callback) {
+        finishCallback = callback;
+    }
 
     // 內部呼叫 --------------------------------------------------------------------------------------------------------------
 
@@ -126,7 +143,7 @@ public class SlidingPuzzle : MonoBehaviour
         tileObjectArray = new GameObject[puzzleGridX, puzzleGridY];
         tilePosArray = new Vector3[puzzleGridX, puzzleGridY];
 
-        for(int j = 0; j < puzzleGridX; j++){
+        for(int j = 0; j < puzzleGridX; j++) {
 			for(int i = 0; i < puzzleGridY; i++) {
                 Sprite tempSprite = Sprite.Create(
                     puzzleImage.texture,
@@ -247,5 +264,16 @@ public class SlidingPuzzle : MonoBehaviour
             return true;
         }
         return false;
+    }
+
+    /** 清除拼圖 */
+    private void clearPuzzleTile() {
+        for(int j = 0; j < puzzleGridX; j++) {
+			for(int i = 0; i < puzzleGridY; i++) {
+                GameObject temp = tileObjectArray[i, j].gameObject;
+                Destroy(temp);
+                tileObjectArray[i, j] = null;
+            }
+        }
     }
 }
