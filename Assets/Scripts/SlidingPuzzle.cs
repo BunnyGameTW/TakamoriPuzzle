@@ -21,13 +21,12 @@ public class SlidingPuzzle : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        isPuzzleActive = false;
         this.GetComponent<SpriteRenderer>().enabled = false;
 
         // ---------------------------------------
         // TODO: 測試用，之後由更外層的manager控制遊戲開始
-        init(puzzleImage, 3, 3);
-        startPuzzle();
+        // init(puzzleImage, 3, 3);
+        // startPuzzle();
         // ---------------------------------------
     }
 
