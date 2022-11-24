@@ -5,8 +5,13 @@ using TMPro;
 
 public class Typewriter : MonoBehaviour
 {
-    public float charDuration = 0.005f;         // 顯示文字時間
-    public float fadeInDuration = 0.05f;        // 淡入文字時間
+    private float charDuration = 0.005f;    // 顯示文字時間
+    
+    private float fadeInDuration = 0.05f;   // 淡入文字時間
+    private byte fadeInAlpha = 0;
+    private Vector2 fadeInPosition = new Vector2(0, 10);
+    private float fadeInRotation = 0f;
+    private float fadeInScale = 0f;
 
     private TMP_Text textMeshPro;
     private TMP_TextInfo textInfo;
@@ -17,13 +22,11 @@ public class Typewriter : MonoBehaviour
     private int textCurrent = 0;                // 當前打字位置
     private bool isTextFinish = false;          // 打字機效果結束
 
-    private float alphaTimer = 0;               // 特效計時器
-    private int alphaCurrent = 0;               // 當前透明特效位置
-    private bool isAlphaFinish = false;         // 透明效果結束
-
-    private bool renewMeshVertices = false;     // 更新網格頂點
-    private bool renewMeshColors32 = false;     // 更新網格顏色
-    private System.Action finishCallback = null;    // 播放完成callback
+    private ObjectPool<CharacterData> objectPoolCharData;   // 字元資料物件池
+    private CharacterData[] charDataArray = null;           // 字元資料陣列
+    private bool renewMeshVertices = false;                 // 更新網格頂點
+    private bool renewMeshColors32 = false;                 // 更新網格顏色
+    private System.Action finishCallback = null;            // 播放完成callback
 
     // 生命週期 --------------------------------------------------------------------------------------------------------------
 
@@ -32,6 +35,12 @@ public class Typewriter : MonoBehaviour
     {
         textMeshPro = this.GetComponent<TMP_Text>();
         isActive = false;
+        objectPoolCharData = new ObjectPool<CharacterData>();
+        objectPoolCharData.init(() => {
+            CharacterData temp = new CharacterData();
+            TypewriterCharData.resetCharData(temp);
+            return temp;
+        }, 256);
 
         // ---------------------------------------
         // TODO: 測試用，之後由更外層的manager控制
@@ -51,10 +60,7 @@ public class Typewriter : MonoBehaviour
         }
         else {
             handleTypewriter();
-            handleFadeInEffect();
-            if (isTextFinish && isAlphaFinish) {
-                finishEffect();
-            }
+            checkFinishEffect();
         }
         if (renewMeshVertices) {
             renewMeshVertices = false;
@@ -84,13 +90,12 @@ public class Typewriter : MonoBehaviour
         timer = 0;
         textCurrent = 0;
         isTextFinish = false;
-        alphaTimer = 0;
-        alphaCurrent = 0;
-        isAlphaFinish = false;
         isActive = true;
 
+        charDataArray = new CharacterData[textInfo.characterCount];
         for(int i = 0; i < textInfo.characterCount; i++) {
-            setCharacterAlpha(i, 0);
+            charDataArray[i] = objectPoolCharData.getObject();
+            TypewriterCharData.resetCharData(charDataArray[i]);
         }
     }
 
@@ -113,7 +118,7 @@ public class Typewriter : MonoBehaviour
         timer += Time.deltaTime;
         while(timer >= charDuration) {
             timer = timer - charDuration;
-            resetCharacterVertex(textCurrent);
+            startFadeInAnimation(textCurrent);
             if (textCurrent >= textInfo.characterCount) {
                 isTextFinish = true;
                 break;
@@ -122,61 +127,35 @@ public class Typewriter : MonoBehaviour
         }
     }
 
-    /** 處理淡入效果 */
-    private void handleFadeInEffect() {
-        if (isAlphaFinish) {
-            return;
-        }
-        alphaTimer = alphaTimer + Time.deltaTime;
-        for(int i = alphaCurrent; i < textCurrent; i++) {
-            float nowTween = (alphaTimer - i * charDuration);
-            byte alpha = (byte)Mathf.Clamp(nowTween * 255, 0, 255);
-            setCharacterAlpha(i, alpha);
-            if (alpha >= 255) {
-                alphaCurrent = i + 1;
-            }
-        }
-        if (alphaCurrent >= textInfo.characterCount) {
-            isAlphaFinish = true;
+    /** 開始淡入動畫 */
+    private void startFadeInAnimation(int index) {
+        if (TypewriterCharData.resetCharacterVertex(textInfo, index)) {
+            renewMeshVertices = true;
+            charDataArray[index].isAnimateFinish = false;
+            // TODO: 設定動畫資料
         }
     }
 
     /** 重設字元頂點位置 */
     private void resetCharacterVertex(int index) {
-        TMP_CharacterInfo charInfo = textInfo.characterInfo[index];
-        int materialIndex = charInfo.materialReferenceIndex;
-        int verticeIndex = charInfo.vertexIndex;
-        TMP_MeshInfo meshInfo = textInfo.meshInfo[materialIndex];
-        if (charInfo.elementType == TMP_TextElementType.Sprite) {
-            verticeIndex = charInfo.spriteIndex;
-        }
-
-        if (charInfo.isVisible) {
-            meshInfo.vertices[0 + verticeIndex] = charInfo.vertex_BL.position;
-            meshInfo.vertices[1 + verticeIndex] = charInfo.vertex_TL.position;
-            meshInfo.vertices[2 + verticeIndex] = charInfo.vertex_TR.position;
-            meshInfo.vertices[3 + verticeIndex] = charInfo.vertex_BR.position;
+        if (TypewriterCharData.resetCharacterVertex(textInfo, index)) {
             renewMeshVertices = true;
         }
     }
 
     /** 設定字元透明度 */
     private void setCharacterAlpha(int index, byte alpha) {
-        TMP_CharacterInfo charInfo = textInfo.characterInfo[index];
-        int materialIndex = charInfo.materialReferenceIndex;
-        int verticeIndex = charInfo.vertexIndex;
-        TMP_MeshInfo meshInfo = textInfo.meshInfo[materialIndex];
-        if (charInfo.elementType == TMP_TextElementType.Sprite) {
-            verticeIndex = charInfo.spriteIndex;
-        }
-
-        if (charInfo.isVisible) {
-            meshInfo.colors32[0 + verticeIndex].a = alpha;
-            meshInfo.colors32[1 + verticeIndex].a = alpha;
-            meshInfo.colors32[2 + verticeIndex].a = alpha;
-            meshInfo.colors32[3 + verticeIndex].a = alpha;
+        if (TypewriterCharData.setCharacterAlpha(textInfo, index, alpha)) {
             renewMeshColors32 = true;
         }
+    }
+
+    /** 檢查是否結束 */
+    private void checkFinishEffect() {
+        if (!isTextFinish) {
+            return;
+        }
+        finishEffect();
     }
 
     /** 結束效果播放 */
@@ -185,9 +164,11 @@ public class Typewriter : MonoBehaviour
         timer = 0;
         textCurrent = 0;
         isTextFinish = false;
-        alphaTimer = 0;
-        alphaCurrent = 0;
-        isAlphaFinish = false;
+
+        for(int i = 0; i < textInfo.characterCount; i++) {
+            objectPoolCharData.recovery(charDataArray[i]);
+        }
+        charDataArray = null;
 
         if (finishCallback != null) {
             finishCallback();
