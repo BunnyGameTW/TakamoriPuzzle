@@ -20,6 +20,7 @@ enum EASE_TYPE {
     QuintIn,
     QuintOut,
     QuintInOut,
+    ElasticOut,
 };
 
 // Easing function
@@ -81,6 +82,10 @@ static class Easing
             break;
             case EASE_TYPE.QuintInOut: {
                 value = QuintInOut(t);
+            }
+            break;
+            case EASE_TYPE.ElasticOut: {
+                value = ElasticOut(t);
             }
             break;
             default: {
@@ -146,6 +151,16 @@ static class Easing
     
     static public float QuintInOut(float t) {
         return EasingInOut(t, 5);
+    }
+
+    static public float ElasticOut(float t) {
+        const float c4 = (2 * Mathf.PI) / 3;
+
+        return t == 0
+        ? 0
+        : t == 1
+        ? 1
+        : Mathf.Pow(2, -10 * t) * Mathf.Sin((float)(t * 10 - 0.75) * c4) + 1;
     }
 
     // 內部呼叫 --------------------------------------------------------------------------------------------------------------
