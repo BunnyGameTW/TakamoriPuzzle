@@ -82,8 +82,15 @@ public class Typewriter : MonoBehaviour
         setFadeOutFinishCallback(() => {
             Debug.Log("Typewriter hide complete!");
         });
-        // startFadeInEffect();
+        var func = StartCoroutine(test());
         // ---------------------------------------
+    }
+
+    private IEnumerator test() {
+        while(true) {
+            yield return new WaitForSeconds(1.5f);
+            changeTypewriterState();
+        }
     }
 
     // Update is called once per frame
@@ -124,6 +131,7 @@ public class Typewriter : MonoBehaviour
         for(int i = 0; i < textInfo.materialCount; i++) {
             textInfo.meshInfo[i].Clear();
         }
+        renewMeshVertices = true;
         clearCharDataArray();
         createCharDataArray();
     }
@@ -135,13 +143,13 @@ public class Typewriter : MonoBehaviour
                 startFadeInEffect();
             } break;
             case TYPEWRITER_STATE.FADE_IN: {
-                // skipFadeInEffect();
+                skipFadeInEffect();
             } break;
             case TYPEWRITER_STATE.WAIT: {
-                // startFadeOutEffect();
+                startFadeOutEffect();
             } break;
             case TYPEWRITER_STATE.FADE_OUT: {
-                // skipFadeOutEffect();
+                skipFadeOutEffect();
             } break;
         }
     }
@@ -153,15 +161,26 @@ public class Typewriter : MonoBehaviour
 
     /** 開始淡入效果 */
     public void startFadeInEffect() {
+        if (typewriterState != TYPEWRITER_STATE.NONE) {
+            return;
+        }
         timer = 0;
         textCurrent = 0;
         isTextFinish = false;
         isAnimateFinish = false;
         typewriterState = TYPEWRITER_STATE.FADE_IN;
+
+        for(int i = 0; i < textInfo.materialCount; i++) {
+            textInfo.meshInfo[i].Clear();
+        }
+        renewMeshVertices = true;
     }
 
     /** 開始淡出效果 */
     public void startFadeOutEffect() {
+        if (typewriterState != TYPEWRITER_STATE.WAIT) {
+            return;
+        }
         timer = 0;
         textCurrent = 0;
         isTextFinish = false;
@@ -171,6 +190,9 @@ public class Typewriter : MonoBehaviour
 
     /** 跳過淡入效果 */
     public void skipFadeInEffect() {
+        if (typewriterState != TYPEWRITER_STATE.FADE_IN) {
+            return;
+        }
         isTextFinish = true;
         textCurrent = textInfo.characterCount;
         for(int i = 0; i < textInfo.characterCount; i++) {
@@ -180,6 +202,9 @@ public class Typewriter : MonoBehaviour
 
     /** 跳過淡出效果 */
     public void skipFadeOutEffect() {
+        if (typewriterState != TYPEWRITER_STATE.FADE_OUT) {
+            return;
+        }
         isTextFinish = true;
         textCurrent = textInfo.characterCount;
         for(int i = 0; i < textInfo.characterCount; i++) {
@@ -219,6 +244,7 @@ public class Typewriter : MonoBehaviour
         timer = 0;
         textCurrent = 0;
         isTextFinish = false;
+        isAnimateFinish = false;
 
         if (fadeInFinishCallback != null) {
             fadeInFinishCallback();
@@ -231,6 +257,7 @@ public class Typewriter : MonoBehaviour
         timer = 0;
         textCurrent = 0;
         isTextFinish = false;
+        isAnimateFinish = false;
 
         if (fadeOutFinishCallback != null) {
             fadeOutFinishCallback();
@@ -295,7 +322,7 @@ public class Typewriter : MonoBehaviour
                 count = count + 1;
             }
         }
-        if (count >= textInfo.characterCount) {
+        if (isTextFinish && count >= textInfo.characterCount) {
             isAnimateFinish = true;
         }
     }
@@ -303,10 +330,10 @@ public class Typewriter : MonoBehaviour
     /** 更新捕間動畫 */
     private void handleCharTween(int index) {
         CharacterData item = charDataArray[index];
-        Vector2 position = Vector2.zero;
-        float rotation = 0f;
-        float scale = 1.0f;
-        byte alpha = 255;
+        Vector2 position = item.basePosition;
+        float rotation = item.baseRotation;
+        float scale = item.baseScale;
+        byte alpha = item.baseColor.a;
         float positionRange, rotationRange, scaleRange, alphaRange;
 
         charDataArray[index].timer = charDataArray[index].timer + Time.deltaTime;
@@ -341,20 +368,36 @@ public class Typewriter : MonoBehaviour
 
     /** 瞬間顯示 */
     private void showCharAnimation(int index) {
+        CharacterData item = charDataArray[index];
+        Vector2 position = item.targetPosition;
+        float rotation = item.targetRotation;
+        float scale = item.targetScale;
+        byte alpha = 255;
+        
         charDataArray[index].isAnimateFinish = true;
-        TypewriterCharData.resetCharacterVertex(textInfo, index);
-        TypewriterCharData.setCharacterAlpha(textInfo, index, charDataArray[index].targetColor.a);
-        renewMeshVertices = true;
-        renewMeshColors32 = true;
+        if (TypewriterCharData.setCharacterTransform(textInfo, index, position, rotation, scale)) {
+            renewMeshVertices = true;
+        }
+        if (TypewriterCharData.setCharacterAlpha(textInfo, index, alpha)) {
+            renewMeshColors32 = true;
+        }
     }
 
     /** 瞬間消失 */
     private void hideCharAnimation(int index) {
+        CharacterData item = charDataArray[index];
+        Vector2 position = item.targetPosition;
+        float rotation = item.targetRotation;
+        float scale = item.targetScale;
+        byte alpha = 0;
+
         charDataArray[index].isAnimateFinish = true;
-        TypewriterCharData.resetCharacterVertex(textInfo, index);
-        TypewriterCharData.setCharacterAlpha(textInfo, index, 0);
-        renewMeshVertices = true;
-        renewMeshColors32 = true;
+        if (TypewriterCharData.setCharacterTransform(textInfo, index, position, rotation, scale)) {
+            renewMeshVertices = true;
+        }
+        if (TypewriterCharData.setCharacterAlpha(textInfo, index, alpha)) {
+            renewMeshColors32 = true;
+        }
     }
 
     /** 開始淡入動畫 */
@@ -374,7 +417,7 @@ public class Typewriter : MonoBehaviour
         charDataArray[index].targetPosition = Vector3.zero;
         charDataArray[index].targetRotation = 0f;
         charDataArray[index].targetScale = 1.0f;
-        charDataArray[index].targetColor = new Color32(255, 255, 255, 255);
+        charDataArray[index].targetColor.a = 255;
 
         charDataArray[index].basePosition = fadeInData.position;
         charDataArray[index].baseRotation = fadeInData.rotation;
@@ -396,7 +439,7 @@ public class Typewriter : MonoBehaviour
         charDataArray[index].basePosition = charDataArray[index].targetPosition;
         charDataArray[index].baseRotation = charDataArray[index].targetRotation;
         charDataArray[index].baseScale = charDataArray[index].targetScale;
-        charDataArray[index].baseColor.a = charDataArray[index].targetColor.a;
+        charDataArray[index].baseColor.a = 255;
 
         charDataArray[index].targetPosition = fadeOutData.position;
         charDataArray[index].targetRotation = fadeOutData.rotation;
