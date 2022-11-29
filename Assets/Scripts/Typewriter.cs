@@ -15,7 +15,7 @@ public class Typewriter : MonoBehaviour
 {
     // 淡入文字資料
     static private class fadeInData {
-        static public float charDuration = 0.01f;
+        static public float charDuration = 0.016f;
         static public float duration = 0.4f;
         static public float alphaStart = duration * 0;
         static public float colorStart = duration * 0;
@@ -24,32 +24,36 @@ public class Typewriter : MonoBehaviour
         static public float scaleStart = duration * 0;
         static public EASE_TYPE alphaEase = EASE_TYPE.QuadIn;
         static public EASE_TYPE colorEase = EASE_TYPE.QuartIn;
-        static public EASE_TYPE positionEase = EASE_TYPE.QuadOut;
+        static public EASE_TYPE positionEase = EASE_TYPE.OutBack;
         static public EASE_TYPE rotationEase = EASE_TYPE.CubicIn;
-        static public EASE_TYPE scaleEase = EASE_TYPE.ElasticOut;
+        static public EASE_TYPE scaleEase = EASE_TYPE.OutBack;
 
-        static public Color32 color = new Color32(255, 150, 220, 32);
+        static public Color32 color = new Color32(220, 100, 160, 32);
         static public Vector2 position = new Vector2(8, -20);
-        static public float rotation = 20.0f;
+        static public Vector2 positionXRange = new Vector2(-8, 8);
+        static public Vector2 positionYRange = new Vector2(0, -4);
+        static public float rotation = 10.0f;
         static public float scale = 0.75f;
     }
     // 淡出文字資料
     static private class fadeOutData {
-        static public float charDuration = 0.005f;
+        static public float charDuration = 0.002f;
         static public float duration = 0.4f;
         static public float alphaStart = duration * 0;
         static public float colorStart = duration * 0;
         static public float positionStart = duration * 0.33f;
         static public float rotationStart = duration * 0;
         static public float scaleStart = duration * 0;
-        static public EASE_TYPE alphaEase = EASE_TYPE.QuadIn;
+        static public EASE_TYPE alphaEase = EASE_TYPE.QuadOut;
         static public EASE_TYPE colorEase = EASE_TYPE.QuartOut;
         static public EASE_TYPE positionEase = EASE_TYPE.QuadOut;
         static public EASE_TYPE rotationEase = EASE_TYPE.CubicIn;
         static public EASE_TYPE scaleEase = EASE_TYPE.ElasticOut;
 
         static public Color32 color = new Color32(255, 64, 16, 32);
-        static public Vector2 position = new Vector2(-8, 20);
+        static public Vector2 position = new Vector2(-8, 16);
+        static public Vector2 positionXRange = new Vector2(-12, 12);
+        static public Vector2 positionYRange = new Vector2(0, 8);
         static public float rotation = -10.0f;
         static public float scale = 1.25f;
     }
@@ -64,6 +68,7 @@ public class Typewriter : MonoBehaviour
     private int textCurrent = 0;                // 當前打字位置
     private bool isTextFinish = false;          // 打字機效果結束
     private bool isAnimateFinish = false;       // 打字機動畫結束
+    private bool isTextSkip = false;            // 打字機快進
 
     private EASE_TYPE alphaEase;
     private EASE_TYPE colorEase;
@@ -108,7 +113,7 @@ public class Typewriter : MonoBehaviour
     private IEnumerator test() {
         while(true) {
             changeTypewriterState();
-            yield return new WaitForSeconds(4.0f);
+            yield return new WaitForSeconds(2.5f);
         }
     }
 
@@ -193,6 +198,7 @@ public class Typewriter : MonoBehaviour
         scaleEase = fadeInData.scaleEase;
         isTextFinish = false;
         isAnimateFinish = false;
+        isTextSkip = false;
         typewriterState = TYPEWRITER_STATE.FADE_IN;
 
         for(int i = 0; i < textInfo.characterCount; i++) {
@@ -219,6 +225,7 @@ public class Typewriter : MonoBehaviour
         scaleEase = fadeOutData.scaleEase;
         isTextFinish = false;
         isAnimateFinish = false;
+        isTextSkip = false;
         typewriterState = TYPEWRITER_STATE.FADE_OUT;
 
         for(int i = 0; i < textInfo.characterCount; i++) {
@@ -231,11 +238,7 @@ public class Typewriter : MonoBehaviour
         if (typewriterState != TYPEWRITER_STATE.FADE_IN) {
             return;
         }
-        isTextFinish = true;
-        textCurrent = textInfo.characterCount;
-        for(int i = 0; i < textInfo.characterCount; i++) {
-            showCharAnimation(i);
-        }
+        isTextSkip = true;
     }
 
     /** 跳過淡出效果 */
@@ -243,11 +246,7 @@ public class Typewriter : MonoBehaviour
         if (typewriterState != TYPEWRITER_STATE.FADE_OUT) {
             return;
         }
-        isTextFinish = true;
-        textCurrent = textInfo.characterCount;
-        for(int i = 0; i < textInfo.characterCount; i++) {
-            hideCharAnimation(i);
-        }
+        isTextSkip = true;
     }
 
     /** 設定淡入完成callback */
@@ -283,6 +282,7 @@ public class Typewriter : MonoBehaviour
         textCurrent = 0;
         isTextFinish = false;
         isAnimateFinish = false;
+        isTextSkip = false;
 
         if (fadeInFinishCallback != null) {
             fadeInFinishCallback();
@@ -296,6 +296,7 @@ public class Typewriter : MonoBehaviour
         textCurrent = 0;
         isTextFinish = false;
         isAnimateFinish = false;
+        isTextSkip = false;
 
         if (fadeOutFinishCallback != null) {
             fadeOutFinishCallback();
@@ -327,9 +328,7 @@ public class Typewriter : MonoBehaviour
         if (isTextFinish) {
             return;
         }
-        float duration = charDuration;
-        int charByte = System.Text.Encoding.Default.GetByteCount(textInfo.characterInfo[textCurrent].character.ToString());
-        duration = charDuration * charByte;
+        float duration = getTypewriterRenewSpeed();
 
         timer += Time.deltaTime;
         while(timer >= duration) {
@@ -342,13 +341,22 @@ public class Typewriter : MonoBehaviour
             charDataArray[textCurrent].isAnimateFinish = false;
 
             textCurrent++;
-            charByte = System.Text.Encoding.Default.GetByteCount(textInfo.characterInfo[textCurrent].character.ToString());
-            duration = charDuration * charByte;
             if (textCurrent >= textInfo.characterCount) {
                 isTextFinish = true;
                 break;
             }
+            duration = getTypewriterRenewSpeed();
         }
+    }
+
+    /** 取得打字機更新速度 */
+    private float getTypewriterRenewSpeed() {
+        float duration = charDuration;
+        int charByte = System.Text.Encoding.Default.GetByteCount(textInfo.characterInfo[textCurrent].character.ToString());
+        if (isTextSkip) {
+            return 0.05f * charDuration * charByte;
+        }
+        return charDuration * charByte;
     }
 
     /** 更新打字機效果 */
@@ -470,6 +478,9 @@ public class Typewriter : MonoBehaviour
         charDataArray[index].baseRotation = fadeInData.rotation;
         charDataArray[index].baseScale = fadeInData.scale;
         charDataArray[index].baseColor = fadeInData.color;
+        
+        charDataArray[index].basePosition.x += Random.Range(fadeInData.positionXRange.x, fadeInData.positionXRange.y);
+        charDataArray[index].basePosition.y += Random.Range(fadeInData.positionYRange.x, fadeInData.positionYRange.y);
     }
 
     /** 處理淡出資料 */
@@ -492,5 +503,8 @@ public class Typewriter : MonoBehaviour
         charDataArray[index].targetRotation = fadeOutData.rotation;
         charDataArray[index].targetScale = fadeOutData.scale;
         charDataArray[index].targetColor = fadeOutData.color;
+        
+        charDataArray[index].targetPosition.x += Random.Range(fadeOutData.positionXRange.x, fadeOutData.positionXRange.y);
+        charDataArray[index].targetPosition.y += Random.Range(fadeOutData.positionYRange.x, fadeOutData.positionYRange.y);
     }
 }
