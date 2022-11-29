@@ -8,18 +8,23 @@ using UnityEngine;
 // Ease 種類
 enum EASE_TYPE {
     Linear,
+
     QuadIn,
     QuadOut,
     QuadInOut,
+
     CubicIn,
     CubicOut,
     CubicInOut,
+
     QuartIn,
     QuartOut,
     QuartInOut,
+
     QuintIn,
     QuintOut,
     QuintInOut,
+    
     ElasticOut,
 };
 

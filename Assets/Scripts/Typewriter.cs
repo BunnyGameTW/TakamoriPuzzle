@@ -4,7 +4,7 @@ using UnityEngine;
 using TMPro;
 
 // 打字機狀態
-enum TYPEWRITER_STATE {
+enum TYPEWRITER_STATE: int {
     NONE,       // 不顯示
     FADE_IN,    // 淡入中
     WAIT,       // 正常顯示
@@ -13,33 +13,47 @@ enum TYPEWRITER_STATE {
 
 public class Typewriter : MonoBehaviour
 {
-    private float charDuration = 0.005f;    // 顯示文字時間
-
     // 淡入文字資料
     static private class fadeInData {
-        static public float duration = 0.5f;
-        static public float alphaStart = 0f;
-        static public float positionStart = 0f;
-        static public float rotationStart = 0f;
-        static public float scaleStart = 0f;
+        static public float charDuration = 0.03f;
+        // static public float charDuration = 0.01f; // 適用英文版速度
+        static public float duration = 0.4f;
+        static public float alphaStart = duration * 0;
+        static public float colorStart = duration * 0;
+        static public float positionStart = duration * 0.25f;
+        static public float rotationStart = duration * 0;
+        static public float scaleStart = duration * 0;
+        static public EASE_TYPE alphaEase = EASE_TYPE.QuadIn;
+        static public EASE_TYPE colorEase = EASE_TYPE.QuartIn;
+        static public EASE_TYPE positionEase = EASE_TYPE.QuadOut;
+        static public EASE_TYPE rotationEase = EASE_TYPE.CubicIn;
+        static public EASE_TYPE scaleEase = EASE_TYPE.ElasticOut;
 
-        static public byte alpha = 32;
-        static public Vector2 position = new Vector2(0, -10);
-        static public float rotation = 180.0f;
-        static public float scale = 0.5f;
+        static public Color32 color = new Color32(255, 150, 220, 32);
+        static public Vector2 position = new Vector2(8, -20);
+        static public float rotation = 20.0f;
+        static public float scale = 0.75f;
     }
     // 淡出文字資料
     static private class fadeOutData {
-        static public float duration = 0.5f;
-        static public float alphaStart = 0f;
-        static public float positionStart = 0f;
-        static public float rotationStart = 0f;
-        static public float scaleStart = 0f;
+        static public float charDuration = 0.015f;
+        // static public float charDuration = 0.005f; // 適用英文版速度
+        static public float duration = 0.4f;
+        static public float alphaStart = duration * 0;
+        static public float colorStart = duration * 0;
+        static public float positionStart = duration * 0.33f;
+        static public float rotationStart = duration * 0;
+        static public float scaleStart = duration * 0;
+        static public EASE_TYPE alphaEase = EASE_TYPE.QuadIn;
+        static public EASE_TYPE colorEase = EASE_TYPE.QuartOut;
+        static public EASE_TYPE positionEase = EASE_TYPE.QuadOut;
+        static public EASE_TYPE rotationEase = EASE_TYPE.CubicIn;
+        static public EASE_TYPE scaleEase = EASE_TYPE.ElasticOut;
 
-        static public byte alpha = 32;
-        static public Vector2 position = new Vector2(0, -10);
-        static public float rotation = 180.0f;
-        static public float scale = 0.5f;
+        static public Color32 color = new Color32(255, 64, 16, 32);
+        static public Vector2 position = new Vector2(-8, 20);
+        static public float rotation = -10.0f;
+        static public float scale = 1.25f;
     }
 
     private TMP_Text textMeshPro;
@@ -47,10 +61,17 @@ public class Typewriter : MonoBehaviour
     private TYPEWRITER_STATE typewriterState = TYPEWRITER_STATE.NONE; // 打字機狀態
 
     private string words;                       // 文本字串
+    private float charDuration = 0f;            // 顯示文字時間
     private float timer = 0;                    // 計時器
     private int textCurrent = 0;                // 當前打字位置
     private bool isTextFinish = false;          // 打字機效果結束
     private bool isAnimateFinish = false;       // 打字機動畫結束
+
+    private EASE_TYPE alphaEase;
+    private EASE_TYPE colorEase;
+    private EASE_TYPE positionEase;
+    private EASE_TYPE rotationEase;
+    private EASE_TYPE scaleEase;
 
     private ObjectPool<CharacterData> objectPoolCharData;   // 字元資料物件池
     private CharacterData[] charDataArray = null;           // 字元資料陣列
@@ -88,8 +109,8 @@ public class Typewriter : MonoBehaviour
 
     private IEnumerator test() {
         while(true) {
-            yield return new WaitForSeconds(1.5f);
             changeTypewriterState();
+            yield return new WaitForSeconds(4.0f);
         }
     }
 
@@ -166,10 +187,19 @@ public class Typewriter : MonoBehaviour
         }
         timer = 0;
         textCurrent = 0;
+        charDuration = fadeInData.charDuration;
+        alphaEase = fadeInData.alphaEase;
+        colorEase = fadeInData.colorEase;
+        positionEase = fadeInData.positionEase;
+        rotationEase = fadeInData.rotationEase;
+        scaleEase = fadeInData.scaleEase;
         isTextFinish = false;
         isAnimateFinish = false;
         typewriterState = TYPEWRITER_STATE.FADE_IN;
 
+        for(int i = 0; i < textInfo.characterCount; i++) {
+            handleFadeInData(i);
+        }
         for(int i = 0; i < textInfo.materialCount; i++) {
             textInfo.meshInfo[i].Clear();
         }
@@ -183,9 +213,19 @@ public class Typewriter : MonoBehaviour
         }
         timer = 0;
         textCurrent = 0;
+        charDuration = fadeOutData.charDuration;
+        alphaEase = fadeOutData.alphaEase;
+        colorEase = fadeOutData.colorEase;
+        positionEase = fadeOutData.positionEase;
+        rotationEase = fadeOutData.rotationEase;
+        scaleEase = fadeOutData.scaleEase;
         isTextFinish = false;
         isAnimateFinish = false;
         typewriterState = TYPEWRITER_STATE.FADE_OUT;
+
+        for(int i = 0; i < textInfo.characterCount; i++) {
+            handleFadeOutData(i);
+        }
     }
 
     /** 跳過淡入效果 */
@@ -293,12 +333,11 @@ public class Typewriter : MonoBehaviour
         while(timer >= charDuration) {
             timer = timer - charDuration;
 
-            if (typewriterState == TYPEWRITER_STATE.FADE_IN) {
-                startFadeInAnimation(textCurrent);
+            if (typewriterState == TYPEWRITER_STATE.FADE_IN
+            && TypewriterCharData.resetCharacterVertex(textInfo, textCurrent)) {
+                renewMeshVertices = true;
             }
-            else if (typewriterState == TYPEWRITER_STATE.FADE_OUT) {
-                startFadeOutAnimation(textCurrent);
-            }
+            charDataArray[textCurrent].isAnimateFinish = false;
 
             textCurrent++;
             if (textCurrent >= textInfo.characterCount) {
@@ -333,8 +372,8 @@ public class Typewriter : MonoBehaviour
         Vector2 position = item.basePosition;
         float rotation = item.baseRotation;
         float scale = item.baseScale;
-        byte alpha = item.baseColor.a;
-        float positionRange, rotationRange, scaleRange, alphaRange;
+        Color32 color = item.baseColor;
+        float positionRange, rotationRange, scaleRange, colorRange, alphaRange;
 
         charDataArray[index].timer = charDataArray[index].timer + Time.deltaTime;
         if (charDataArray[index].timer >= item.duration) {
@@ -349,18 +388,22 @@ public class Typewriter : MonoBehaviour
             positionRange = Mathf.Clamp((charDataArray[index].timer - item.positionStart) / (item.duration - item.positionStart), 0f, 1.0f);
             rotationRange = Mathf.Clamp((charDataArray[index].timer - item.rotationStart) / (item.duration - item.rotationStart), 0f, 1.0f);
             scaleRange = Mathf.Clamp((charDataArray[index].timer - item.scaleStart) / (item.duration - item.scaleStart), 0f, 1.0f);
+            colorRange = Mathf.Clamp((charDataArray[index].timer - item.colorStart) / (item.duration - item.colorStart), 0f, 1.0f);
             alphaRange = Mathf.Clamp((charDataArray[index].timer - item.alphaStart) / (item.duration - item.alphaStart), 0f, 1.0f);
 
-            position.x = item.basePosition.x + (item.targetPosition.x - item.basePosition.x) * Easing.Tween(positionRange, EASE_TYPE.Linear);
-            position.y = item.basePosition.y + (item.targetPosition.y - item.basePosition.y) * Easing.Tween(positionRange, EASE_TYPE.Linear);
-            rotation = item.baseRotation + (item.targetRotation - item.baseRotation) * Easing.Tween(rotationRange, EASE_TYPE.Linear);
-            scale = item.baseScale + (item.targetScale - item.baseScale) * Easing.Tween(scaleRange, EASE_TYPE.Linear);
-            alpha = (byte)(item.baseColor.a + (item.targetColor.a - item.baseColor.a) * Easing.Tween(alphaRange, EASE_TYPE.Linear));
+            position.x = item.basePosition.x + (item.targetPosition.x - item.basePosition.x) * Easing.Tween(positionRange, positionEase);
+            position.y = item.basePosition.y + (item.targetPosition.y - item.basePosition.y) * Easing.Tween(positionRange, positionEase);
+            rotation = item.baseRotation + (item.targetRotation - item.baseRotation) * Easing.Tween(rotationRange, rotationEase);
+            scale = item.baseScale + (item.targetScale - item.baseScale) * Easing.Tween(scaleRange, scaleEase);
+            color.r = (byte)(item.baseColor.r + (item.targetColor.r - item.baseColor.r) * Easing.Tween(colorRange, colorEase));
+            color.g = (byte)(item.baseColor.g + (item.targetColor.g - item.baseColor.g) * Easing.Tween(colorRange, colorEase));
+            color.b = (byte)(item.baseColor.b + (item.targetColor.b - item.baseColor.b) * Easing.Tween(colorRange, colorEase));
+            color.a = (byte)(item.baseColor.a + (item.targetColor.a - item.baseColor.a) * Easing.Tween(alphaRange, alphaEase));
 
             if (TypewriterCharData.setCharacterTransform(textInfo, index, position, rotation, scale)) {
                 renewMeshVertices = true;
             }
-            if (TypewriterCharData.setCharacterAlpha(textInfo, index, alpha)) {
+            if (TypewriterCharData.setCharacterColor(textInfo, index, color)) {
                 renewMeshColors32 = true;
             }
         }
@@ -372,13 +415,13 @@ public class Typewriter : MonoBehaviour
         Vector2 position = item.targetPosition;
         float rotation = item.targetRotation;
         float scale = item.targetScale;
-        byte alpha = 255;
+        Color32 color = item.targetColor;
         
         charDataArray[index].isAnimateFinish = true;
         if (TypewriterCharData.setCharacterTransform(textInfo, index, position, rotation, scale)) {
             renewMeshVertices = true;
         }
-        if (TypewriterCharData.setCharacterAlpha(textInfo, index, alpha)) {
+        if (TypewriterCharData.setCharacterColor(textInfo, index, color)) {
             renewMeshColors32 = true;
         }
     }
@@ -389,27 +432,26 @@ public class Typewriter : MonoBehaviour
         Vector2 position = item.targetPosition;
         float rotation = item.targetRotation;
         float scale = item.targetScale;
-        byte alpha = 0;
+        Color32 color = item.baseColor;
+        color.a = 0;
 
         charDataArray[index].isAnimateFinish = true;
         if (TypewriterCharData.setCharacterTransform(textInfo, index, position, rotation, scale)) {
             renewMeshVertices = true;
         }
-        if (TypewriterCharData.setCharacterAlpha(textInfo, index, alpha)) {
+        if (TypewriterCharData.setCharacterColor(textInfo, index, color)) {
             renewMeshColors32 = true;
         }
     }
 
-    /** 開始淡入動畫 */
-    private void startFadeInAnimation(int index) {
-        if (TypewriterCharData.resetCharacterVertex(textInfo, index)) {
-            renewMeshVertices = true;
-        }
+    /** 處理淡入資料 */
+    private void handleFadeInData(int index) {
+        TMP_CharacterInfo charInfo = textInfo.characterInfo[index];
         // 設定淡入動畫資料
-        charDataArray[index].isAnimateFinish = false;
         charDataArray[index].duration = fadeInData.duration;
         charDataArray[index].timer = 0;
         charDataArray[index].alphaStart = fadeInData.alphaStart;
+        charDataArray[index].colorStart = fadeInData.colorStart;
         charDataArray[index].positionStart = fadeInData.positionStart;
         charDataArray[index].rotationStart = fadeInData.rotationStart;
         charDataArray[index].scaleStart = fadeInData.scaleStart;
@@ -417,21 +459,22 @@ public class Typewriter : MonoBehaviour
         charDataArray[index].targetPosition = Vector3.zero;
         charDataArray[index].targetRotation = 0f;
         charDataArray[index].targetScale = 1.0f;
+        charDataArray[index].targetColor = charInfo.color;
         charDataArray[index].targetColor.a = 255;
 
         charDataArray[index].basePosition = fadeInData.position;
         charDataArray[index].baseRotation = fadeInData.rotation;
         charDataArray[index].baseScale = fadeInData.scale;
-        charDataArray[index].baseColor.a = fadeInData.alpha;
+        charDataArray[index].baseColor = fadeInData.color;
     }
 
-    /** 開始淡出動畫 */
-    private void startFadeOutAnimation(int index) {
+    /** 處理淡出資料 */
+    private void handleFadeOutData(int index) {
         // 設定淡出動畫資料
-        charDataArray[index].isAnimateFinish = false;
         charDataArray[index].duration = fadeOutData.duration;
         charDataArray[index].timer = 0;
         charDataArray[index].alphaStart = fadeOutData.alphaStart;
+        charDataArray[index].colorStart = fadeOutData.colorStart;
         charDataArray[index].positionStart = fadeOutData.positionStart;
         charDataArray[index].rotationStart = fadeOutData.rotationStart;
         charDataArray[index].scaleStart = fadeOutData.scaleStart;
@@ -444,6 +487,6 @@ public class Typewriter : MonoBehaviour
         charDataArray[index].targetPosition = fadeOutData.position;
         charDataArray[index].targetRotation = fadeOutData.rotation;
         charDataArray[index].targetScale = fadeOutData.scale;
-        charDataArray[index].targetColor.a = fadeOutData.alpha;
+        charDataArray[index].targetColor = fadeOutData.color;
     }
 }
