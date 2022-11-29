@@ -15,8 +15,7 @@ public class Typewriter : MonoBehaviour
 {
     // 淡入文字資料
     static private class fadeInData {
-        static public float charDuration = 0.03f;
-        // static public float charDuration = 0.01f; // 適用英文版速度
+        static public float charDuration = 0.01f;
         static public float duration = 0.4f;
         static public float alphaStart = duration * 0;
         static public float colorStart = duration * 0;
@@ -36,8 +35,7 @@ public class Typewriter : MonoBehaviour
     }
     // 淡出文字資料
     static private class fadeOutData {
-        static public float charDuration = 0.015f;
-        // static public float charDuration = 0.005f; // 適用英文版速度
+        static public float charDuration = 0.005f;
         static public float duration = 0.4f;
         static public float alphaStart = duration * 0;
         static public float colorStart = duration * 0;
@@ -329,9 +327,13 @@ public class Typewriter : MonoBehaviour
         if (isTextFinish) {
             return;
         }
+        float duration = charDuration;
+        int charByte = System.Text.Encoding.Default.GetByteCount(textInfo.characterInfo[textCurrent].character.ToString());
+        duration = charDuration * charByte;
+
         timer += Time.deltaTime;
-        while(timer >= charDuration) {
-            timer = timer - charDuration;
+        while(timer >= duration) {
+            timer = timer - duration;
 
             if (typewriterState == TYPEWRITER_STATE.FADE_IN
             && TypewriterCharData.resetCharacterVertex(textInfo, textCurrent)) {
@@ -340,6 +342,8 @@ public class Typewriter : MonoBehaviour
             charDataArray[textCurrent].isAnimateFinish = false;
 
             textCurrent++;
+            charByte = System.Text.Encoding.Default.GetByteCount(textInfo.characterInfo[textCurrent].character.ToString());
+            duration = charDuration * charByte;
             if (textCurrent >= textInfo.characterCount) {
                 isTextFinish = true;
                 break;
