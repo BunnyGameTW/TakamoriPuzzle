@@ -88,6 +88,10 @@ public class Typewriter : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+    }
+    
+    // 初始化
+    public void init() {
         textMeshPro = this.GetComponent<TMP_Text>();
         typewriterState = TYPEWRITER_STATE.NONE;
         objectPoolCharData = new ObjectPool<CharacterData>();
@@ -96,25 +100,7 @@ public class Typewriter : MonoBehaviour
             TypewriterCharData.resetCharData(out temp);
             return temp;
         }, 256);
-
-        // ---------------------------------------
-        // TODO: 測試用，之後由更外層的manager控制
-        setWord(textMeshPro.text);
-        setFadeInFinishCallback(() => {
-            Debug.Log("Typewriter show complete!");
-        });
-        setFadeOutFinishCallback(() => {
-            Debug.Log("Typewriter hide complete!");
-        });
-        var func = StartCoroutine(test());
-        // ---------------------------------------
-    }
-
-    private IEnumerator test() {
-        while(true) {
-            changeTypewriterState();
-            yield return new WaitForSeconds(2.5f);
-        }
+        clearWord();
     }
 
     // Update is called once per frame
@@ -158,6 +144,13 @@ public class Typewriter : MonoBehaviour
         renewMeshVertices = true;
         clearCharDataArray();
         createCharDataArray();
+    }
+
+    /** 清除文本 */
+    public void clearWord() {
+        clearCharDataArray();
+        textMeshPro.text = "";
+        textMeshPro.ForceMeshUpdate();
     }
 
     /** 切換打字機狀態機(萬用觸碰按鈕) */
@@ -354,7 +347,7 @@ public class Typewriter : MonoBehaviour
         float duration = charDuration;
         int charByte = System.Text.Encoding.Default.GetByteCount(textInfo.characterInfo[textCurrent].character.ToString());
         if (isTextSkip) {
-            return 0.05f * charDuration * charByte;
+            return 0;
         }
         return charDuration * charByte;
     }
