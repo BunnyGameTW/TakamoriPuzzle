@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 // 選項資料
 struct DialogBoxSelectData {
@@ -13,8 +14,10 @@ public class DialogBox : MonoBehaviour
 {
     const string newlineChar = "<block>";    // 分段標記
 
-    public Typewriter typewriter = null;    // 打字機物件
-    public Button btnNext = null;           // 下一句按鈕物件
+    public Typewriter typewriter = null;        // 打字機物件
+    public Button btnNext = null;               // 下一句按鈕物件
+    public GameObject selectGroup = null;       // 選項群組
+    public Button prefabDialogSelect = null;    // 選項物件
 
     private bool isReadyPlay = false;                       // 是否準備播放就緒
     private List<string> messageList = null;                // 訊息List
@@ -29,6 +32,7 @@ public class DialogBox : MonoBehaviour
         typewriter.setFadeOutFinishCallback(() => {
             handleShowNextMessage();
         });
+        clearSelectGroup();
 
         selectList = new List<DialogBoxSelectData>();
 
@@ -43,6 +47,8 @@ public class DialogBox : MonoBehaviour
         testText = testText + "她擔心是因為自己太傲嬌讓Kiara忍受不了，想要離開她<block>";
         testText = testText + "Calli: 我想讓她開心起來，但是我該怎麼做？";
         setMessageData(testText);
+        addSelectData("選項A", 1);
+        addSelectData("選項B", 2);
         // var func = StartCoroutine(test());
         // ---------------------------------------
     }
@@ -82,6 +88,24 @@ public class DialogBox : MonoBehaviour
                 typewriter.skipFadeOutEffect();
             } break;
         }
+    }
+
+    /** 觸碰選項 */
+    public void onClickSelect(int ID) {
+        Debug.Log("選擇開啟關卡:" + ID);
+        clearSelectGroup();
+        clearAllSelectData();
+    }
+
+    /** 清除選項 */
+    public void clearSelectGroup() {
+        if (selectGroup.transform.childCount > 0) {
+            for(int i = 0; i < selectGroup.transform.childCount; i++) {
+                GameObject item = selectGroup.transform.GetChild(i).gameObject;
+                Destroy(item);
+            }
+        }
+        selectGroup.SetActive(false);
     }
 
     /** 開始對話 */
@@ -137,8 +161,23 @@ public class DialogBox : MonoBehaviour
 
     /** 處理選項創造 */
     private void handleShowSelect() {
-        // TODO: 選擇選項處理
-        Debug.Log("DialogBox handleShowSelect");
+        if (selectList.Count <= 0) {
+            Debug.LogError("Error DialogBox handleShowSelect: No slelect");
+            return;
+        }
+        selectGroup.SetActive(true);
+        for( int i = 0; i < selectList.Count; i++) {
+            Button tmepButton = Instantiate(prefabDialogSelect, Vector3.zero, Quaternion.identity);
+            GameObject textChild = tmepButton.transform.Find("Text (TMP)").gameObject;
+            int selectID = selectList[i].selectID;
+            
+            tmepButton.onClick.AddListener(() => {
+                this.onClickSelect(selectID);
+            });
+            textChild.GetComponent<TMP_Text>().text = selectList[i].selectText;
+            tmepButton.transform.SetParent(selectGroup.transform);
+            tmepButton.transform.localScale = selectGroup.transform.localScale;
+        }
     }
 
     /** 解析訊息成陣列 */
