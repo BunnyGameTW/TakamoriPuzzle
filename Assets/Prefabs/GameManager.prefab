@@ -44,3 +44,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79e792759e92e9d42a66d607d9e4ae8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  slidingPuzzle: {fileID: 0}
+  dialogBox: {fileID: 0}

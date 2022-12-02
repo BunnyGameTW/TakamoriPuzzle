@@ -22,12 +22,6 @@ public class SlidingPuzzle : MonoBehaviour
     void Start()
     {
         this.GetComponent<SpriteRenderer>().enabled = false;
-
-        // ---------------------------------------
-        // TODO: 測試用，之後由更外層的manager控制遊戲開始
-        // init(puzzleImage, 3, 3);
-        // startPuzzle();
-        // ---------------------------------------
     }
 
     // Update is called once per frame
@@ -49,6 +43,7 @@ public class SlidingPuzzle : MonoBehaviour
         puzzleImage = image;
         puzzleGridX = gridX;
         puzzleGridY = gridY;
+        this.GetComponent<SpriteRenderer>().sprite = puzzleImage;
     }
 
     // 開始遊戲
