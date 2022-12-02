@@ -8,18 +8,25 @@ using UnityEngine;
 // Ease 種類
 enum EASE_TYPE {
     Linear,
+
     QuadIn,
     QuadOut,
     QuadInOut,
+
     CubicIn,
     CubicOut,
     CubicInOut,
+
     QuartIn,
     QuartOut,
     QuartInOut,
+
     QuintIn,
     QuintOut,
     QuintInOut,
+
+    ElasticOut,
+    OutBack,
 };
 
 // Easing function
@@ -33,60 +40,52 @@ static class Easing
         switch(type) {
             case EASE_TYPE.Linear: {
                 value = Linear(t);
-            }
-            break;
+            } break;
             case EASE_TYPE.QuadIn: {
                 value = QuadIn(t);
-            }
-            break;
+            } break;
             case EASE_TYPE.QuadOut: {
                 value = QuadOut(t);
-            }
-            break;
+            } break;
             case EASE_TYPE.QuadInOut: {
                 value = QuadInOut(t);
-            }
-            break;
+            } break;
             case EASE_TYPE.CubicIn: {
                 value = CubicIn(t);
-            }
-            break;
+            } break;
             case EASE_TYPE.CubicOut: {
                 value = CubicOut(t);
-            }
-            break;
+            } break;
             case EASE_TYPE.CubicInOut: {
                 value = CubicInOut(t);
-            }
-            break;
+            } break;
             case EASE_TYPE.QuartIn: {
                 value = QuartIn(t);
-            }
-            break;
+            } break;
             case EASE_TYPE.QuartOut: {
                 value = QuartOut(t);
-            }
-            break;
+            } break;
             case EASE_TYPE.QuartInOut: {
                 value = QuartInOut(t);
-            }
-            break;
+            } break;
             case EASE_TYPE.QuintIn: {
                 value = QuintIn(t);
-            }
-            break;
+            } break;
             case EASE_TYPE.QuintOut: {
                 value = QuintOut(t);
-            }
-            break;
+            } break;
             case EASE_TYPE.QuintInOut: {
                 value = QuintInOut(t);
-            }
-            break;
+            } break;
+            case EASE_TYPE.ElasticOut: {
+                value = ElasticOut(t);
+            } break;
+            case EASE_TYPE.OutBack: {
+                value = OutBack(t);
+            } break;
             default: {
                 Debug.Log("Error: Easing.Tween type not implementation.");
-            }
-            break;
+            } break;
         }
         return value;
     }
@@ -146,6 +145,23 @@ static class Easing
     
     static public float QuintInOut(float t) {
         return EasingInOut(t, 5);
+    }
+
+    // Elastic
+    static public float ElasticOut(float t) {
+        const float c4 = (2 * Mathf.PI) / 3;
+
+        return t == 0
+        ? 0
+        : t == 1
+        ? 1
+        : Mathf.Pow(2, -10 * t) * Mathf.Sin((float)(t * 10 - 0.75) * c4) + 1;
+    }
+
+    static public float OutBack(float t) {
+        const float c1 = 1.70158f;
+        const float c3 = c1 + 1;
+        return 1 + c3 * Mathf.Pow(t - 1, 3) + c1 * Mathf.Pow(t - 1, 2);
     }
 
     // 內部呼叫 --------------------------------------------------------------------------------------------------------------
