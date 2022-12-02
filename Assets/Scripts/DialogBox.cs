@@ -16,12 +16,15 @@ public class DialogBox : MonoBehaviour
 
     public Typewriter typewriter = null;        // 打字機物件
     public Button btnNext = null;               // 下一句按鈕物件
+    public GameObject waitIcon = null;          // 等待下一句圖示
     public GameObject selectGroup = null;       // 選項群組
     public Button prefabDialogSelect = null;    // 選項物件
 
+    private Coroutine waitIconEvent = null;                 // 等待圖示事件
     private bool isReadyPlay = false;                       // 是否準備播放就緒
     private List<string> messageList = null;                // 訊息List
     private List<DialogBoxSelectData> selectList = null;    // 選項List
+    private System.Action<int> selectCallback = null;       // 選擇完成callback
 
     // 生命週期 --------------------------------------------------------------------------------------------------------------
 
@@ -29,9 +32,13 @@ public class DialogBox : MonoBehaviour
     void Start()
     {
         typewriter.init();
+        typewriter.setFadeInFinishCallback(() => {
+            showWaitNextIcon();
+        });
         typewriter.setFadeOutFinishCallback(() => {
             handleShowNextMessage();
         });
+        waitIcon.SetActive(false);
         clearSelectGroup();
 
         selectList = new List<DialogBoxSelectData>();
@@ -49,15 +56,10 @@ public class DialogBox : MonoBehaviour
         setMessageData(testText);
         addSelectData("選項A", 1);
         addSelectData("選項B", 2);
-        // var func = StartCoroutine(test());
+        setSelectCallback((ID) => {
+            Debug.Log("選擇開啟關卡:" + ID);
+        });
         // ---------------------------------------
-    }
-
-    private IEnumerator test() {
-        while(true) {
-            typewriter.changeTypewriterState();
-            yield return new WaitForSeconds(2.5f);
-        }
     }
 
     // Update is called once per frame
@@ -78,34 +80,29 @@ public class DialogBox : MonoBehaviour
                 playMessage();
                 // ---------------------------------------
             } break;
-            case (int)TYPEWRITER_STATE.FADE_IN: {
-                typewriter.skipFadeInEffect();
-            } break;
             case (int)TYPEWRITER_STATE.WAIT: {
+                hideWaitNextIcon();
                 typewriter.startFadeOutEffect();
             } break;
+            case (int)TYPEWRITER_STATE.FADE_IN:
             case (int)TYPEWRITER_STATE.FADE_OUT: {
-                typewriter.skipFadeOutEffect();
+                typewriter.skipTypewriterEffect();
             } break;
         }
     }
 
-    /** 觸碰選項 */
+    /** 觸碰選項按鈕 */
     public void onClickSelect(int ID) {
-        Debug.Log("選擇開啟關卡:" + ID);
         clearSelectGroup();
         clearAllSelectData();
+        if (selectCallback != null) {
+            selectCallback(ID);
+        }
     }
 
-    /** 清除選項 */
-    public void clearSelectGroup() {
-        if (selectGroup.transform.childCount > 0) {
-            for(int i = 0; i < selectGroup.transform.childCount; i++) {
-                GameObject item = selectGroup.transform.GetChild(i).gameObject;
-                Destroy(item);
-            }
-        }
-        selectGroup.SetActive(false);
+    /** 設定選擇完成callback */
+    public void setSelectCallback(System.Action<int> callback) {
+        selectCallback = callback;
     }
 
     /** 開始對話 */
@@ -117,7 +114,7 @@ public class DialogBox : MonoBehaviour
         handleShowNextMessage();
     }
 
-    /** 設定全部訊息 */
+    /** 設定訊息資料 */
     public void setMessageData(string text) {
         messageList = new List<string>();
         if (parseMessage(text)) {
@@ -125,7 +122,7 @@ public class DialogBox : MonoBehaviour
         }
     }
 
-    /** 增加選項 */
+    /** 增加選項資料 */
     public void addSelectData(string text, int ID) {
         DialogBoxSelectData temp = new DialogBoxSelectData();
         temp.selectText = text;
@@ -133,9 +130,20 @@ public class DialogBox : MonoBehaviour
         selectList.Add(temp);
     }
 
-    /** 清空選項 */
+    /** 清空選項資料 */
     public void clearAllSelectData() {
         selectList.Clear();
+    }
+
+    /** 清除所有選項按鈕 */
+    public void clearSelectGroup() {
+        if (selectGroup.transform.childCount > 0) {
+            for(int i = 0; i < selectGroup.transform.childCount; i++) {
+                GameObject item = selectGroup.transform.GetChild(i).gameObject;
+                Destroy(item);
+            }
+        }
+        selectGroup.SetActive(false);
     }
 
     // 內部呼叫 --------------------------------------------------------------------------------------------------------------
@@ -155,8 +163,14 @@ public class DialogBox : MonoBehaviour
         }
         else {
             typewriter.clearWord();
-            handleShowSelect();
+            StartCoroutine(runMessageFinishEffect());
         }
+    }
+
+    /** 結束對話效果 */
+    private IEnumerator runMessageFinishEffect() {
+        yield return new WaitForSeconds(0.5f);
+        handleShowSelect();
     }
 
     /** 處理選項創造 */
@@ -170,7 +184,7 @@ public class DialogBox : MonoBehaviour
             Button tmepButton = Instantiate(prefabDialogSelect, Vector3.zero, Quaternion.identity);
             GameObject textChild = tmepButton.transform.Find("Text (TMP)").gameObject;
             int selectID = selectList[i].selectID;
-            
+
             tmepButton.onClick.AddListener(() => {
                 this.onClickSelect(selectID);
             });
@@ -205,4 +219,27 @@ public class DialogBox : MonoBehaviour
         messageList.Add(text);
     }
 
+    /** 顯示等待下一句標示 */
+    private void showWaitNextIcon() {
+        waitIconEvent = StartCoroutine(runWaitIconEffect());
+    }
+
+    /** 隱藏等待下一句標示 */
+    private void hideWaitNextIcon() {
+        waitIcon.SetActive(false);
+        StopCoroutine(waitIconEvent);
+        waitIconEvent = null;
+    }
+
+    /** 結束對話效果 */
+    private IEnumerator runWaitIconEffect() {
+        yield return new WaitForSeconds(0.5f);
+        waitIcon.SetActive(true);
+        while(true) {
+            yield return new WaitForSeconds(0.5f);
+            waitIcon.SetActive(false);
+            yield return new WaitForSeconds(0.5f);
+            waitIcon.SetActive(true);
+        }
+    }
 }

@@ -16,7 +16,7 @@ public class Typewriter : MonoBehaviour
     // 淡入文字資料
     static private class fadeInData {
         static public float charDuration = 0.016f;
-        static public float duration = 0.4f;
+        static public float duration = 0.3f;
         static public float alphaStart = duration * 0;
         static public float colorStart = duration * 0;
         static public float positionStart = duration * 0.25f;
@@ -38,7 +38,7 @@ public class Typewriter : MonoBehaviour
     // 淡出文字資料
     static private class fadeOutData {
         static public float charDuration = 0.002f;
-        static public float duration = 0.4f;
+        static public float duration = 0.3f;
         static public float alphaStart = duration * 0;
         static public float colorStart = duration * 0;
         static public float positionStart = duration * 0.33f;
@@ -153,24 +153,6 @@ public class Typewriter : MonoBehaviour
         textMeshPro.ForceMeshUpdate();
     }
 
-    /** 切換打字機狀態機(萬用觸碰按鈕) */
-    public void changeTypewriterState() {
-        switch(typewriterState) {
-            case TYPEWRITER_STATE.NONE: {
-                startFadeInEffect();
-            } break;
-            case TYPEWRITER_STATE.FADE_IN: {
-                skipFadeInEffect();
-            } break;
-            case TYPEWRITER_STATE.WAIT: {
-                startFadeOutEffect();
-            } break;
-            case TYPEWRITER_STATE.FADE_OUT: {
-                skipFadeOutEffect();
-            } break;
-        }
-    }
-
     /** 取得打字機狀態 */
     public int getTypewriterState() {
         return (int)typewriterState;
@@ -226,17 +208,10 @@ public class Typewriter : MonoBehaviour
         }
     }
 
-    /** 跳過淡入效果 */
-    public void skipFadeInEffect() {
-        if (typewriterState != TYPEWRITER_STATE.FADE_IN) {
-            return;
-        }
-        isTextSkip = true;
-    }
-
-    /** 跳過淡出效果 */
-    public void skipFadeOutEffect() {
-        if (typewriterState != TYPEWRITER_STATE.FADE_OUT) {
+    /** 跳過打字機效果 */
+    public void skipTypewriterEffect() {
+        if (typewriterState != TYPEWRITER_STATE.FADE_IN
+        && typewriterState != TYPEWRITER_STATE.FADE_OUT) {
             return;
         }
         isTextSkip = true;
