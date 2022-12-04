@@ -10,7 +10,8 @@ using System.IO;
 
 public class LoadExcel: Singleton<LoadExcel>
 {
-    const string arrayTag = "[]";    // 陣列標記
+    const string arrayTag = "[]";   // 陣列標記
+    private string firstSheet = ""; // 第一個表單頁簽名稱
     private Dictionary<string, Dictionary<string, Hashtable>> data = null;// excel原始資料
 
     /** 建構子 */
@@ -30,14 +31,21 @@ public class LoadExcel: Singleton<LoadExcel>
             return;
         }
         parseExcelData(result);
+        stream.Close();
+        reader.Close();
     }
 
-    /** 取得-物件 */
-    public Hashtable getObject(string sheet, string IDkey, int ID) {
+    /** 取得表單 */
+    public Dictionary<string, Hashtable> getTable(string sheet) {
+        return data[sheet];
+    }
+
+    /** 取得物件 */
+    public Hashtable getObject(string sheet, string IDkey, string ID) {
         foreach(KeyValuePair<string, Hashtable> item in data[sheet]) {
             foreach(DictionaryEntry data in item.Value) {
                 if ((string)data.Key == IDkey
-                && (string)data.Value == ID.ToString()) {
+                && (string)data.Value == ID) {
                     return item.Value;
                 }
             }
@@ -45,12 +53,24 @@ public class LoadExcel: Singleton<LoadExcel>
         return null;
     }
 
-    /** 取得-物件數值 */
-    public string getObjectValue(string sheet, string IDkey, int ID, string key) {
+    public Hashtable getObject(string sheet, string IDkey, int ID) {
+        return getObject(sheet, IDkey, ID.ToString());
+    }
+
+    public Hashtable getObject(string IDkey, string ID) {
+        return getObject(firstSheet, IDkey, ID);
+    }
+
+    public Hashtable getObject(string IDkey, int ID) {
+        return getObject(firstSheet, IDkey, ID);
+    }
+
+    /** 取得物件數值 */
+    public string getObjectValue(string sheet, string IDkey, string ID, string key) {
         foreach(KeyValuePair<string, Hashtable> item in data[sheet]) {
             foreach(DictionaryEntry data in item.Value) {
                 if ((string)data.Key == IDkey
-                && (string)data.Value == ID.ToString()) {
+                && (string)data.Value == ID) {
                     return (string)item.Value[key];
                 }
             }
@@ -58,12 +78,24 @@ public class LoadExcel: Singleton<LoadExcel>
         return null;
     }
 
-    /** 取得-物件清單 */
-    public List<string> getObjectList(string sheet, string IDkey, int ID, string key) {
+    public string getObjectValue(string sheet, string IDkey, int ID, string key) {
+        return getObjectValue(sheet, IDkey, ID.ToString(), key);
+    }
+
+    public string getObjectValue(string IDkey, string ID, string key) {
+        return getObjectValue(firstSheet, IDkey, ID, key);
+    }
+
+    public string getObjectValue(string IDkey, int ID, string key) {
+        return getObjectValue(firstSheet, IDkey, ID, key);
+    }
+
+    /** 取得物件清單 */
+    public List<string> getObjectList(string sheet, string IDkey, string ID, string key) {
         foreach(KeyValuePair<string, Hashtable> item in data[sheet]) {
             foreach(DictionaryEntry data in item.Value) {
                 if ((string)data.Key == IDkey
-                && (string)data.Value == ID.ToString()) {
+                && (string)data.Value == ID) {
                     List<string> list = new List<string>();
                     Hashtable keyList = (Hashtable)item.Value[key];
                     foreach(DictionaryEntry listItem in keyList) {
@@ -75,13 +107,29 @@ public class LoadExcel: Singleton<LoadExcel>
         }
         return null;
     }
+    
+    public List<string> getObjectList(string sheet, string IDkey, int ID, string key) {
+        return getObjectList(sheet, IDkey, ID.ToString(), key);
+    }
 
-    /** 取得-值 */
+    public List<string> getObjectList(string IDkey, string ID, string key) {
+        return getObjectList(firstSheet, IDkey, ID, key);
+    }
+
+    public List<string> getObjectList(string IDkey, int ID, string key) {
+        return getObjectList(firstSheet, IDkey, ID, key);
+    }
+
+    /** 取得某行的值 */
     public string getValue(string sheet, int index, string key) {
         return (string)data[sheet][index.ToString()][key];
     }
 
-    /** 取得-清單 */
+    public string getValue(int index, string key) {
+        return getValue(firstSheet, index, key);
+    }
+
+    /** 取得某行的清單 */
     public List<string> getList(string sheet, int index, string key) {
         Hashtable keyList = (Hashtable)data[sheet][index.ToString()][key];
         List<string> list = new List<string>();
@@ -91,44 +139,8 @@ public class LoadExcel: Singleton<LoadExcel>
         return list;
     }
 
-    /** 取得第一表單-物件 */
-    public Hashtable getObject(string IDkey, int ID) {
-        foreach(KeyValuePair<string, Dictionary<string, Hashtable>> table in data) {
-            return getObject(table.Key, IDkey, ID);
-        }
-        return null;
-    }
-
-    /** 取得第一表單-物件數值 */
-    public string getObjectValue(string IDkey, int ID, string key) {
-        foreach(KeyValuePair<string, Dictionary<string, Hashtable>> table in data) {
-            return getObjectValue(table.Key, IDkey, ID, key);
-        }
-        return null;
-    }
-
-    /** 取得第一表-單值 */
-    public string getValue(int index, string key) {
-        foreach(KeyValuePair<string, Dictionary<string, Hashtable>> item in data) {
-            return getValue(item.Key, index, key);
-        }
-        return null;
-    }
-
-    /** 取得第一表單-清單 */
     public List<string> getList(int index, string key) {
-        foreach(KeyValuePair<string, Dictionary<string, Hashtable>> item in data) {
-            return getList(item.Key, index, key);
-        }
-        return null;
-    }
-
-    /** 取得第一表單-物件清單 */
-    public List<string> getObjectList(string IDkey, int ID, string key) {
-        foreach(KeyValuePair<string, Dictionary<string, Hashtable>> item in data) {
-            return getObjectList(item.Key, IDkey, ID, key);
-        }
-        return null;
+        return getList(firstSheet, index, key);
     }
 
     // 內部呼叫 --------------------------------------------------------------------------------------------------------------
@@ -136,6 +148,7 @@ public class LoadExcel: Singleton<LoadExcel>
     /** 解析excel檔案 */
     private void parseExcelData(System.Data.DataSet excelData) {
         data = new Dictionary<string, Dictionary<string, Hashtable>>();
+        firstSheet = excelData.Tables[0].TableName;
         for(int i = 0; i < excelData.Tables.Count; i++) {
             var table = excelData.Tables[i];
             Dictionary<string, Hashtable> tableData = new Dictionary<string, Hashtable>();

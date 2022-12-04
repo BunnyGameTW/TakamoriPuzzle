@@ -24,6 +24,7 @@ public class DialogBox : MonoBehaviour
     private bool isReadyPlay = false;                       // 是否準備播放就緒
     private List<string> messageList = null;                // 訊息List
     private List<DialogBoxSelectData> selectList = null;    // 選項List
+    private System.Action finishCallback = null;            // 播放結束callback
     private System.Action<int> selectCallback = null;       // 選擇完成callback
 
     // 生命週期 --------------------------------------------------------------------------------------------------------------
@@ -90,9 +91,15 @@ public class DialogBox : MonoBehaviour
         selectCallback = callback;
     }
 
+    /** 設定播放結束callback */
+    public void setFinishCallback(System.Action callback) {
+        finishCallback = callback;
+    }
+
     /** 開始對話 */
     public void playMessage() {
         if (!isReadyPlay) {
+            Debug.LogError("DialogBox: playMessage is not ReadyPlay");
             return;
         }
         isReadyPlay = false;
@@ -156,15 +163,16 @@ public class DialogBox : MonoBehaviour
     /** 結束對話效果 */
     private IEnumerator runMessageFinishEffect() {
         yield return new WaitForSeconds(0.5f);
-        handleShowSelect();
+        if (finishCallback != null) {
+            finishCallback();
+        }
+        if (selectList.Count > 0) {
+            handleShowSelect();
+        }
     }
 
     /** 處理選項創造 */
     private void handleShowSelect() {
-        if (selectList.Count <= 0) {
-            Debug.LogError("Error DialogBox handleShowSelect: No slelect");
-            return;
-        }
         selectGroup.SetActive(true);
         for( int i = 0; i < selectList.Count; i++) {
             Button tmepButton = Instantiate(prefabDialogSelect, Vector3.zero, Quaternion.identity);
@@ -188,10 +196,19 @@ public class DialogBox : MonoBehaviour
             index = tempStr.IndexOf(newlineChar);
             if (index > 0) {
                 string result = tempStr.Substring(0, index);
+                if (result.Substring(0, 1) == "\n") {
+                    result = tempStr.Substring(1, index - 1);
+                }
                 addMessageToList(result);
                 tempStr = tempStr.Remove(0, index + newlineChar.Length);
+                if (tempStr.Length <= 0) {
+                    return true;
+                }
             }
             else {
+                if (tempStr.Substring(0, 1) == "\n") {
+                    tempStr = tempStr.Substring(1, tempStr.Length - 1);
+                }
                 addMessageToList(tempStr);
                 tempStr = tempStr.Remove(0, tempStr.Length - 1);
                 return true;

@@ -93,6 +93,7 @@ public class Typewriter : MonoBehaviour
     // 初始化
     public void init() {
         textMeshPro = this.GetComponent<TMP_Text>();
+        textMeshPro.text = "";
         typewriterState = TYPEWRITER_STATE.NONE;
         objectPoolCharData = new ObjectPool<CharacterData>();
         objectPoolCharData.init(() => {

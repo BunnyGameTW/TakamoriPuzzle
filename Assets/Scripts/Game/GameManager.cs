@@ -12,41 +12,8 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        int episodeId = DataManager.instance.episodeId;
-        int levelId = DataManager.instance.levelId;
-        int puzzleGridX = DataManager.instance.puzzleGridX;
-        int puzzleGridY = DataManager.instance.puzzleGridY;
-        string puzzleImagePath = ResManager.getPuzzleImagePath(episodeId, levelId);
-        Sprite puzzleImage = ResManager.loadSprite(puzzleImagePath);
-
-        slidingPuzzle.init(puzzleImage, puzzleGridX, puzzleGridY);
-        slidingPuzzle.startPuzzle();
-        slidingPuzzle.setFinishPuzzleCallback(handleFinishPuzzle);
-        dialogBox.init();
-        // ---------------------------------------
-        // TODO: 測試用
-        string testText = "";
-        testText = testText + "聖誕前夜，到處洋溢著歡樂的氣氛，但對TAKAMORI來説卻是例外<block>";
-        testText = testText + "Calli和Kiara之間充滿古怪與尷尬的氣氛，但她們之前並沒有吵過架<block>";
-        testText = testText + "Kiara最近總是很晚才回家，而且常常嘆氣，但當Calli試著跟她說話時\n她的反應卻總是一切都好<block>";
-        testText = testText + "Calli告訴她自己他們之間不能再這樣了，<block>";
-        testText = testText + "她擔心是因為自己太傲嬌讓Kiara忍受不了，想要離開她<block>";
-        testText = testText + "Calli: 我想讓她開心起來，但是我該怎麼做？";
-        dialogBox.setMessageData(testText);
-        dialogBox.addSelectData("選項A", 1);
-        dialogBox.addSelectData("選項B", 2);
-        dialogBox.setSelectCallback((ID) => {
-            Debug.Log("選擇開啟關卡:" + ID);
-        });
-        // ---------------------------------------
-
-        LoadExcel.instance.loadFile(RES_PATH.PUZZLE_EXCEL);
-        Debug.Log(LoadExcel.instance.getValue("content", 1, "zh"));
-        Debug.Log(LoadExcel.instance.getValue(1, "zh"));
-        Debug.Log(LoadExcel.instance.getList("content", 1, "chioce"));
-        Debug.Log(LoadExcel.instance.getList(1, "chioce"));
-        Debug.Log(LoadExcel.instance.getObject("content", "id", 1)["zh"]);
-        Debug.Log(LoadExcel.instance.getObjectList("content", "id", 1, "chioce"));
+        initSlidingPuzzle();
+        initDialogBox();
     }
 
     // Update is called once per frame
@@ -57,8 +24,90 @@ public class GameManager : MonoBehaviour
     
     // 內部呼叫 --------------------------------------------------------------------------------------------------------------
 
+    /** 初始化謎題 */
+    private void initSlidingPuzzle() {
+        int episodeId = DataManager.instance.episodeId;
+        int levelId = DataManager.instance.levelId;
+        int puzzleGridX = DataManager.instance.puzzleGridX;
+        int puzzleGridY = DataManager.instance.puzzleGridY;
+        string puzzleImagePath = ResManager.getPuzzleImagePath(episodeId, levelId);
+        Sprite puzzleImage = ResManager.loadSprite(puzzleImagePath);
+
+        slidingPuzzle.init(puzzleImage, puzzleGridX, puzzleGridY);
+        slidingPuzzle.startPuzzle();
+        slidingPuzzle.setFinishPuzzleCallback(handleFinishPuzzle);
+    }
+
+    /** 初始化對話 */
+    private void initDialogBox() {
+        int episodeId = DataManager.instance.episodeId;
+        int levelId = DataManager.instance.levelId;
+        string language = DataManager.instance.language;
+        Dictionary<string, Hashtable> allTable = null;
+        Hashtable allData = null;
+        Hashtable contentData = null;
+        string message = null;
+        int selectCount = 0;
+
+        dialogBox.init();
+        LoadExcel.instance.loadFile(RES_PATH.PUZZLE_EXCEL);
+        allTable = LoadExcel.instance.getTable("all");
+
+        foreach(KeyValuePair<string, Hashtable> item in allTable) {
+            bool episodeIdCheck = false;
+            bool levelIdCheck = false;
+            foreach(DictionaryEntry data in item.Value) {
+                if ((string)data.Key == "episodeId" && (string)data.Value == episodeId.ToString()) {
+                    episodeIdCheck = true;
+                }
+                if ((string)data.Key == "levelId" && (string)data.Value == levelId.ToString()) {
+                    levelIdCheck = true;
+                }
+            }
+            if (episodeIdCheck && levelIdCheck) {
+                allData = item.Value;
+            }
+        }
+        if (allData == null) {
+            Debug.LogError("Error initDialogBox : episodeId & levelId can not find.");
+            return;
+        }
+        contentData = LoadExcel.instance.getObject("content", "id", (string)allData["contentId"]);
+        message = (string)contentData[language + "_story"];
+        dialogBox.setMessageData(message);
+
+        while(true) {
+            int count = selectCount + 1;
+            string chioceKey = "chioceId_" + count.ToString();
+            if ((string)allData[chioceKey] != "") {
+                string contentKey = language + "_chioce_" + count.ToString();
+                dialogBox.addSelectData((string)contentData[contentKey], int.Parse((string)allData[chioceKey]));
+                selectCount++;
+            }
+            else {
+                break;
+            }
+        }
+        if (selectCount > 0) {
+            dialogBox.setSelectCallback(handleDialogSelect);
+        }
+        else {
+            dialogBox.setFinishCallback(handleDialogFinish);
+        }
+    }
+
     /** 處理完成謎題 */
     private void handleFinishPuzzle() {
         dialogBox.playMessage();
+    }
+
+    /** 處理對話選擇 */
+    private void handleDialogSelect(int ID) {
+        Debug.Log("選擇解鎖關卡:" + ID);
+    }
+
+    /** 處理對話結束 */
+    private void handleDialogFinish() {
+        Debug.Log("直接解鎖關卡");
     }
 }
