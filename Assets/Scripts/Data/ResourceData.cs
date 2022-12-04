@@ -6,13 +6,15 @@ using UnityEngine;
     資源清單，用於Resources.Load
 */
 
-// 資源資料
-static class RES_DATA
+// 資源路徑
+static class RES_PATH
 {
+
+    static public string PUZZLE_EXCEL = "excel/TAKAMORIPuzzleScripts.xlsx";
     static private string spritePath = "puzzle/";
     static public Dictionary<Vector2Int, string> SPRITE_PUZZLE_IMAGE = new Dictionary<Vector2Int, string>();
 
-    static RES_DATA() {
+    static RES_PATH() {
         SPRITE_PUZZLE_IMAGE.Add(new Vector2Int(1, 1), spritePath + "puzzle_1_1");
         SPRITE_PUZZLE_IMAGE.Add(new Vector2Int(1, 2), spritePath + "puzzle_1_2");
         SPRITE_PUZZLE_IMAGE.Add(new Vector2Int(1, 3), spritePath + "puzzle_1_3");
@@ -37,6 +39,6 @@ static class ResManager
 
     /** 取得謎題圖片 */
     static public string getPuzzleImagePath(int episodeId, int levelId) {
-        return RES_DATA.SPRITE_PUZZLE_IMAGE[new Vector2Int(episodeId, levelId)];
+        return RES_PATH.SPRITE_PUZZLE_IMAGE[new Vector2Int(episodeId, levelId)];
     }
 }

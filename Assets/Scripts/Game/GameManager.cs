@@ -39,6 +39,14 @@ public class GameManager : MonoBehaviour
             Debug.Log("選擇開啟關卡:" + ID);
         });
         // ---------------------------------------
+
+        LoadExcel.instance.loadFile(RES_PATH.PUZZLE_EXCEL);
+        Debug.Log(LoadExcel.instance.getValue("content", 1, "zh"));
+        Debug.Log(LoadExcel.instance.getValue(1, "zh"));
+        Debug.Log(LoadExcel.instance.getList("content", 1, "chioce"));
+        Debug.Log(LoadExcel.instance.getList(1, "chioce"));
+        Debug.Log(LoadExcel.instance.getObject("content", "id", 1)["zh"]);
+        Debug.Log(LoadExcel.instance.getObjectList("content", "id", 1, "chioce"));
     }
 
     // Update is called once per frame
@@ -49,6 +57,7 @@ public class GameManager : MonoBehaviour
     
     // 內部呼叫 --------------------------------------------------------------------------------------------------------------
 
+    /** 處理完成謎題 */
     private void handleFinishPuzzle() {
         dialogBox.playMessage();
     }
