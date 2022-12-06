@@ -45,9 +45,6 @@ public class GameManager : MonoBehaviour
         string language = DataManager.instance.language;
         Dictionary<string, Hashtable> allTable = null;
         Hashtable allData = null;
-        Hashtable contentData = null;
-        string message = null;
-        int selectCount = 0;
 
         dialogBox.init();
         LoadExcel.instance.loadFile(RES_PATH.PUZZLE_EXCEL);
@@ -68,11 +65,23 @@ public class GameManager : MonoBehaviour
                 allData = item.Value;
             }
         }
+        initDialogData(allData);
+    }
+
+    /** 初始化對話資料 */
+    private void initDialogData(Hashtable allData) {
+        string language = DataManager.instance.language;
+        Hashtable contentData = null;
+        string contentId = null;
+        string message = null;
+        int selectCount = 0;
+
         if (allData == null) {
             Debug.LogError("Error initDialogBox : episodeId & levelId can not find.");
             return;
         }
-        contentData = LoadExcel.instance.getObject("content", "id", (string)allData["contentId"]);
+        contentId = (string)allData["contentId"];
+        contentData = LoadExcel.instance.getObject("content", "id", contentId);
         message = (string)contentData[language + "_story"];
         dialogBox.setMessageData(message);
 
@@ -89,10 +98,19 @@ public class GameManager : MonoBehaviour
             }
         }
         if (selectCount > 0) {
-            dialogBox.setSelectCallback(handleDialogSelect);
+            dialogBox.setSelectCallback((ID) => {
+                handleDialogSelect(ID);
+            });
         }
         else {
-            dialogBox.setFinishCallback(handleDialogFinish);
+            object unlockLevel = allData["unlockLevelId"];
+            int value = 0;
+            if ((string)unlockLevel != "") {
+                value = int.Parse((string)unlockLevel);
+                dialogBox.setFinishCallback(() => {
+                    handleDialogFinish(value);
+                });
+            }
         }
     }
 
@@ -101,13 +119,22 @@ public class GameManager : MonoBehaviour
         dialogBox.playMessage();
     }
 
-    /** 處理對話選擇 */
+    /** 處理選擇選項 */
     private void handleDialogSelect(int ID) {
         Debug.Log("選擇解鎖關卡:" + ID);
+        handleUnlockLevel(ID);
+    }
+    
+    /** 處理對話結束 */
+    private void handleDialogFinish(int ID) {
+        Debug.Log("直接解鎖關卡:" + ID);
+        handleUnlockLevel(ID);
     }
 
-    /** 處理對話結束 */
-    private void handleDialogFinish() {
-        Debug.Log("直接解鎖關卡");
+    /** 處理解鎖關卡 */
+    private void handleUnlockLevel(int ID) {
+        int episode = DataManager.instance.episodeId;
+        int level = ID;
+        DataManager.instance.unlockLevel(episode, level);
     }
 }

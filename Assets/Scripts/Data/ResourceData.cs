@@ -12,18 +12,9 @@ static class RES_PATH
 
     static public string PUZZLE_EXCEL = "excel/TAKAMORIPuzzleScripts.xlsx";
     static private string spritePath = "puzzle/";
-    static public Dictionary<Vector2Int, string> SPRITE_PUZZLE_IMAGE = new Dictionary<Vector2Int, string>();
+    static public string SPRITE_PUZZLE_IMAGE = spritePath + "puzzle_";
 
     static RES_PATH() {
-        SPRITE_PUZZLE_IMAGE.Add(new Vector2Int(1, 1), spritePath + "puzzle_1_1");
-        SPRITE_PUZZLE_IMAGE.Add(new Vector2Int(1, 2), spritePath + "puzzle_1_2");
-        SPRITE_PUZZLE_IMAGE.Add(new Vector2Int(1, 3), spritePath + "puzzle_1_3");
-        SPRITE_PUZZLE_IMAGE.Add(new Vector2Int(1, 4), spritePath + "puzzle_1_4");
-        SPRITE_PUZZLE_IMAGE.Add(new Vector2Int(1, 5), spritePath + "puzzle_1_5");
-        SPRITE_PUZZLE_IMAGE.Add(new Vector2Int(1, 6), spritePath + "puzzle_1_6");
-        SPRITE_PUZZLE_IMAGE.Add(new Vector2Int(1, 7), spritePath + "puzzle_1_7");
-        SPRITE_PUZZLE_IMAGE.Add(new Vector2Int(1, 8), spritePath + "puzzle_1_8");
-        SPRITE_PUZZLE_IMAGE.Add(new Vector2Int(1, 9), spritePath + "puzzle_1_9");
     }
 }
 
@@ -39,6 +30,8 @@ static class ResManager
 
     /** 取得謎題圖片 */
     static public string getPuzzleImagePath(int episodeId, int levelId) {
-        return RES_PATH.SPRITE_PUZZLE_IMAGE[new Vector2Int(episodeId, levelId)];
+        string path =  RES_PATH.SPRITE_PUZZLE_IMAGE;
+        path = path + episodeId.ToString() + "_" + levelId.ToString();
+        return path;
     }
 }
