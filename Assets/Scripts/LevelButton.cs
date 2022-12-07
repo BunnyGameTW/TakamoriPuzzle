@@ -18,6 +18,9 @@ public class LevelButton : MonoBehaviour
     }
     void OnClick()
     {
+        DataManager.instance.levelId = _data.levelId;
+        DataManager.instance.puzzleGridX = 3;
+        DataManager.instance.puzzleGridY = 3;
         MySceneManager.Instance.SetLoadSceneParameter(_data.levelId);
         MySceneManager.Instance.SetLoadSceneName(CONNECT_SCENE_NAME);//TODO set game state?
         MySceneManager.Instance.LoadScene();

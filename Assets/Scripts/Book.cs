@@ -18,6 +18,7 @@ public class Book : MonoBehaviour
     }
     void OnClick()
     {
+        DataManager.instance.episodeId = _data.episodeId;
         MySceneManager.Instance.SetLoadSceneName("SelectLevelScene");
         MySceneManager.Instance.LoadScene();
     }
