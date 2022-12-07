@@ -17,6 +17,7 @@ public class LevelUI : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //TODO set title
         int episodeId = DataManager.instance.episodeId;
         levelDatas = new LevelData[8];
         int index = 0, counter = 0;
@@ -30,15 +31,11 @@ public class LevelUI : MonoBehaviour
                 levelDatas[i].isLock = false;
             }
 
-            //test data
-            levelDatas[i].episodeId = 1;//TODO ask manager?
-            levelDatas[i].levelId = i + 1;
-            levelDatas[i].isLock = i > 2;
 
             //create buttons
             if (i == 0) 
-            { 
-                //�����b�����W�\�n?
+            {
+                FindObjectOfType<LevelButton>().SetData(levelDatas[i]);
             }
             else
             {            

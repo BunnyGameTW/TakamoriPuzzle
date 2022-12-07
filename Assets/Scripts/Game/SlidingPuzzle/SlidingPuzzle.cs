@@ -167,7 +167,7 @@ public class SlidingPuzzle : MonoBehaviour
 
     /** 洗謎題盤面 */
     private void jugglePuzzle() {
-        int juggleCount = 2 * puzzleGridX * puzzleGridY; // 洗牌次數
+        int juggleCount = 1;// 2 * puzzleGridX * puzzleGridY; // 洗牌次數
         int count;
         Vector2Int randTile = new Vector2Int(0, 0);
         Vector2Int beforeTile = new Vector2Int(-1, -1);
