@@ -123,12 +123,16 @@ public class GameManager : MonoBehaviour
     private void handleDialogSelect(int ID) {
         Debug.Log("選擇解鎖關卡:" + ID);
         handleUnlockLevel(ID);
+        MySceneManager.Instance.SetLoadSceneName("SelectLevelScene");
+        MySceneManager.Instance.LoadScene();
     }
     
     /** 處理對話結束 */
     private void handleDialogFinish(int ID) {
         Debug.Log("直接解鎖關卡:" + ID);
         handleUnlockLevel(ID);
+        MySceneManager.Instance.SetLoadSceneName("SelectLevelScene");
+        MySceneManager.Instance.LoadScene();
     }
 
     /** 處理解鎖關卡 */
