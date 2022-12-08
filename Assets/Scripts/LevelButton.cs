@@ -5,10 +5,11 @@ using UnityEngine.UI;
 
 public class LevelButton : MonoBehaviour
 {
-    Button button;
-    const string CONNECT_SCENE_NAME = "GameScene";
+    Button button;    
     LevelData _data;
     public Image levelImage;
+    const string IMAGE_FORMAT = "puzzle/puzzle_{0}_{1}";
+
     // Start is called before the first frame update
     void Start()
     {
@@ -21,8 +22,7 @@ public class LevelButton : MonoBehaviour
         DataManager.instance.levelId = _data.levelId;
         DataManager.instance.puzzleGridX = 3;
         DataManager.instance.puzzleGridY = 3;
-        MySceneManager.Instance.SetLoadSceneParameter(_data.levelId);
-        MySceneManager.Instance.SetLoadSceneName(CONNECT_SCENE_NAME);//TODO set game state?
+        MySceneManager.Instance.SetLoadSceneState(SceneState.Game);
         MySceneManager.Instance.LoadScene();
     }
     public void SetData(LevelData data)
@@ -36,7 +36,7 @@ public class LevelButton : MonoBehaviour
 
         if (!_data.isLock)
         {
-            string fileName = string.Format("puzzle/puzzle_{0}_{1}", _data.episodeId, _data.levelId);
+            string fileName = string.Format(IMAGE_FORMAT, _data.episodeId, _data.levelId);
             levelImage.sprite = Resources.Load<Sprite>(fileName);
         }
     }

@@ -17,7 +17,7 @@ public class EpisodeUI : MonoBehaviour
     void Start()
     {
         //cellData
-        storyDatas = new CellData[4];
+        storyDatas = new CellData[3];
 
         GameObject goCell, goBook, bookPrefab;
         goCell = Instantiate(cellPrefab, scrollContent.transform);
@@ -43,15 +43,5 @@ public class EpisodeUI : MonoBehaviour
             }
             goBook.GetComponent<Book>().SetData(storyDatas[i]);
         }                
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-    public void ButtonEvent(string name)
-    {
-
     }
 }
