@@ -56,8 +56,10 @@ SpriteAtlas:
   - {fileID: 21300000, guid: e658f9bc80a298446a19a15e5f13782e, type: 3}
   - {fileID: 21300000, guid: 3218f29d6b543f244b212d770d7cd05c, type: 3}
   - {fileID: 21300000, guid: 12bb9dcd95ec0f14cb736a9ab869bceb, type: 3}
+  - {fileID: 21300000, guid: 9fc3cedd7061d08459c7bff303b8c163, type: 3}
   - {fileID: 21300000, guid: 839531ce256f7da4397ed6b5e6da9ec1, type: 3}
   - {fileID: 21300000, guid: 5fb276ee7daac714cb9686e6c2f173e5, type: 3}
+  - {fileID: 21300000, guid: 2ef2827f59e585d43bb59502d9f50a98, type: 3}
   - {fileID: 21300000, guid: a0e115bf6b46a0342b2ddb4b237eac36, type: 3}
   - {fileID: 21300000, guid: 8b5fa1cf84b0a9e4bb36d0cf7ed427f9, type: 3}
   m_PackedSpriteNamesToIndex:
@@ -79,8 +81,10 @@ SpriteAtlas:
   - buttonClosePress
   - buttonCommon
   - buttonMenu
+  - frame2
   - kiara_2
   - shelf
+  - frame
   - starButton_2
   - starButton_1
   m_RenderDataMap: {}
