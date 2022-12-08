@@ -42,7 +42,7 @@ public class GameManager : MonoBehaviour
     private void initDialogBox() {
         int episodeId = DataManager.instance.episodeId;
         int levelId = DataManager.instance.levelId;
-        string language = DataManager.instance.language;
+        string language = DataManager.instance.getLanguageName();
         Dictionary<string, Hashtable> allTable = null;
         Hashtable allData = null;
 
@@ -70,7 +70,7 @@ public class GameManager : MonoBehaviour
 
     /** 初始化對話資料 */
     private void initDialogData(Hashtable allData) {
-        string language = DataManager.instance.language;
+        string language = DataManager.instance.getLanguageName();
         Hashtable contentData = null;
         string contentId = null;
         string message = null;
