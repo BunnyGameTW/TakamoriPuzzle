@@ -1,0 +1,92 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: UI
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings: []
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 1
+      enableTightPacking: 0
+      enableAlphaDilation: 0
+    secondaryTextureSettings: {}
+    variantMultiplier: 1
+    packables:
+    - {fileID: 102900000, guid: 4c48d3a9b6ac50849aa81cc6e52d2143, type: 3}
+    bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: 408bbed0b80e30e40b7e6d3ba0d774d0, type: 3}
+  - {fileID: 21300000, guid: e625bf41e81ff7f4dbebd6b8299b0c24, type: 3}
+  - {fileID: 21300000, guid: a7570232df8c81c458a8fcd6d2f31bb8, type: 3}
+  - {fileID: 21300000, guid: 7ddd02f214a3298489d5ad9b5510609f, type: 3}
+  - {fileID: 21300000, guid: e1cab1d4eab950e47b17a77713ca39a0, type: 3}
+  - {fileID: 21300000, guid: f662dcd447a12ff4aa65aae1e01ce407, type: 3}
+  - {fileID: 21300000, guid: 7d78a915fe2f8364aa5efa3ec99e941b, type: 3}
+  - {fileID: 21300000, guid: 9a8eae4543fb8a84cb3da2e65ef556a4, type: 3}
+  - {fileID: 21300000, guid: 4e39d04855ed56548bcbfc0817f24753, type: 3}
+  - {fileID: 21300000, guid: 9c03c148d90580b49aab048fa8d2062c, type: 3}
+  - {fileID: 21300000, guid: 06734b79261bb3749b242dbd803e095a, type: 3}
+  - {fileID: 21300000, guid: 277979a92b53f0b4c8b50452823d2824, type: 3}
+  - {fileID: 21300000, guid: 94f0f31a27b0bbb42a1378805131949a, type: 3}
+  - {fileID: 21300000, guid: f471212a0f6494b4a8825130030bd133, type: 3}
+  - {fileID: 21300000, guid: 5de9161b6b4f119498e9f5764b1c2853, type: 3}
+  - {fileID: 21300000, guid: e658f9bc80a298446a19a15e5f13782e, type: 3}
+  - {fileID: 21300000, guid: 3218f29d6b543f244b212d770d7cd05c, type: 3}
+  - {fileID: 21300000, guid: 12bb9dcd95ec0f14cb736a9ab869bceb, type: 3}
+  - {fileID: 21300000, guid: 9fc3cedd7061d08459c7bff303b8c163, type: 3}
+  - {fileID: 21300000, guid: 839531ce256f7da4397ed6b5e6da9ec1, type: 3}
+  - {fileID: 21300000, guid: 5fb276ee7daac714cb9686e6c2f173e5, type: 3}
+  - {fileID: 21300000, guid: 2ef2827f59e585d43bb59502d9f50a98, type: 3}
+  - {fileID: 21300000, guid: a0e115bf6b46a0342b2ddb4b237eac36, type: 3}
+  - {fileID: 21300000, guid: 8b5fa1cf84b0a9e4bb36d0cf7ed427f9, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - handler
+  - calli_2
+  - book_lock
+  - buttonArrow
+  - bookFrame
+  - progress
+  - ball
+  - titleLevel
+  - top
+  - buttom
+  - titleEpisode
+  - buttonBack
+  - buttonClose
+  - title
+  - maskCricle
+  - buttonClosePress
+  - buttonCommon
+  - buttonMenu
+  - frame2
+  - kiara_2
+  - shelf
+  - frame
+  - starButton_2
+  - starButton_1
+  m_RenderDataMap: {}
+  m_Tag: UI
+  m_IsVariant: 0
