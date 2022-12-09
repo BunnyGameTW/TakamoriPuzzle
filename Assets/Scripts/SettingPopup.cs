@@ -58,6 +58,7 @@ public class SettingPopup : MonoBehaviour
                 language = SystemLanguage.English;
             } break;
         }
+        DataManager.instance.renewLocalization(DataManager.instance.getLanguageName(language));
     }
 
     /** 開啟視窗 */
