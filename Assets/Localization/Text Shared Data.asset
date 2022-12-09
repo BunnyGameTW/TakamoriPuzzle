@@ -14,7 +14,30 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_TableCollectionName: Text
   m_TableCollectionNameGuidString: e9dc4cb9acede1649a5e4f5dd455b5b5
-  m_Entries: []
+  m_Entries:
+  - m_Id: 20895649435648
+    m_Key: SettingPopup/Canvas (Environment)/SettingPopup/TMPTitle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 20988725235712
+    m_Key: SettingPopup/Canvas (Environment)/SettingPopup/Scroll View/Viewport/Content/TMPLanguage
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21080697933824
+    m_Key: SettingPopup/Canvas (Environment)/SettingPopup/Scroll View/Viewport/Content/GameObject
+      (2)/GameObject/TMPLanguage (1)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21107205935104
+    m_Key: SettingPopup/Canvas (Environment)/SettingPopup/Scroll View/Viewport/Content/GameObject
+      (2)/GameObject (1)/TMPLanguage (1)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21128085180416
+    m_Key: SettingPopup/Canvas (Environment)/SettingPopup/Scroll View/Viewport/Content/GameObject
+      (2)/GameObject (2)/TMPLanguage (1)
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
