@@ -1,6 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Localization.Settings;
+
+// 語言code值
+static class LANGUAGE_CODE {
+    public const string ENGLISH = "en";
+    public const string JAPANESE = "jp";
+    public const string CHINESE = "zh";
+}
 
 // 遊戲資料(需儲存)
 public class GameData
@@ -57,6 +65,8 @@ public class DataManager: Singleton<DataManager>
         levelId = 1;
         puzzleGridX = 3;
         puzzleGridY = 3;
+
+        renewLocalization(getLanguageName());
     }
 
     /** 設定音樂大小 */
@@ -81,6 +91,17 @@ public class DataManager: Singleton<DataManager>
         return gameData.SEVolime;
     }
 
+    /** Localization語言處理 */
+    public void renewLocalization(string languageCode) {
+        for (int i = 0; i < LocalizationSettings.AvailableLocales.Locales.Count; ++i)
+        {
+            var locale = LocalizationSettings.AvailableLocales.Locales[i];
+            if (languageCode == locale.Identifier.Code) {
+                LocalizationSettings.SelectedLocale = locale;
+            }
+        }
+    }
+
     /** 設定語言 */
     public void setLanguage(SystemLanguage ID) {
         gameData.language = ID;
@@ -93,21 +114,25 @@ public class DataManager: Singleton<DataManager>
     }
     
     /** 取得語言字符 */
-    public string getLanguageName() {
-        string language = "en";
-        switch(gameData.language) {
+    public string getLanguageName(SystemLanguage languageValue) {
+        string language = LANGUAGE_CODE.ENGLISH;
+        switch(languageValue) {
             case SystemLanguage.ChineseTraditional:
             case SystemLanguage.ChineseSimplified: {
-                language = "zh";
+                language = LANGUAGE_CODE.CHINESE;
             } break;
             case SystemLanguage.Japanese: {
-                language = "jp";
+                language = LANGUAGE_CODE.JAPANESE;
             } break;
             default: {
-                language = "en";
+                language = LANGUAGE_CODE.ENGLISH;
             } break;
         }
         return language;
+    }
+
+    public string getLanguageName() {
+        return getLanguageName(gameData.language);
     }
 
     /** 解鎖關卡 */
