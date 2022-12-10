@@ -1,3 +1,5 @@
+using UnityEngine;
+
 // 單例模式class，繼承用
 public abstract class Singleton<T> where T : new() {
     private static readonly object syslock = new object();  // 安全鎖標記
@@ -15,4 +17,33 @@ public abstract class Singleton<T> where T : new() {
             return _instance;
         }
     }
+}
+
+// 單例模式class MonoBehaviour，繼承用
+public abstract class SingletonMono<T> : MonoBehaviour where T : SingletonMono<T> {
+    public bool global = true;
+    private static T _instance = default;     // 實例
+
+    public static T instance {
+        get {
+            if (_instance == null) {
+                _instance = FindObjectOfType<T>();
+            }
+            return _instance;
+        }
+    }
+
+    private void Awake() {
+        if (global) {
+            if (_instance != null && _instance != this.gameObject.GetComponent<T>()) {
+                Destroy(this.gameObject);
+                return;
+            }
+            DontDestroyOnLoad(this.gameObject);
+            _instance = this.gameObject.GetComponent<T>();
+        }
+        this.OnStart();
+    }
+
+    protected virtual void OnStart() {}
 }
