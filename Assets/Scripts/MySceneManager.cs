@@ -90,6 +90,8 @@ public class MySceneManager : MonoBehaviour
         buttonBack.onClick.AddListener(OnClickBack);
         buttonMenu.onClick.AddListener(OnClickMenu);
         
+        AudioClip bgm = ResManager.loadAudioClip(RES_PATH.BGM.TITLE);
+        SoundManager.instance.playBGM(bgm);
     }
 
     void Update()
@@ -109,6 +111,9 @@ public class MySceneManager : MonoBehaviour
         isLoading = true;
         ani.SetInteger("state", 1);
         StartCoroutine(LoadYourAsyncScene());
+        
+        AudioClip se = ResManager.loadAudioClip(RES_PATH.SE.PAGE);
+        SoundManager.instance.playSE(se);
     }
     
     IEnumerator LoadYourAsyncScene()
