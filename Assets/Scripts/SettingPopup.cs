@@ -33,12 +33,14 @@ public class SettingPopup : MonoBehaviour
     public void onChangeBGMVolime() {
         float value = sliderBGM.value;
         BGMVolime = value;
+        SoundManager.instance.setBGMVolime(BGMVolime);
     }
 
     /** 監聽改變音效音量 */
     public void onChangeSEVolime() {
         float value = sliderSE.value;
         SEVolime = value;
+        SoundManager.instance.setSEVolime(SEVolime);
     }
 
     /** 監聽改變語言 */

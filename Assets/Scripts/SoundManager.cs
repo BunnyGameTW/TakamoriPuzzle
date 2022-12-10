@@ -23,7 +23,7 @@ public class SoundManager: SingletonMono<SoundManager>
 
     // 外部呼叫 --------------------------------------------------------------------------------------------------------------
     
-    /** 播放音效 */
+    /** 播放音樂 */
     public void playBGM(AudioClip music) {
         if (musicSource.isPlaying == true) {
             musicSource.Stop();
@@ -37,5 +37,15 @@ public class SoundManager: SingletonMono<SoundManager>
     /** 播放音效 */
     public void playSE(AudioClip sound) {
         effectSource.PlayOneShot(sound, DataManager.instance.getSEVolime());
+    }
+
+    /** 設定音樂音量 */
+    public void setBGMVolime(float value) {
+        musicSource.volume = value;
+    }
+
+    /** 設定音效音量 */
+    public void setSEVolime(float value) {
+        effectSource.volume = value;
     }
 }
