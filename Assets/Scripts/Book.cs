@@ -27,6 +27,12 @@ public class Book : MonoBehaviour
         MySceneManager.Instance.LoadScene();
     }
 
+    public void UpdateTitle(string title)
+    {
+        _data.title = title;//TODO?
+        titleText.text = title;
+    }
+
     public void SetData(CellData data)
     {
         _data = data;        

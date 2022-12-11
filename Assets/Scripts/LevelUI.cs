@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 public struct LevelData
 {
     public int episodeId;
@@ -13,12 +14,19 @@ public class LevelUI : MonoBehaviour
     LevelData[] levelDatas;
     public GameObject[] layouts;
     public GameObject levelButtonPrefab;
+    public TextMeshProUGUI textTitle;
     int[] sections = {1, 2, 4, 1};
+    Hashtable data;
     // Start is called before the first frame update
     void Start()
     {
-        //TODO set title
-        int episodeId = DataManager.instance.getEpisodeId();
+        DataManager.instance.LanguageChanged += OnLanguageChanged;
+        int episodeId = DataManager.instance.episodeId;
+
+        //set title
+        data = LoadExcel.instance.getObject("episodeTitle", "id", episodeId);
+        UpdateTitle(DataManager.instance.getLanguageName());
+
         levelDatas = new LevelData[8];
         int index = 0, counter = 0;
         for (int i = 0; i < levelDatas.Length; i++)
@@ -52,8 +60,19 @@ public class LevelUI : MonoBehaviour
         }
     }
 
-    private void Update()
+    private void OnDestroy()
     {
-        
+        DataManager.instance.LanguageChanged -= OnLanguageChanged;
+    }
+
+    void OnLanguageChanged(object sender, string languageCode)
+    {
+        UpdateTitle(languageCode);
+    }
+
+    void UpdateTitle(string language)
+    {
+        string message = (string)data[language + "_title"];
+        textTitle.text = message;
     }
 }

@@ -55,7 +55,7 @@ public class DataManager: Singleton<DataManager>
     public int puzzleGridX = 0;     // 謎題格數X
     public int puzzleGridY = 0;     // 謎題格數Y
     private GameData gameData;      // 遊戲資料(用func呼叫+自動存檔)
-
+    public event System.EventHandler<string> LanguageChanged;
     /** 建構子 */
     public DataManager() {
         gameData = (GameData)SaveLoad.instance.loadData(typeof(GameData));
@@ -112,7 +112,7 @@ public class DataManager: Singleton<DataManager>
     public float getSEVolime() {
         return gameData.SEVolime;
     }
-
+    
     /** Localization語言處理 */
     public void renewLocalization(string languageCode) {
         for (int i = 0; i < LocalizationSettings.AvailableLocales.Locales.Count; ++i)
@@ -122,6 +122,7 @@ public class DataManager: Singleton<DataManager>
                 LocalizationSettings.SelectedLocale = locale;
             }
         }
+        LanguageChanged?.Invoke(this, languageCode);
     }
 
     /** 設定語言 */
