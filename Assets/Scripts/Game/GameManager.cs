@@ -26,8 +26,8 @@ public class GameManager : MonoBehaviour
 
     /** 初始化謎題 */
     private void initSlidingPuzzle() {
-        int episodeId = DataManager.instance.episodeId;
-        int levelId = DataManager.instance.levelId;
+        int episodeId = DataManager.instance.getEpisodeId();
+        int levelId = DataManager.instance.getLevelId();
         int puzzleGridX = DataManager.instance.puzzleGridX;
         int puzzleGridY = DataManager.instance.puzzleGridY;
         string puzzleImagePath = ResManager.getPuzzleImagePath(episodeId, levelId);
@@ -40,8 +40,8 @@ public class GameManager : MonoBehaviour
 
     /** 初始化對話 */
     private void initDialogBox() {
-        int episodeId = DataManager.instance.episodeId;
-        int levelId = DataManager.instance.levelId;
+        int episodeId = DataManager.instance.getEpisodeId();
+        int levelId = DataManager.instance.getLevelId();
         string language = DataManager.instance.getLanguageName();
         Dictionary<string, Hashtable> allTable = null;
         Hashtable allData = null;
@@ -137,7 +137,7 @@ public class GameManager : MonoBehaviour
 
     /** 處理解鎖關卡 */
     private void handleUnlockLevel(int ID) {
-        int episode = DataManager.instance.episodeId;
+        int episode = DataManager.instance.getEpisodeId();
         int level = ID;
         DataManager.instance.unlockLevel(episode, level);
     }

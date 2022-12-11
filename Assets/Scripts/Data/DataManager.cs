@@ -13,6 +13,8 @@ static class LANGUAGE_CODE {
 // 遊戲資料(需儲存)
 public class GameData
 {
+    public int episodeId;           // 最後章節編號
+    public int levelId;             // 最後關卡編號
     public List<Vector2Int> unlockListKey;  // 解鎖清單-索引
     public List<bool> unlockListValue;      // 解鎖清單-值
     public float BGMVolime;         // 音樂音量
@@ -21,6 +23,8 @@ public class GameData
     
     /** 建構子 */
     public GameData() {
+        episodeId = 0;
+        levelId = 0;
         unlockListKey = new List<Vector2Int>();
         unlockListValue = new List<bool>();
         BGMVolime = 1.0f;
@@ -48,8 +52,6 @@ public class GameData
 // 資料管理器
 public class DataManager: Singleton<DataManager>
 {
-    public int episodeId = 0;       // 章節編號
-    public int levelId = 0;         // 關卡編號
     public int puzzleGridX = 0;     // 謎題格數X
     public int puzzleGridY = 0;     // 謎題格數Y
     private GameData gameData;      // 遊戲資料(用func呼叫+自動存檔)
@@ -61,12 +63,32 @@ public class DataManager: Singleton<DataManager>
             gameData = new GameData();
         }
 
-        episodeId = 1;
-        levelId = 1;
         puzzleGridX = 3;
         puzzleGridY = 3;
 
         renewLocalization(getLanguageName());
+    }
+
+    /** 設定章節 */
+    public void setEpisodeId(int value) {
+        gameData.episodeId = value;
+        SaveLoad.instance.saveData(gameData);
+    }
+
+    /** 取得章節 */
+    public int getEpisodeId() {
+        return gameData.episodeId;
+    }
+
+    /** 設定關卡 */
+    public void setLevelId(int value) {
+        gameData.levelId = value;
+        SaveLoad.instance.saveData(gameData);
+    }
+
+    /** 取得關卡 */
+    public int getLevelId() {
+        return gameData.levelId;
     }
 
     /** 設定音樂大小 */
@@ -142,7 +164,7 @@ public class DataManager: Singleton<DataManager>
     }
 
     public void unlockLevel(int level) {
-        unlockLevel(episodeId, level);
+        unlockLevel(gameData.episodeId, level);
     }
 
     /** 取得是否解鎖 */
@@ -151,7 +173,7 @@ public class DataManager: Singleton<DataManager>
     }
 
     public bool isUnlockLevel(int level) {
-        return isUnlockLevel(episodeId, level);
+        return isUnlockLevel(gameData.episodeId, level);
     }
 
     /** 取得已解鎖level清單 */

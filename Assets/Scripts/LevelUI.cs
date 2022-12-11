@@ -18,7 +18,7 @@ public class LevelUI : MonoBehaviour
     void Start()
     {
         //TODO set title
-        int episodeId = DataManager.instance.episodeId;
+        int episodeId = DataManager.instance.getEpisodeId();
         levelDatas = new LevelData[8];
         int index = 0, counter = 0;
         for (int i = 0; i < levelDatas.Length; i++)
