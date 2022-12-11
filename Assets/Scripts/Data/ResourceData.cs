@@ -14,24 +14,6 @@ static class RES_PATH
     static private string spritePath = "puzzle/";
     static public string SPRITE_PUZZLE_IMAGE = spritePath + "puzzle_";
 
-    static private string bgmPath = "Music/BGM/";
-    static private string sePath = "Music/SE/";
-    static public class BGM {
-        static public string TITLE = bgmPath + "bgm_title";
-        static public string XMAS = bgmPath + "bgm_xmas";
-    }
-    static public class SE {
-        static public string FINISH = sePath + "finish";
-        static public string PAGE = sePath + "page";
-        static public string PAGE_2 = sePath + "page_2";
-        static public string PUZZLE_1 = sePath + "puzzle_1";
-        static public string PUZZLE_2 = sePath + "puzzle_2";
-        static public string PUZZLE_3 = sePath + "puzzle_3";
-        static public string PUZZLE_4 = sePath + "puzzle_4";
-        static public string TRANSITION_IN = sePath + "transition_in";
-        static public string TRANSITION_OUT = sePath + "transition_out";
-    }
-
     static RES_PATH() {
     }
 }

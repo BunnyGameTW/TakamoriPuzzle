@@ -8,36 +8,25 @@ public class SoundManager: SingletonMono<SoundManager>
     public AudioSource musicSource;
     public AudioSource effectSource;
 
+    public AudioClip BGM_title;
+    public AudioClip BGM_xmas;
+
+    public AudioClip SE_finish;
+    public AudioClip SE_page;
+    public AudioClip SE_page2;
+    public AudioClip SE_puzzle1;
+    public AudioClip SE_puzzle2;
+    public AudioClip SE_puzzle3;
+    public AudioClip SE_puzzle4;
+    public AudioClip SE_transitionIn;
+    public AudioClip SE_transitionOut;
+
     // 生命週期 --------------------------------------------------------------------------------------------------------------
 
     // Start is called before the first frame update
     void Start()
     {
-        init(() => {
-            AudioClip bgm = ResManager.loadAudioClip(RES_PATH.BGM.TITLE);
-            SoundManager.instance.playBGM(bgm);
-        });
-    }
 
-    public void init(System.Action callback) {
-        StartCoroutine(preloadSound(callback));
-    }
-
-    IEnumerator preloadSound(System.Action callback) {
-        yield return ResManager.asyncLoadAudioClip(RES_PATH.BGM.TITLE);
-        yield return ResManager.asyncLoadAudioClip(RES_PATH.BGM.XMAS);
-        yield return ResManager.asyncLoadAudioClip(RES_PATH.SE.FINISH);
-        yield return ResManager.asyncLoadAudioClip(RES_PATH.SE.PAGE);
-        yield return ResManager.asyncLoadAudioClip(RES_PATH.SE.PAGE_2);
-        yield return ResManager.asyncLoadAudioClip(RES_PATH.SE.PUZZLE_1);
-        yield return ResManager.asyncLoadAudioClip(RES_PATH.SE.PUZZLE_2);
-        yield return ResManager.asyncLoadAudioClip(RES_PATH.SE.PUZZLE_3);
-        yield return ResManager.asyncLoadAudioClip(RES_PATH.SE.PUZZLE_4);
-        yield return ResManager.asyncLoadAudioClip(RES_PATH.SE.TRANSITION_IN);
-        yield return ResManager.asyncLoadAudioClip(RES_PATH.SE.TRANSITION_OUT);
-        if (callback != null) {
-            callback();
-        }
     }
 
     void Update()

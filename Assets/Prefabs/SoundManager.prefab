@@ -177,6 +177,17 @@ MonoBehaviour:
   global: 1
   musicSource: {fileID: 4388543193219514344}
   effectSource: {fileID: 7268892531247981193}
+  BGM_title: {fileID: 8300000, guid: 5dd58ed050ea69e439dd3b223e9550f6, type: 3}
+  BGM_xmas: {fileID: 8300000, guid: a5c9861cfebcc594bb6ce4a338001b71, type: 3}
+  SE_finish: {fileID: 8300000, guid: 80b38646631dc354d9b52559ebc93596, type: 3}
+  SE_page: {fileID: 8300000, guid: c5a3149987e85984a9ba6eb89168f3a2, type: 3}
+  SE_page2: {fileID: 8300000, guid: 6b103c6c2ad3d3343b36169b5657ba00, type: 3}
+  SE_puzzle1: {fileID: 8300000, guid: 5a2879df0ac3dfc49bc45d4f8b1d3dd1, type: 3}
+  SE_puzzle2: {fileID: 8300000, guid: 38928a6496d3ae2429bef396ac38a35a, type: 3}
+  SE_puzzle3: {fileID: 8300000, guid: ac528cd01ab22e7419b1f11bce28b68b, type: 3}
+  SE_puzzle4: {fileID: 8300000, guid: 9dde16b3748344f4c9a6033ee3ce815f, type: 3}
+  SE_transitionIn: {fileID: 8300000, guid: 21d05aec3ba3dfb488147d82df2184ba, type: 3}
+  SE_transitionOut: {fileID: 8300000, guid: 4d3024f512c5ff044b1e9f25a9324ba8, type: 3}
 --- !u!1 &8171922632462606031
 GameObject:
   m_ObjectHideFlags: 0

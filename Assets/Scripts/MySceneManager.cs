@@ -89,6 +89,8 @@ public class MySceneManager : MonoBehaviour
         ani = GetComponentInChildren<Animator>();
         buttonBack.onClick.AddListener(OnClickBack);
         buttonMenu.onClick.AddListener(OnClickMenu);
+
+        SoundManager.instance.playBGM(SoundManager.instance.BGM_title);
     }
 
     void Update()
@@ -109,8 +111,7 @@ public class MySceneManager : MonoBehaviour
         ani.SetInteger("state", 1);
         StartCoroutine(LoadYourAsyncScene());
         
-        AudioClip se = ResManager.loadAudioClip(RES_PATH.SE.PAGE);
-        SoundManager.instance.playSE(se);
+        SoundManager.instance.playSE(SoundManager.instance.SE_page);
     }
     
     IEnumerator LoadYourAsyncScene()
