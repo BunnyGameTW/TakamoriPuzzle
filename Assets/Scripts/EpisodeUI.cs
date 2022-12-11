@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 public struct CellData
 {
     public int episodeId;
@@ -13,22 +14,37 @@ public class EpisodeUI : MonoBehaviour
 {
     public GameObject cellPrefab, scrollContent;
     CellData[] storyDatas;
+    Book[] books;
+    const string EXCEL_TAG_NAME = "episodeTitle";
+    const string INDEX_NAME = "id";
+    Hashtable data;
     // Start is called before the first frame update
     void Start()
     {
-        //cellData
-        storyDatas = new CellData[3];
+        Dictionary<string, Hashtable> allTable = LoadExcel.instance.getTable(EXCEL_TAG_NAME);
+        storyDatas = new CellData[allTable.Count];
+        books = new Book[allTable.Count];
+
+        DataManager.instance.LanguageChanged += OnLanguageChanged;
 
         GameObject goCell, goBook, bookPrefab;
         goCell = Instantiate(cellPrefab, scrollContent.transform);
         bookPrefab = goCell.GetComponentInChildren<Button>().gameObject;
 
+        string language = DataManager.instance.getLanguageName();              
         for (int i = 0; i < storyDatas.Length; i++)
         {
-            storyDatas[i].title = i.ToString();
-            storyDatas[i].episodeId = i + 1;
-            storyDatas[i].isLock = i != 0;
+            //set data
+            Hashtable data = allTable[(i + 1).ToString()];
+            storyDatas[i].episodeId = Convert.ToInt32(data["id"]);
+            storyDatas[i].isLock = Convert.ToBoolean(data["isLock"]);
+            if (!storyDatas[i].isLock)
+            {                
+                string message = (string)data[language + "_title"];
+                storyDatas[i].title = message;
+            }
 
+            //create ui
             if (i % 2 == 0)
             {
                 if (i != 0)
@@ -41,7 +57,28 @@ public class EpisodeUI : MonoBehaviour
             {
                 goBook = Instantiate(bookPrefab, goCell.transform.GetChild(0));
             }
-            goBook.GetComponent<Book>().SetData(storyDatas[i]);
+
+            //set ui
+            books[i] = goBook.GetComponent<Book>();
+            books[i].SetData(storyDatas[i]);
         }                
+    }
+    private void OnDestroy()
+    {
+        DataManager.instance.LanguageChanged -= OnLanguageChanged;
+    }
+
+    void OnLanguageChanged(object sender, string languageCode)
+    {
+        for (int i = 0; i < books.Length; i++)
+        {
+            if (!storyDatas[i].isLock)
+            {
+                Hashtable data = LoadExcel.instance.getObject("episodeTitle", "id", i + 1);
+                string title = (string)data[languageCode + "_title"];
+                books[i].UpdateTitle(title);
+            }
+        }
+        
     }
 }

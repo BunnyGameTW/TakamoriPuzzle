@@ -20,7 +20,7 @@ public class MySceneManager : MonoBehaviour
     const string SELECT_LEVEL_SCENE_NAME = "SelectLevelScene";
     const string GAME_SCENE_NAME = "GameScene";
     const string DEFAULT_SCENE_NAME = "LoginScene";
-    public Button buttonBack, buttonMenu;
+    public Button buttonBack;
     public GameObject gameObjectButtons;
     static MySceneManager instance;
     public static MySceneManager Instance
@@ -69,10 +69,6 @@ public class MySceneManager : MonoBehaviour
         
         LoadScene();
     }
-    void OnClickMenu()
-    {
-        //TODO open setting
-    }
 
     // Start is called before the first frame update
     void Start()
@@ -88,8 +84,8 @@ public class MySceneManager : MonoBehaviour
         gameObjectButtons.SetActive(false);
         ani = GetComponentInChildren<Animator>();
         buttonBack.onClick.AddListener(OnClickBack);
-        buttonMenu.onClick.AddListener(OnClickMenu);
 
+        LoadExcel.instance.loadFile(RES_PATH.PUZZLE_EXCEL);
         SoundManager.instance.playBGM(SoundManager.instance.BGM_title);
     }
 
