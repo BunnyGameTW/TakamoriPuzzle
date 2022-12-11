@@ -89,9 +89,6 @@ public class MySceneManager : MonoBehaviour
         ani = GetComponentInChildren<Animator>();
         buttonBack.onClick.AddListener(OnClickBack);
         buttonMenu.onClick.AddListener(OnClickMenu);
-        
-        AudioClip bgm = ResManager.loadAudioClip(RES_PATH.BGM.TITLE);
-        SoundManager.instance.playBGM(bgm);
     }
 
     void Update()

@@ -44,6 +44,18 @@ static class ResManager
         return Resources.Load<Sprite>(path);
     }
 
+    // 預讀內部音檔AudioClip
+    static public IEnumerator asyncLoadAudioClip(string path, System.Action<AudioClip> callback = null) {
+        ResourceRequest resRequest = Resources.LoadAsync<AudioClip>(path);
+        while(!resRequest.isDone) {
+            yield return null;
+        }
+        if (callback != null) {
+            AudioClip audioClip = resRequest.asset as AudioClip;
+            callback(audioClip);
+        }
+    }
+
     // 讀取內部音檔AudioClip
     static public AudioClip loadAudioClip(string path) {
         return Resources.Load<AudioClip>(path);
