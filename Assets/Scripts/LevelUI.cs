@@ -17,14 +17,17 @@ public class LevelUI : MonoBehaviour
     public TextMeshProUGUI textTitle;
     int[] sections = {1, 2, 4, 1};
     Hashtable data;
+    const string EXCEL_TAG_NAME = "episodeTitle";
+    const string INDEX_NAME = "id";
+    const string TITLE_SUFFIX_NAME = "_title";
     // Start is called before the first frame update
     void Start()
     {
         DataManager.instance.LanguageChanged += OnLanguageChanged;
-        int episodeId = DataManager.instance.episodeId;
+        int episodeId = DataManager.instance.getEpisodeId();
 
         //set title
-        data = LoadExcel.instance.getObject("episodeTitle", "id", episodeId);
+        data = LoadExcel.instance.getObject(EXCEL_TAG_NAME, INDEX_NAME, episodeId);
         UpdateTitle(DataManager.instance.getLanguageName());
 
         levelDatas = new LevelData[8];
@@ -72,7 +75,7 @@ public class LevelUI : MonoBehaviour
 
     void UpdateTitle(string language)
     {
-        string message = (string)data[language + "_title"];
+        string message = (string)data[language + TITLE_SUFFIX_NAME];
         textTitle.text = message;
     }
 }

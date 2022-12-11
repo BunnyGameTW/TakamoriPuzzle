@@ -17,7 +17,9 @@ public class EpisodeUI : MonoBehaviour
     Book[] books;
     const string EXCEL_TAG_NAME = "episodeTitle";
     const string INDEX_NAME = "id";
-    Hashtable data;
+    const string IS_LOCK_NAME = "isLock";
+    const string TITLE_SUFFIX_NAME = "_title";
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -36,11 +38,11 @@ public class EpisodeUI : MonoBehaviour
         {
             //set data
             Hashtable data = allTable[(i + 1).ToString()];
-            storyDatas[i].episodeId = Convert.ToInt32(data["id"]);
-            storyDatas[i].isLock = Convert.ToBoolean(data["isLock"]);
+            storyDatas[i].episodeId = Convert.ToInt32(data[INDEX_NAME]);
+            storyDatas[i].isLock = Convert.ToBoolean(data[IS_LOCK_NAME]);
             if (!storyDatas[i].isLock)
             {                
-                string message = (string)data[language + "_title"];
+                string message = (string)data[language + TITLE_SUFFIX_NAME];
                 storyDatas[i].title = message;
             }
 
@@ -74,8 +76,8 @@ public class EpisodeUI : MonoBehaviour
         {
             if (!storyDatas[i].isLock)
             {
-                Hashtable data = LoadExcel.instance.getObject("episodeTitle", "id", i + 1);
-                string title = (string)data[languageCode + "_title"];
+                Hashtable data = LoadExcel.instance.getObject(EXCEL_TAG_NAME, INDEX_NAME, i + 1);
+                string title = (string)data[languageCode + TITLE_SUFFIX_NAME];
                 books[i].UpdateTitle(title);
             }
         }
