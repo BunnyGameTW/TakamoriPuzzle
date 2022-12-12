@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class SlidingPuzzle : MonoBehaviour
 {
@@ -32,9 +33,13 @@ public class SlidingPuzzle : MonoBehaviour
         }
         //判斷平台
 		#if !UNITY_EDITOR && (UNITY_IOS || UNITY_ANDROID)
-            onTouchDown();
+            if(!EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId)) {
+                onTouchDown();
+            }
 		#else
-            onMouseDown();
+            if(!EventSystem.current.IsPointerOverGameObject()) {
+                onMouseDown();
+            }
 		#endif
     }
 
