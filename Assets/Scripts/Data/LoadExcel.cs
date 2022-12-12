@@ -91,7 +91,25 @@ public class LoadExcel: Singleton<LoadExcel>
     }
 
     /** 取得物件清單 */
-    public List<string> getObjectList(string sheet, string IDkey, string ID, string key) {
+    public List<Hashtable> getObjectList(string sheet, string IDkey, string ID) {
+        List<Hashtable> list = new List<Hashtable>();
+        foreach(KeyValuePair<string, Hashtable> item in data[sheet]) {
+            foreach(DictionaryEntry data in item.Value) {
+                if ((string)data.Key == IDkey
+                && (string)data.Value == ID) {
+                    list.Add(item.Value);
+                }
+            }
+        }
+        return list;
+    }
+
+    public List<Hashtable> getObjectList(string IDkey, string ID) {
+        return getObjectList(firstSheet, IDkey, ID);
+    }
+
+    /** 取得物件陣列(指[]標記的key) */
+    public string[] getObjectArray(string sheet, string IDkey, string ID, string key) {
         foreach(KeyValuePair<string, Hashtable> item in data[sheet]) {
             foreach(DictionaryEntry data in item.Value) {
                 if ((string)data.Key == IDkey
@@ -101,23 +119,31 @@ public class LoadExcel: Singleton<LoadExcel>
                     foreach(DictionaryEntry listItem in keyList) {
                         list.Add((string)listItem.Value);
                     }
-                    return list;
+                    if (list.Count > 0) {
+                        string[] array = new string[list.Count];
+                        int count = 0;
+                        foreach(string item2 in list) {
+                            array[count] = item2;
+                            count++;
+                        }
+                        return array;
+                    }
                 }
             }
         }
         return null;
     }
     
-    public List<string> getObjectList(string sheet, string IDkey, int ID, string key) {
-        return getObjectList(sheet, IDkey, ID.ToString(), key);
+    public string[] getObjectArray(string sheet, string IDkey, int ID, string key) {
+        return getObjectArray(sheet, IDkey, ID.ToString(), key);
     }
 
-    public List<string> getObjectList(string IDkey, string ID, string key) {
-        return getObjectList(firstSheet, IDkey, ID, key);
+    public string[] getObjectArray(string IDkey, string ID, string key) {
+        return getObjectArray(firstSheet, IDkey, ID, key);
     }
 
-    public List<string> getObjectList(string IDkey, int ID, string key) {
-        return getObjectList(firstSheet, IDkey, ID, key);
+    public string[] getObjectArray(string IDkey, int ID, string key) {
+        return getObjectArray(firstSheet, IDkey, ID, key);
     }
 
     /** 取得某行的值 */
@@ -129,18 +155,27 @@ public class LoadExcel: Singleton<LoadExcel>
         return getValue(firstSheet, index, key);
     }
 
-    /** 取得某行的清單 */
-    public List<string> getList(string sheet, int index, string key) {
+    /** 取得某行陣列(指[]標記的key) */
+    public string[] getArray(string sheet, int index, string key) {
         Hashtable keyList = (Hashtable)data[sheet][index.ToString()][key];
         List<string> list = new List<string>();
         foreach(DictionaryEntry item in keyList) {
             list.Add((string)item.Value);
         }
-        return list;
+        if (list.Count > 0) {
+            string[] array = new string[list.Count];
+            int count = 0;
+            foreach(string item in list) {
+                array[count] = item;
+                count++;
+            }
+            return array;
+        }
+        return null;
     }
 
-    public List<string> getList(int index, string key) {
-        return getList(firstSheet, index, key);
+    public string[] getArray(int index, string key) {
+        return getArray(firstSheet, index, key);
     }
 
     // 內部呼叫 --------------------------------------------------------------------------------------------------------------

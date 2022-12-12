@@ -123,16 +123,14 @@ public class GameManager : MonoBehaviour
     private void handleDialogSelect(int ID) {
         Debug.Log("選擇解鎖關卡:" + ID);
         handleUnlockLevel(ID);
-        MySceneManager.Instance.SetLoadSceneState(SceneState.SelectLevel);
-        MySceneManager.Instance.LoadScene();
+        handleFinishLevel(ID);
     }
     
     /** 處理對話結束 */
     private void handleDialogFinish(int ID) {
         Debug.Log("直接解鎖關卡:" + ID);
         handleUnlockLevel(ID);
-        MySceneManager.Instance.SetLoadSceneState(SceneState.SelectLevel);
-        MySceneManager.Instance.LoadScene();
+        handleFinishLevel(ID);
     }
 
     /** 處理解鎖關卡 */
@@ -140,5 +138,32 @@ public class GameManager : MonoBehaviour
         int episode = DataManager.instance.getEpisodeId();
         int level = ID;
         DataManager.instance.unlockLevel(episode, level);
+        DataManager.instance.setLevelId(ID);
+    }
+
+    /** 處理完成關卡 */
+    private void handleFinishLevel(int nextLevel) {
+        if (nextLevel == 0) {
+            int episodeId = DataManager.instance.getEpisodeId();
+            List<Hashtable> levelList = LoadExcel.instance.getObjectList("all", "episodeId", episodeId.ToString());
+            List<int> unlockList = DataManager.instance.getUnlockLevelList(episodeId);
+            if (unlockList.Count >= levelList.Count) {
+                Debug.Log("已解鎖全部關卡");
+                Debug.Log("解鎖第" + (levelList.Count+1) + "張cg");
+                DataManager.instance.unlockLevel(episodeId, levelList.Count + 1);
+
+                // TODO: 最終cg相關動作
+                MySceneManager.Instance.SetLoadSceneState(SceneState.SelectLevel);
+                MySceneManager.Instance.LoadScene();
+            }
+            else {
+                MySceneManager.Instance.SetLoadSceneState(SceneState.SelectLevel);
+                MySceneManager.Instance.LoadScene();
+            }
+        }
+        else {
+            MySceneManager.Instance.SetLoadSceneState(SceneState.Game);
+            MySceneManager.Instance.LoadScene();
+        }
     }
 }
