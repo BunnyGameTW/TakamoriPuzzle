@@ -6,6 +6,7 @@ public class GameManager : MonoBehaviour
 {
     public SlidingPuzzle slidingPuzzle = null;
     public DialogBox dialogBox = null;
+    public AwardPopup awardPopup = null;
     
     // 生命週期 --------------------------------------------------------------------------------------------------------------
 
@@ -143,26 +144,32 @@ public class GameManager : MonoBehaviour
 
     /** 處理完成關卡 */
     private void handleFinishLevel(int nextLevel) {
-        if (nextLevel == 0) {
-            int episodeId = DataManager.instance.getEpisodeId();
-            List<Hashtable> levelList = LoadExcel.instance.getObjectList("all", "episodeId", episodeId.ToString());
-            List<int> unlockList = DataManager.instance.getUnlockLevelList(episodeId);
-            if (unlockList.Count >= levelList.Count) {
-                Debug.Log("已解鎖全部關卡");
-                Debug.Log("解鎖第" + (levelList.Count+1) + "張cg");
-                DataManager.instance.unlockLevel(episodeId, levelList.Count + 1);
+        if (nextLevel != 0) {
+            MySceneManager.Instance.SetLoadSceneState(SceneState.Game);
+            MySceneManager.Instance.LoadScene();
+            return;
+        }
+        int episodeId = DataManager.instance.getEpisodeId();
+        List<Hashtable> levelList = LoadExcel.instance.getObjectList("all", "episodeId", episodeId.ToString());
+        List<int> unlockList = DataManager.instance.getUnlockLevelList(episodeId);
 
-                // TODO: 最終cg相關動作
+        if (unlockList.Count >= levelList.Count) {
+            int awardID = levelList.Count + 1;
+            string puzzleImagePath = ResManager.getPuzzleImagePath(episodeId, awardID);
+            Sprite puzzleImage = ResManager.loadSprite(puzzleImagePath);
+            DataManager.instance.unlockLevel(episodeId, awardID);
+            awardPopup.init(puzzleImage);
+            awardPopup.setTouchCallback(() => {
                 MySceneManager.Instance.SetLoadSceneState(SceneState.SelectLevel);
                 MySceneManager.Instance.LoadScene();
-            }
-            else {
-                MySceneManager.Instance.SetLoadSceneState(SceneState.SelectLevel);
-                MySceneManager.Instance.LoadScene();
-            }
+            });
+            awardPopup.show();
+
+            Debug.Log("已解鎖全部關卡");
+            Debug.Log("解鎖第" + (levelList.Count+1) + "張cg");
         }
         else {
-            MySceneManager.Instance.SetLoadSceneState(SceneState.Game);
+            MySceneManager.Instance.SetLoadSceneState(SceneState.SelectLevel);
             MySceneManager.Instance.LoadScene();
         }
     }
