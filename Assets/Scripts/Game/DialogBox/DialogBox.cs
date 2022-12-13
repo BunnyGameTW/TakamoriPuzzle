@@ -10,6 +10,14 @@ struct DialogBoxSelectData {
     public int selectID;        // 選項ID
 }
 
+// 對話框狀態
+public enum DIALOG_BOX_STATE: int {
+    NONE,       // 不顯示
+    PLAYING,    // 播放中
+    SELECT,     // 選擇中
+    FINISH,     // 結束
+}
+
 public class DialogBox : MonoBehaviour
 {
     const string newlineChar = "<block>";    // 分段標記
@@ -22,6 +30,7 @@ public class DialogBox : MonoBehaviour
 
     private Coroutine waitIconEvent = null;                 // 等待圖示事件
     private bool isReadyPlay = false;                       // 是否準備播放就緒
+    private DIALOG_BOX_STATE state = DIALOG_BOX_STATE.NONE; // 狀態機
     private List<string> messageList = null;                // 訊息List
     private List<DialogBoxSelectData> selectList = null;    // 選項List
     private System.Action finishCallback = null;            // 播放結束callback
@@ -43,6 +52,7 @@ public class DialogBox : MonoBehaviour
         selectList = new List<DialogBoxSelectData>();
         btnNext.onClick.AddListener(onClickDialogBox);
         this.gameObject.SetActive(false);
+        state = DIALOG_BOX_STATE.NONE;
     }
 
     // Start is called before the first frame update
@@ -80,10 +90,10 @@ public class DialogBox : MonoBehaviour
     /** 觸碰選項按鈕 */
     public void onClickSelect(int ID) {
         clearSelectGroup();
-        clearAllSelectData();
         if (selectCallback != null) {
             selectCallback(ID);
         }
+        state = DIALOG_BOX_STATE.FINISH;
     }
 
     /** 設定選擇完成callback */
@@ -105,6 +115,7 @@ public class DialogBox : MonoBehaviour
         isReadyPlay = false;
         this.gameObject.SetActive(true);
         handleShowNextMessage();
+        state = DIALOG_BOX_STATE.PLAYING;
     }
 
     /** 設定訊息資料 */
@@ -123,20 +134,27 @@ public class DialogBox : MonoBehaviour
         selectList.Add(temp);
     }
 
+    /** 顯示選項 */
+    public void showSelect() {
+        handleShowSelect();
+    }
+
     /** 清空選項資料 */
     public void clearAllSelectData() {
         selectList.Clear();
+        clearSelectGroup();
     }
 
-    /** 清除所有選項按鈕 */
-    public void clearSelectGroup() {
-        if (selectGroup.transform.childCount > 0) {
-            for(int i = 0; i < selectGroup.transform.childCount; i++) {
-                GameObject item = selectGroup.transform.GetChild(i).gameObject;
-                Destroy(item);
-            }
-        }
-        selectGroup.SetActive(false);
+    /** 清除文本資料 */
+    public void clearAllTextData() {
+        typewriter.clearWord();
+        messageList.Clear();
+        hideWaitNextIcon();
+    }
+
+    /** 取得狀態 */
+    public DIALOG_BOX_STATE getState() {
+        return state;
     }
 
     // 內部呼叫 --------------------------------------------------------------------------------------------------------------
@@ -186,6 +204,18 @@ public class DialogBox : MonoBehaviour
             tmepButton.transform.SetParent(selectGroup.transform);
             tmepButton.transform.localScale = selectGroup.transform.localScale;
         }
+        state = DIALOG_BOX_STATE.SELECT;
+    }
+
+    /** 清除所有選項按鈕 */
+    private void clearSelectGroup() {
+        if (selectGroup.transform.childCount > 0) {
+            for(int i = 0; i < selectGroup.transform.childCount; i++) {
+                GameObject item = selectGroup.transform.GetChild(i).gameObject;
+                Destroy(item);
+            }
+        }
+        selectGroup.SetActive(false);
     }
 
     /** 解析訊息成陣列 */
@@ -230,8 +260,10 @@ public class DialogBox : MonoBehaviour
     /** 隱藏等待下一句標示 */
     private void hideWaitNextIcon() {
         waitIcon.SetActive(false);
-        StopCoroutine(waitIconEvent);
-        waitIconEvent = null;
+        if (waitIconEvent != null) {
+            StopCoroutine(waitIconEvent);
+            waitIconEvent = null;
+        }
     }
 
     /** 結束對話效果 */

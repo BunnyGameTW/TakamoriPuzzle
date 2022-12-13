@@ -7,20 +7,29 @@ public class GameManager : MonoBehaviour
     public SlidingPuzzle slidingPuzzle = null;
     public DialogBox dialogBox = null;
     public AwardPopup awardPopup = null;
+
+    private string language;
     
     // 生命週期 --------------------------------------------------------------------------------------------------------------
 
     // Start is called before the first frame update
     void Start()
     {
+        language = DataManager.instance.getLanguageName();
         initSlidingPuzzle();
         initDialogBox();
+        DataManager.instance.LanguageChanged += onLanguageChanged;
     }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+
+    void OnDestroy()
+    {
+        DataManager.instance.LanguageChanged -= onLanguageChanged;
     }
     
     // 內部呼叫 --------------------------------------------------------------------------------------------------------------
@@ -41,57 +50,67 @@ public class GameManager : MonoBehaviour
 
     /** 初始化對話 */
     private void initDialogBox() {
-        int episodeId = DataManager.instance.getEpisodeId();
-        int levelId = DataManager.instance.getLevelId();
-        string language = DataManager.instance.getLanguageName();
-        Dictionary<string, Hashtable> allTable = null;
-        Hashtable allData = null;
-
         dialogBox.init();
-        LoadExcel.instance.loadFile(RES_PATH.PUZZLE_EXCEL);
-        allTable = LoadExcel.instance.getTable("all");
-
-        foreach(KeyValuePair<string, Hashtable> item in allTable) {
-            bool episodeIdCheck = false;
-            bool levelIdCheck = false;
-            foreach(DictionaryEntry data in item.Value) {
-                if ((string)data.Key == "episodeId" && (string)data.Value == episodeId.ToString()) {
-                    episodeIdCheck = true;
-                }
-                if ((string)data.Key == "levelId" && (string)data.Value == levelId.ToString()) {
-                    levelIdCheck = true;
-                }
-            }
-            if (episodeIdCheck && levelIdCheck) {
-                allData = item.Value;
-            }
-        }
-        initDialogData(allData);
+        initDialogData(getLevelAllData());
     }
 
     /** 初始化對話資料 */
-    private void initDialogData(Hashtable allData) {
-        string language = DataManager.instance.getLanguageName();
-        Hashtable contentData = null;
-        string contentId = null;
-        string message = null;
-        int selectCount = 0;
-
-        if (allData == null) {
+    private void initDialogData(Hashtable objectAllData) {
+        if (objectAllData == null) {
             Debug.LogError("Error initDialogBox : episodeId & levelId can not find.");
             return;
         }
-        contentId = (string)allData["contentId"];
-        contentData = LoadExcel.instance.getObject("content", "id", contentId);
-        message = (string)contentData[language + "_story"];
-        dialogBox.setMessageData(message);
+        setDialogTextData(objectAllData);
+        if(setDialogSelectData(objectAllData)) {
+            dialogBox.setSelectCallback((ID) => {
+                handleDialogSelect(ID);
+            });
+        }
+        else {
+            object unlockLevel = objectAllData["unlockLevelId"];
+            if ((string)unlockLevel != "") {
+                int unlockID = int.Parse((string)unlockLevel);
+                dialogBox.setFinishCallback(() => {
+                    handleDialogFinish(unlockID);
+                });
+            }
+        }
+    }
 
+    /** 取得關卡配置資料 */
+    private Hashtable getLevelAllData() {
+        int episodeId = DataManager.instance.getEpisodeId();
+        int levelId = DataManager.instance.getLevelId();
+        List<Hashtable> objList = LoadExcel.instance.getObjectList("all", "episodeId", episodeId.ToString());
+        foreach(Hashtable item in objList) {
+            if (item["levelId"].ToString() == levelId.ToString()) {
+                return item;
+            }
+        }
+        return null;
+    }
+
+    /** 設定對話資料 */
+    private void setDialogTextData(Hashtable objectAllData) {
+        string contentId = (string)objectAllData["contentId"];
+        Hashtable contentData = LoadExcel.instance.getObject("content", "id", contentId);
+        string message = (string)contentData[language + "_story"];
+        dialogBox.setMessageData(message);
+    }
+
+    /** 設定選項資料 */
+    private bool setDialogSelectData(Hashtable objectAllData) {
+        string contentId = (string)objectAllData["contentId"];
+        Hashtable contentData = LoadExcel.instance.getObject("content", "id", contentId);
+        int selectCount = 0;
         while(true) {
             int count = selectCount + 1;
             string chioceKey = "chioceId_" + count.ToString();
-            if ((string)allData[chioceKey] != "") {
+            if ((string)objectAllData[chioceKey] != "") {
                 string contentKey = language + "_chioce_" + count.ToString();
-                dialogBox.addSelectData((string)contentData[contentKey], int.Parse((string)allData[chioceKey]));
+                string selectText = (string)contentData[contentKey];
+                int selectID = int.Parse((string)objectAllData[chioceKey]);
+                dialogBox.addSelectData(selectText, selectID);
                 selectCount++;
             }
             else {
@@ -99,19 +118,42 @@ public class GameManager : MonoBehaviour
             }
         }
         if (selectCount > 0) {
-            dialogBox.setSelectCallback((ID) => {
-                handleDialogSelect(ID);
-            });
+            return true;
         }
-        else {
-            object unlockLevel = allData["unlockLevelId"];
-            int value = 0;
-            if ((string)unlockLevel != "") {
-                value = int.Parse((string)unlockLevel);
-                dialogBox.setFinishCallback(() => {
-                    handleDialogFinish(value);
-                });
-            }
+        return false;
+    }
+
+    /** 監聽語言更換 */
+    private void onLanguageChanged(object sender, string languageCode) {
+        if (language == languageCode) {
+            return;
+        }
+        language = languageCode;
+        DIALOG_BOX_STATE state = dialogBox.getState();
+        switch(state) {
+            case DIALOG_BOX_STATE.NONE: {
+                Hashtable objectAllData = getLevelAllData();
+                dialogBox.clearAllTextData();
+                dialogBox.clearAllSelectData();
+                setDialogTextData(objectAllData);
+                setDialogSelectData(objectAllData);
+            } break;
+            case DIALOG_BOX_STATE.PLAYING: {
+                Hashtable objectAllData = getLevelAllData();
+                dialogBox.clearAllTextData();
+                dialogBox.clearAllSelectData();
+                setDialogTextData(objectAllData);
+                setDialogSelectData(objectAllData);
+                dialogBox.playMessage();
+            } break;
+            case DIALOG_BOX_STATE.SELECT: {
+                Hashtable objectAllData = getLevelAllData();
+                dialogBox.clearAllSelectData();
+                setDialogSelectData(objectAllData);
+                dialogBox.showSelect();
+            } break;
+            default: {
+            } break;
         }
     }
 

@@ -152,6 +152,7 @@ public class Typewriter : MonoBehaviour
         clearCharDataArray();
         textMeshPro.text = "";
         textMeshPro.ForceMeshUpdate();
+        typewriterState = TYPEWRITER_STATE.NONE;
     }
 
     /** 取得打字機狀態 */
