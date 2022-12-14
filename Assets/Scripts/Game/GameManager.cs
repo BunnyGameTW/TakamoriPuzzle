@@ -15,7 +15,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        language = DataManager.instance.getLanguageName();
+        language = DataManager.instance.getLanguageCode();
         initSlidingPuzzle();
         initDialogBox();
         DataManager.instance.LanguageChanged += onLanguageChanged;

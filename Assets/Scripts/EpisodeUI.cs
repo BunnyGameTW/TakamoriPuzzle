@@ -33,7 +33,7 @@ public class EpisodeUI : MonoBehaviour
         goCell = Instantiate(cellPrefab, scrollContent.transform);
         bookPrefab = goCell.GetComponentInChildren<Button>().gameObject;
 
-        string language = DataManager.instance.getLanguageName();              
+        string language = DataManager.instance.getLanguageCode();              
         for (int i = 0; i < storyDatas.Length; i++)
         {
             //set data

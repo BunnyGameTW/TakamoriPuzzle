@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Localization.Settings;
 
 // 語言code值
 static class LANGUAGE_CODE {
@@ -70,8 +69,6 @@ public class DataManager: Singleton<DataManager>
 
         puzzleGridX = 3;
         puzzleGridY = 3;
-
-        renewLocalization(getLanguageName());
     }
 
     /** 最後選擇的章節 */
@@ -116,6 +113,7 @@ public class DataManager: Singleton<DataManager>
         set {
             gameData.language = value;
             SaveLoad.instance.saveData(gameData);
+            LanguageChanged?.Invoke(this, getLanguageCode());
         }
     }
 
@@ -137,20 +135,8 @@ public class DataManager: Singleton<DataManager>
         }
     }
 
-    /** Localization語言處理 */
-    public void renewLocalization(string languageCode) {
-        for (int i = 0; i < LocalizationSettings.AvailableLocales.Locales.Count; ++i)
-        {
-            var locale = LocalizationSettings.AvailableLocales.Locales[i];
-            if (languageCode == locale.Identifier.Code) {
-                LocalizationSettings.SelectedLocale = locale;
-            }
-        }
-        LanguageChanged?.Invoke(this, languageCode);
-    }
-
     /** 取得語言字符 */
-    public string getLanguageName(SystemLanguage languageValue) {
+    public string getLanguageCode(SystemLanguage languageValue) {
         string language = LANGUAGE_CODE.ENGLISH;
         switch(languageValue) {
             case SystemLanguage.ChineseTraditional:
@@ -167,8 +153,8 @@ public class DataManager: Singleton<DataManager>
         return language;
     }
 
-    public string getLanguageName() {
-        return getLanguageName(gameData.language);
+    public string getLanguageCode() {
+        return getLanguageCode(gameData.language);
     }
 
     /** 解鎖關卡 */
