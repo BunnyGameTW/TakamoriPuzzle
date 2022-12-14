@@ -11,6 +11,18 @@ public class SettingPopup : MonoBehaviour
     public TMP_Dropdown dropdownLanguage;
     public Toggle toggleSkipPuzzle;
     public Toggle toggleAutoPlay;
+    
+    public TMP_Text textTitle;
+    public TMP_Text textBGM;
+    public TMP_Text textSE;
+    public TMP_Text textLanguage;
+    public TMP_Text textSkipPuzzle;
+    public TMP_Text textAutoPlay;
+    public TMP_Text textReset;
+    public TMP_Text textCredit;
+    public TMP_Text textProgramming;
+    public TMP_Text textArt;
+    public TMP_Text textTranslation;
 
     private float BGMVolime = 1.0f;
     private float SEVolime = 1.0f;
@@ -65,7 +77,7 @@ public class SettingPopup : MonoBehaviour
                 language = SystemLanguage.English;
             } break;
         }
-        DataManager.instance.renewLocalization(DataManager.instance.getLanguageName(language));
+        changeUIText(DataManager.instance.getLanguageCode(language));
     }
 
     /** 監聽改變跳過已解謎題 */
@@ -106,6 +118,8 @@ public class SettingPopup : MonoBehaviour
         dropdownLanguage.value = getLanguageIndex(language);
         toggleSkipPuzzle.isOn = skipPassPuzzle;
         toggleAutoPlay.isOn = autoPlayDialog;
+        
+        changeUIText(DataManager.instance.getLanguageCode(language));
     }
 
     /** 關閉視窗 */
@@ -132,5 +146,21 @@ public class SettingPopup : MonoBehaviour
             default:
                 return 0;
         }
+    }
+
+    /** 更換UI語言 */
+    private void changeUIText(string languageCode) {
+        LoadExcel data = LoadExcel.instance;
+        textTitle.text =        data.getObjectValue("uiText", "name", "setting", languageCode);
+        textBGM.text =          data.getObjectValue("uiText", "name", "bgm", languageCode);
+        textSE.text =           data.getObjectValue("uiText", "name", "se", languageCode);
+        textLanguage.text =     data.getObjectValue("uiText", "name", "language", languageCode);
+        textSkipPuzzle.text =   data.getObjectValue("uiText", "name", "skipPuzzle", languageCode);
+        textAutoPlay.text =     data.getObjectValue("uiText", "name", "storyAuto", languageCode);
+        textReset.text =        data.getObjectValue("uiText", "name", "reset", languageCode);
+        textCredit.text =       data.getObjectValue("uiText", "name", "credit", languageCode);
+        textProgramming.text =  data.getObjectValue("uiText", "name", "programming", languageCode);
+        textArt.text =          data.getObjectValue("uiText", "name", "art", languageCode);
+        textTranslation.text =  data.getObjectValue("uiText", "name", "translation", languageCode);
     }
 }
