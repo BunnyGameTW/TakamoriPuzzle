@@ -19,6 +19,9 @@ public class GameManager : MonoBehaviour
         initSlidingPuzzle();
         initDialogBox();
         DataManager.instance.LanguageChanged += onLanguageChanged;
+        if (DataManager.instance.skipPassPuzzle) {
+            slidingPuzzle.quickFinishPuzzle();
+        }
     }
 
     // Update is called once per frame

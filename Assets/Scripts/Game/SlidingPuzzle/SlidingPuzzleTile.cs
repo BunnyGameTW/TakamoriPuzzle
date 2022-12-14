@@ -44,6 +44,11 @@ public class SlidingPuzzleTile : MonoBehaviour
         return nowGridPos;
     }
 
+    /** 取得目標格子位置 */
+    public Vector2Int getGoalGridPos() {
+        return goalGridPos;
+    }
+
     /** 檢查格子是否在正確的位置 */
     public bool checkGridCorrect() {
         return (nowGridPos == goalGridPos);

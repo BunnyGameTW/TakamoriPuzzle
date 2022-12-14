@@ -124,6 +124,21 @@ public class SlidingPuzzle : MonoBehaviour
         finishCallback = callback;
     }
 
+    /** 快速完成謎題 */
+    public void quickFinishPuzzle() {
+        SlidingPuzzleTile tmepTile;
+        Vector2Int goalPos;
+        for(int j = 0; j < puzzleGridX; j++){
+			for(int i = 0; i < puzzleGridY; i++) {
+                tmepTile = tileObjectArray[i, j].GetComponent<SlidingPuzzleTile>();
+                goalPos = tmepTile.getGoalGridPos();
+                tmepTile.setNowGridPos(goalPos);
+                tmepTile.transform.localPosition = tilePosArray[goalPos.x, goalPos.y];
+            }
+        }
+        finishPuzzle();
+    }
+
     // 內部呼叫 --------------------------------------------------------------------------------------------------------------
 
     /** 創造謎題方塊 */
@@ -172,7 +187,7 @@ public class SlidingPuzzle : MonoBehaviour
 
     /** 洗謎題盤面 */
     private void jugglePuzzle() {
-        int juggleCount = 1;// 2 * puzzleGridX * puzzleGridY; // 洗牌次數
+        int juggleCount = 2 * puzzleGridX * puzzleGridY; // 洗牌次數
         int count;
         Vector2Int randTile = new Vector2Int(0, 0);
         Vector2Int beforeTile = new Vector2Int(-1, -1);
