@@ -159,6 +159,8 @@ public class GameManager : MonoBehaviour
 
     /** 處理完成謎題 */
     private void handleFinishPuzzle() {
+        SoundManager.instance.playSE(SoundManager.instance.SE_finish);
+        //TODO 圖片往上移動到定點再顯示對話
         dialogBox.playMessage();
     }
 
