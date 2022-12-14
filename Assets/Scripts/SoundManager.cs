@@ -14,10 +14,7 @@ public class SoundManager: SingletonMono<SoundManager>
     public AudioClip SE_finish;
     public AudioClip SE_page;
     public AudioClip SE_page2;
-    public AudioClip SE_puzzle1;
-    public AudioClip SE_puzzle2;
-    public AudioClip SE_puzzle3;
-    public AudioClip SE_puzzle4;
+    public AudioClip[] SE_puzzles;
     public AudioClip SE_transitionIn;
     public AudioClip SE_transitionOut;
 
@@ -66,7 +63,10 @@ public class SoundManager: SingletonMono<SoundManager>
     public void playSE(AudioClip sound) {
         effectSource.PlayOneShot(sound, DataManager.instance.SEVolime);
     }
-
+    public void playSE(AudioClip sound, float value)
+    {
+        effectSource.PlayOneShot(sound, DataManager.instance.SEVolime * value);
+    }
     /** 設定音樂音量 */
     public void setBGMVolime(float value) {
         musicSource.volume = value;

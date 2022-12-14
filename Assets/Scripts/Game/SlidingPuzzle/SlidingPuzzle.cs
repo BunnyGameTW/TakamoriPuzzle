@@ -107,6 +107,8 @@ public class SlidingPuzzle : MonoBehaviour
         SlidingPuzzleTile tmepTile = hit.transform.gameObject.GetComponent<SlidingPuzzleTile>();
         if (tmepTile) {
             moveTileToEmptyPos(tmepTile, () => {
+                SoundManager.instance.playSE(
+                    SoundManager.instance.SE_puzzles[Random.Range(0, SoundManager.instance.SE_puzzles.Length)]);
                 if (!isPuzzleActive) {
                     finishPuzzle();
                 }

@@ -79,6 +79,7 @@ public class DialogBox : MonoBehaviour
 
             } break;
             case (int)TYPEWRITER_STATE.WAIT: {
+                SoundManager.instance.playSE(SoundManager.instance.SE_page);
                 hideWaitNextIcon();
                 typewriter.startFadeOutEffect();
             } break;

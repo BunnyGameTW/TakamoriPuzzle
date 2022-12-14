@@ -14,7 +14,7 @@ public class MySceneManager : MonoBehaviour
 {
     bool isLoading;
     Animator ani;
-    SceneState sceneState;
+    SceneState sceneState, preSceneState;
     Dictionary<SceneState, string> sceneNameMap;
     const string DEFAULT_LOAD_SCENE_NAME = "SelectEpisodeScene";
     const string SELECT_LEVEL_SCENE_NAME = "SelectLevelScene";
@@ -33,6 +33,7 @@ public class MySceneManager : MonoBehaviour
     }
     public void SetLoadSceneState(SceneState _state)
     {
+        preSceneState = sceneState;
         sceneState = _state;
     }
 
@@ -106,8 +107,8 @@ public class MySceneManager : MonoBehaviour
         isLoading = true;
         ani.SetInteger("state", 1);
         StartCoroutine(LoadYourAsyncScene());
-        
-        SoundManager.instance.playSE(SoundManager.instance.SE_page);
+
+        SoundManager.instance.playSE(SoundManager.instance.SE_transitionIn, 0.5f);
     }
     
     IEnumerator LoadYourAsyncScene()
@@ -133,8 +134,13 @@ public class MySceneManager : MonoBehaviour
             yield return null;
 
             ani.SetInteger("state", 2);
-            asyncLoad.allowSceneActivation = true;            
+            asyncLoad.allowSceneActivation = true;
             gameObjectButtons.SetActive(sceneState != SceneState.Login);
+            SoundManager.instance.playSE(SoundManager.instance.SE_transitionOut, 0.5f);
+            if ((preSceneState == SceneState.SelectEpisode) && sceneState == (SceneState.SelectLevel))
+                SoundManager.instance.playBGM(SoundManager.instance.BGM_xmas);
+            else if ((preSceneState == SceneState.SelectLevel) && sceneState == (SceneState.SelectEpisode))
+                SoundManager.instance.playBGM(SoundManager.instance.BGM_title);
             isLoading = false;
         }
     }
