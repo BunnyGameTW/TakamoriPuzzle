@@ -19,7 +19,8 @@ public class EpisodeUI : MonoBehaviour
     const string INDEX_NAME = "id";
     const string IS_LOCK_NAME = "isLock";
     const string TITLE_SUFFIX_NAME = "_title";
-    
+    const int BOOK_PER_SHELF = 1;
+    const int HEIGHT_PER_BOOK = 900;
     // Start is called before the first frame update
     void Start()
     {
@@ -34,6 +35,9 @@ public class EpisodeUI : MonoBehaviour
         bookPrefab = goCell.GetComponentInChildren<Button>().gameObject;
 
         string language = DataManager.instance.getLanguageCode();              
+        RectTransform rectTransform = scrollContent.GetComponent<RectTransform>();
+        rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, HEIGHT_PER_BOOK * storyDatas.Length);
+
         for (int i = 0; i < storyDatas.Length; i++)
         {
             //set data
@@ -47,18 +51,18 @@ public class EpisodeUI : MonoBehaviour
             }
 
             //create ui
-            if (i % 2 == 0)
+            //if (i % 2 == 0)
+            //{
+            if (i != 0)
             {
-                if (i != 0)
-                {
-                    goCell = Instantiate(cellPrefab, scrollContent.transform);
-                }
-                goBook = goCell.GetComponentInChildren<Button>().gameObject;                
+                goCell = Instantiate(cellPrefab, scrollContent.transform);
             }
-            else
-            {
-                goBook = Instantiate(bookPrefab, goCell.transform.GetChild(0));
-            }
+            goBook = goCell.GetComponentInChildren<Button>().gameObject;                
+            //}
+            //else
+            //{
+            //    goBook = Instantiate(bookPrefab, goCell.transform.GetChild(0));
+            //}
 
             //set ui
             books[i] = goBook.GetComponent<Book>();
