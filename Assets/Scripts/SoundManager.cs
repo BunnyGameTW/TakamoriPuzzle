@@ -43,13 +43,13 @@ public class SoundManager: SingletonMono<SoundManager>
         }
         musicSource.clip = music;
         musicSource.loop = true;
-        musicSource.volume = DataManager.instance.getBGMVolime();
+        musicSource.volume = DataManager.instance.BGMVolime;
         musicSource.Play();
     }
 
     /** 播放音效 */
     public void playSE(AudioClip sound) {
-        effectSource.PlayOneShot(sound, DataManager.instance.getSEVolime());
+        effectSource.PlayOneShot(sound, DataManager.instance.SEVolime);
     }
 
     /** 設定音樂音量 */

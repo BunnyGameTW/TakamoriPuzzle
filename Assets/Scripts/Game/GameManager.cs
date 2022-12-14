@@ -27,8 +27,8 @@ public class GameManager : MonoBehaviour
 
     /** 初始化謎題 */
     private void initSlidingPuzzle() {
-        int episodeId = DataManager.instance.getEpisodeId();
-        int levelId = DataManager.instance.getLevelId();
+        int episodeId = DataManager.instance.episodeId;
+        int levelId = DataManager.instance.levelId;
         int puzzleGridX = DataManager.instance.puzzleGridX;
         int puzzleGridY = DataManager.instance.puzzleGridY;
         string puzzleImagePath = ResManager.getPuzzleImagePath(episodeId, levelId);
@@ -41,8 +41,8 @@ public class GameManager : MonoBehaviour
 
     /** 初始化對話 */
     private void initDialogBox() {
-        int episodeId = DataManager.instance.getEpisodeId();
-        int levelId = DataManager.instance.getLevelId();
+        int episodeId = DataManager.instance.episodeId;
+        int levelId = DataManager.instance.levelId;
         string language = DataManager.instance.getLanguageName();
         Dictionary<string, Hashtable> allTable = null;
         Hashtable allData = null;
@@ -136,10 +136,10 @@ public class GameManager : MonoBehaviour
 
     /** 處理解鎖關卡 */
     private void handleUnlockLevel(int ID) {
-        int episode = DataManager.instance.getEpisodeId();
+        int episode = DataManager.instance.episodeId;
         int level = ID;
         DataManager.instance.unlockLevel(episode, level);
-        DataManager.instance.setLevelId(ID);
+        DataManager.instance.levelId = ID;
     }
 
     /** 處理完成關卡 */
@@ -149,7 +149,7 @@ public class GameManager : MonoBehaviour
             MySceneManager.Instance.LoadScene();
             return;
         }
-        int episodeId = DataManager.instance.getEpisodeId();
+        int episodeId = DataManager.instance.episodeId;
         List<Hashtable> levelList = LoadExcel.instance.getObjectList("all", "episodeId", episodeId.ToString());
         List<int> unlockList = DataManager.instance.getUnlockLevelList(episodeId);
 

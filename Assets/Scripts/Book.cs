@@ -22,7 +22,7 @@ public class Book : MonoBehaviour
     }
     void OnClick()
     {
-        DataManager.instance.setEpisodeId(_data.episodeId);
+        DataManager.instance.episodeId = _data.episodeId;
         MySceneManager.Instance.SetLoadSceneState(SceneState.SelectLevel);
         MySceneManager.Instance.LoadScene();
     }

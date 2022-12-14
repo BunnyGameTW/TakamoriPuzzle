@@ -9,9 +9,14 @@ public class SettingPopup : MonoBehaviour
     public Slider sliderBGM;
     public Slider sliderSE;
     public TMP_Dropdown dropdownLanguage;
-    private float BGMVolime = 1;
-    private float SEVolime = 1;
+    public Toggle toggleSkipPuzzle;
+    public Toggle toggleAutoPlay;
+
+    private float BGMVolime = 1.0f;
+    private float SEVolime = 1.0f;
     private SystemLanguage language = SystemLanguage.English;
+    private bool skipPassPuzzle = false;
+    private bool autoPlayDialog = false;
 
     // 生命週期 --------------------------------------------------------------------------------------------------------------
 
@@ -63,22 +68,53 @@ public class SettingPopup : MonoBehaviour
         DataManager.instance.renewLocalization(DataManager.instance.getLanguageName(language));
     }
 
+    /** 監聽改變跳過已解謎題 */
+    public void onChangeSkipPassPuzzle() {
+        bool value = toggleSkipPuzzle.isOn;
+        skipPassPuzzle = value;
+    }
+
+    /** 監聽改變自動播放對話 */
+    public void onChangeAutoPlayDialog() {
+        bool value = toggleAutoPlay.isOn;
+        autoPlayDialog = value;
+    }
+
+    /** 重置設定 */
+    public void resetSetting() {
+        BGMVolime = 1.0f;
+        SEVolime = 1.0f;
+        skipPassPuzzle = false;
+        autoPlayDialog = false;
+
+        sliderBGM.value = BGMVolime;
+        sliderSE.value = SEVolime;
+        toggleSkipPuzzle.isOn = skipPassPuzzle;
+        toggleAutoPlay.isOn = autoPlayDialog;
+    }
+
     /** 開啟視窗 */
     public void onOpenPopup() {
-        BGMVolime = DataManager.instance.getBGMVolime();
-        SEVolime = DataManager.instance.getSEVolime();
-        language = DataManager.instance.getLanguage();
+        BGMVolime = DataManager.instance.BGMVolime;
+        SEVolime = DataManager.instance.SEVolime;
+        language = DataManager.instance.language;
+        skipPassPuzzle = DataManager.instance.skipPassPuzzle;
+        autoPlayDialog = DataManager.instance.autoPlayDialog;
         
         sliderBGM.value = BGMVolime;
         sliderSE.value = SEVolime;
         dropdownLanguage.value = getLanguageIndex(language);
+        toggleSkipPuzzle.isOn = skipPassPuzzle;
+        toggleAutoPlay.isOn = autoPlayDialog;
     }
 
     /** 關閉視窗 */
     public void onClosePopup() {
-        DataManager.instance.setBGMVolime(BGMVolime);
-        DataManager.instance.setSEVolime(SEVolime);
-        DataManager.instance.setLanguage(language);
+        DataManager.instance.BGMVolime = BGMVolime;
+        DataManager.instance.SEVolime = SEVolime;
+        DataManager.instance.language = language;
+        DataManager.instance.skipPassPuzzle = skipPassPuzzle;
+        DataManager.instance.autoPlayDialog = autoPlayDialog;
         this.gameObject.SetActive(false);
     }
 

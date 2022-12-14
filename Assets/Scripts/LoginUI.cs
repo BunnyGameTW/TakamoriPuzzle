@@ -10,8 +10,8 @@ public class LoginUI : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        int episodeId = DataManager.instance.getEpisodeId();
-        int levelId = DataManager.instance.getLevelId();
+        int episodeId = DataManager.instance.episodeId;
+        int levelId = DataManager.instance.levelId;
         bool needShowProgress = episodeId != 0 && levelId != 0;
         if (gameObjectProgress.activeSelf != needShowProgress)
             gameObjectProgress.SetActive(needShowProgress);

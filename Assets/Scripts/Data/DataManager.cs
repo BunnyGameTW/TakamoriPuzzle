@@ -20,6 +20,8 @@ public class GameData
     public float BGMVolime;         // 音樂音量
     public float SEVolime;          // 音效音量
     public SystemLanguage language; // 語言
+    public bool skipPassPuzzle;     // 跳過已解謎題
+    public bool autoPlayDialog;     // 自動播放對話
     
     /** 建構子 */
     public GameData() {
@@ -29,6 +31,8 @@ public class GameData
         unlockListValue = new List<bool>();
         BGMVolime = 1.0f;
         SEVolime = 1.0f;
+        skipPassPuzzle = false;
+        autoPlayDialog = false;
 
         switch(Application.systemLanguage) {
             case SystemLanguage.ChineseTraditional:
@@ -56,6 +60,7 @@ public class DataManager: Singleton<DataManager>
     public int puzzleGridY = 0;     // 謎題格數Y
     private GameData gameData;      // 遊戲資料(用func呼叫+自動存檔)
     public event System.EventHandler<string> LanguageChanged;
+
     /** 建構子 */
     public DataManager() {
         gameData = (GameData)SaveLoad.instance.loadData(typeof(GameData));
@@ -69,50 +74,69 @@ public class DataManager: Singleton<DataManager>
         renewLocalization(getLanguageName());
     }
 
-    /** 設定章節 */
-    public void setEpisodeId(int value) {
-        gameData.episodeId = value;
-        SaveLoad.instance.saveData(gameData);
+    /** 最後選擇的章節 */
+    public int episodeId {
+        get { return gameData.episodeId; }
+        set {
+            gameData.episodeId = value;
+            SaveLoad.instance.saveData(gameData);
+        }
     }
 
-    /** 取得章節 */
-    public int getEpisodeId() {
-        return gameData.episodeId;
+    /** 最後選擇的關卡 */
+    public int levelId {
+        get { return gameData.levelId; }
+        set {
+            gameData.levelId = value;
+            SaveLoad.instance.saveData(gameData);
+        }
     }
 
-    /** 設定關卡 */
-    public void setLevelId(int value) {
-        gameData.levelId = value;
-        SaveLoad.instance.saveData(gameData);
+    /** 音樂音量 */
+    public float BGMVolime {
+        get { return gameData.BGMVolime; }
+        set {
+            gameData.BGMVolime = value;
+            SaveLoad.instance.saveData(gameData);
+        }
     }
 
-    /** 取得關卡 */
-    public int getLevelId() {
-        return gameData.levelId;
+    /** 音效音量 */
+    public float SEVolime {
+        get { return gameData.SEVolime; }
+        set {
+            gameData.SEVolime = value;
+            SaveLoad.instance.saveData(gameData);
+        }
     }
 
-    /** 設定音樂大小 */
-    public void setBGMVolime(float value) {
-        gameData.BGMVolime = value;
-        SaveLoad.instance.saveData(gameData);
+    /** 語言 */
+    public SystemLanguage language {
+        get { return gameData.language; }
+        set {
+            gameData.language = value;
+            SaveLoad.instance.saveData(gameData);
+        }
     }
 
-    /** 取得音樂大小 */
-    public float getBGMVolime() {
-        return gameData.BGMVolime;
+    /** 跳過已解謎題 */
+    public bool skipPassPuzzle {
+        get { return gameData.skipPassPuzzle; }
+        set {
+            gameData.skipPassPuzzle = value;
+            SaveLoad.instance.saveData(gameData);
+        }
     }
 
-    /** 設定音效大小 */
-    public void setSEVolime(float value) {
-        gameData.SEVolime = value;
-        SaveLoad.instance.saveData(gameData);
+    /** 自動播放對話 */
+    public bool autoPlayDialog {
+        get { return gameData.autoPlayDialog; }
+        set {
+            gameData.autoPlayDialog = value;
+            SaveLoad.instance.saveData(gameData);
+        }
     }
 
-    /** 取得音效大小 */
-    public float getSEVolime() {
-        return gameData.SEVolime;
-    }
-    
     /** Localization語言處理 */
     public void renewLocalization(string languageCode) {
         for (int i = 0; i < LocalizationSettings.AvailableLocales.Locales.Count; ++i)
@@ -125,17 +149,6 @@ public class DataManager: Singleton<DataManager>
         LanguageChanged?.Invoke(this, languageCode);
     }
 
-    /** 設定語言 */
-    public void setLanguage(SystemLanguage ID) {
-        gameData.language = ID;
-        SaveLoad.instance.saveData(gameData);
-    }
-
-    /** 取得語言 */
-    public SystemLanguage getLanguage() {
-        return gameData.language;
-    }
-    
     /** 取得語言字符 */
     public string getLanguageName(SystemLanguage languageValue) {
         string language = LANGUAGE_CODE.ENGLISH;

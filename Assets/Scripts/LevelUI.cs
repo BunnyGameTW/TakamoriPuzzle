@@ -24,7 +24,7 @@ public class LevelUI : MonoBehaviour
     void Start()
     {
         DataManager.instance.LanguageChanged += OnLanguageChanged;
-        int episodeId = DataManager.instance.getEpisodeId();
+        int episodeId = DataManager.instance.episodeId;
 
         //set title
         data = LoadExcel.instance.getObject(EXCEL_TAG_NAME, INDEX_NAME, episodeId);

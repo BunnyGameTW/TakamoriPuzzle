@@ -887,6 +887,8 @@ MonoBehaviour:
   sliderBGM: {fileID: 2012942411975648592}
   sliderSE: {fileID: 4857574364279998723}
   dropdownLanguage: {fileID: 7275437368113881675}
+  toggleSkipPuzzle: {fileID: 2200266582395013576}
+  toggleAutoPlay: {fileID: 5252083657924256417}
 --- !u!1 &1832476680019837760
 GameObject:
   m_ObjectHideFlags: 0
@@ -917,7 +919,7 @@ RectTransform:
   m_Children:
   - {fileID: 3973960073146080249}
   m_Father: {fileID: 5759503618817496867}
-  m_RootOrder: 10
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
@@ -1181,7 +1183,7 @@ RectTransform:
   - {fileID: 6643852344501428209}
   - {fileID: 1593939657185960630}
   m_Father: {fileID: 5759503618817496867}
-  m_RootOrder: 8
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
@@ -1551,7 +1553,7 @@ RectTransform:
   - {fileID: 3507010637068461924}
   - {fileID: 2882180965528076228}
   m_Father: {fileID: 5759503618817496867}
-  m_RootOrder: 7
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -1865,7 +1867,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5759503618817496867}
-  m_RootOrder: 6
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
@@ -3805,7 +3807,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1637027311290845270}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1338731477942770726}
+        m_TargetAssemblyTypeName: SettingPopup, Assembly-CSharp
+        m_MethodName: resetSetting
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &6793553218942941483
 GameObject:
   m_ObjectHideFlags: 0
@@ -4051,11 +4065,11 @@ RectTransform:
   - {fileID: 8450035233107373175}
   - {fileID: 8450035233181513994}
   - {fileID: 3148229983201363172}
-  - {fileID: 3967023611612791542}
-  - {fileID: 1630599442703181914}
   - {fileID: 6112286620294925944}
   - {fileID: 2273694944067832697}
   - {fileID: 6203738297420412158}
+  - {fileID: 3967023611612791542}
+  - {fileID: 1630599442703181914}
   m_Father: {fileID: 8966857130809258419}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4284,7 +4298,19 @@ MonoBehaviour:
   m_Group: {fileID: 0}
   onValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1338731477942770726}
+        m_TargetAssemblyTypeName: SettingPopup, Assembly-CSharp
+        m_MethodName: onChangeSkipPassPuzzle
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_IsOn: 1
 --- !u!1 &7731145284860585475
 GameObject:
@@ -4506,7 +4532,7 @@ RectTransform:
   - {fileID: 3682034685935073808}
   - {fileID: 6231983872760126494}
   m_Father: {fileID: 5759503618817496867}
-  m_RootOrder: 9
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
@@ -4598,7 +4624,19 @@ MonoBehaviour:
   m_Group: {fileID: 0}
   onValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1338731477942770726}
+        m_TargetAssemblyTypeName: SettingPopup, Assembly-CSharp
+        m_MethodName: onChangeAutoPlayDialog
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_IsOn: 1
 --- !u!1 &8450035233107373174
 GameObject:
