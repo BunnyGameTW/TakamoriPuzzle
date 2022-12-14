@@ -28,7 +28,7 @@ public class DialogBox : MonoBehaviour
     public GameObject selectGroup = null;       // 選項群組
     public Button prefabDialogSelect = null;    // 選項物件
 
-    private Coroutine waitIconEvent = null;                 // 等待圖示事件
+    private Coroutine waitDialogEvent = null;                 // 等待圖示事件
     private bool isReadyPlay = false;                       // 是否準備播放就緒
     private DIALOG_BOX_STATE state = DIALOG_BOX_STATE.NONE; // 狀態機
     private List<string> messageList = null;                // 訊息List
@@ -254,15 +254,20 @@ public class DialogBox : MonoBehaviour
 
     /** 顯示等待下一句標示 */
     private void showWaitNextIcon() {
-        waitIconEvent = StartCoroutine(runWaitIconEffect());
+        if (DataManager.instance.autoPlayDialog) {
+            waitDialogEvent = StartCoroutine(runAutoWaitEffect());
+        }
+        else {
+            waitDialogEvent = StartCoroutine(runWaitIconEffect());
+        }
     }
 
     /** 隱藏等待下一句標示 */
     private void hideWaitNextIcon() {
         waitIcon.SetActive(false);
-        if (waitIconEvent != null) {
-            StopCoroutine(waitIconEvent);
-            waitIconEvent = null;
+        if (waitDialogEvent != null) {
+            StopCoroutine(waitDialogEvent);
+            waitDialogEvent = null;
         }
     }
 
@@ -276,5 +281,11 @@ public class DialogBox : MonoBehaviour
             yield return new WaitForSeconds(0.5f);
             waitIcon.SetActive(true);
         }
+    }
+
+    /** 結束對話自動播放 */
+    private IEnumerator runAutoWaitEffect() {
+        yield return new WaitForSeconds(1.5f);
+        onClickDialogBox();
     }
 }
