@@ -21,6 +21,8 @@ public enum DIALOG_BOX_STATE: int {
 public class DialogBox : MonoBehaviour
 {
     const string newlineChar = "<block>";    // 分段標記
+    
+    private Color SELECTED_COLOR = new Color(0.8f, 0.7f, 0.3f); // 已選擇過選項
 
     public Typewriter typewriter = null;        // 打字機物件
     public Button btnNext = null;               // 下一句按鈕物件
@@ -28,7 +30,7 @@ public class DialogBox : MonoBehaviour
     public GameObject selectGroup = null;       // 選項群組
     public Button prefabDialogSelect = null;    // 選項物件
 
-    private Coroutine waitDialogEvent = null;                 // 等待圖示事件
+    private Coroutine waitDialogEvent = null;               // 等待圖示事件
     private bool isReadyPlay = false;                       // 是否準備播放就緒
     private DIALOG_BOX_STATE state = DIALOG_BOX_STATE.NONE; // 狀態機
     private List<string> messageList = null;                // 訊息List
@@ -203,6 +205,10 @@ public class DialogBox : MonoBehaviour
             textChild.GetComponent<TMP_Text>().text = selectList[i].selectText;
             tmepButton.transform.SetParent(selectGroup.transform);
             tmepButton.transform.localScale = selectGroup.transform.localScale;
+
+            if (DataManager.instance.isUnlockLevel(DataManager.instance.episodeId, selectID)) {
+                tmepButton.image.color = SELECTED_COLOR;
+            }
         }
         state = DIALOG_BOX_STATE.SELECT;
     }
