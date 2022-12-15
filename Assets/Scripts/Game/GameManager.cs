@@ -19,7 +19,8 @@ public class GameManager : MonoBehaviour
         initSlidingPuzzle();
         initDialogBox();
         DataManager.instance.LanguageChanged += onLanguageChanged;
-        if (DataManager.instance.skipPassPuzzle) {
+        if (DataManager.instance.skipPassPuzzle
+        && DataManager.instance.isPassLevel(DataManager.instance.episodeId, DataManager.instance.levelId)) {
             slidingPuzzle.quickFinishPuzzle();
         }
     }
@@ -184,8 +185,9 @@ public class GameManager : MonoBehaviour
     /** 處理解鎖關卡 */
     private void handleUnlockLevel(int ID) {
         int episode = DataManager.instance.episodeId;
-        int level = ID;
-        DataManager.instance.unlockLevel(episode, level);
+        int levelId = DataManager.instance.levelId;
+        DataManager.instance.passLevel(episode, levelId);
+        DataManager.instance.unlockLevel(episode, ID);
         DataManager.instance.levelId = ID;
     }
 

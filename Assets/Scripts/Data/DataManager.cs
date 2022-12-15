@@ -16,6 +16,8 @@ public class GameData
     public int levelId;             // 最後關卡編號
     public List<Vector2Int> unlockListKey;  // 解鎖清單-索引
     public List<bool> unlockListValue;      // 解鎖清單-值
+    public List<Vector2Int> passListKey;    // 通關清單-索引
+    public List<bool> passListValue;        // 通關清單-值
     public float BGMVolime;         // 音樂音量
     public float SEVolime;          // 音效音量
     public SystemLanguage language; // 語言
@@ -192,6 +194,25 @@ public class DataManager: Singleton<DataManager>
         return list;
     }
 
+    /** 通關關卡 */
+    public void passLevel(int episode, int level) {
+        setPass(episode, level, true);
+        SaveLoad.instance.saveData(gameData);
+    }
+
+    public void passLevel(int level) {
+        passLevel(gameData.episodeId, level);
+    }
+
+    /** 取得是否曾通關 */
+    public bool isPassLevel(int episode, int level) {
+        return getPass(episode, level);
+    }
+
+    public bool isPassLevel(int level) {
+        return isPassLevel(gameData.episodeId, level);
+    }
+
     // 內部呼叫 --------------------------------------------------------------------------------------------------------------
 
     /** 設定解鎖值 */
@@ -213,6 +234,29 @@ public class DataManager: Singleton<DataManager>
         int index = gameData.unlockListKey.IndexOf(key);
         if (index != -1) {
             return gameData.unlockListValue[index];
+        }
+        return false;
+    }
+
+    /** 設定通關值 */
+    private void setPass(int episode, int level, bool value) {
+        Vector2Int key = new Vector2Int(episode, level);
+        int index = gameData.passListKey.IndexOf(key);
+        if (index == -1) {
+            gameData.passListKey.Add(key);
+            gameData.passListValue.Add(value);
+        }
+        else {
+            gameData.passListValue[index] = value;
+        }
+    }
+
+    /** 取得通關值 */
+    private bool getPass(int episode, int level) {
+        Vector2Int key = new Vector2Int(episode, level);
+        int index = gameData.passListKey.IndexOf(key);
+        if (index != -1) {
+            return gameData.passListValue[index];
         }
         return false;
     }
