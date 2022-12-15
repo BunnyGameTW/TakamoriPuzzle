@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.brunomikoski.animationsequencer": "0.5.1",
     "com.coffee.softmask-for-ugui": "https://github.com/mob-sakai/SoftMaskForUGUI.git#1.0.2",
     "com.unity.collab-proxy": "1.15.15",
     "com.unity.feature.2d": "1.0.0",
@@ -42,5 +43,15 @@
     "com.unity.modules.vr": "1.0.0",
     "com.unity.modules.wind": "1.0.0",
     "com.unity.modules.xr": "1.0.0"
-  }
+  },
+  "scopedRegistries": [
+    {
+      "name": "OpenUPM",
+      "url": "https://package.openupm.com/",
+      "scopes": [
+        "com.brunomikoski",
+        "com.demigiant"
+      ]
+    }
+  ]
 }
