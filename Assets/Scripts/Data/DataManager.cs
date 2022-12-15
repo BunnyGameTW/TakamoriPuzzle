@@ -30,6 +30,8 @@ public class GameData
         levelId = 0;
         unlockListKey = new List<Vector2Int>();
         unlockListValue = new List<bool>();
+        passListKey = new List<Vector2Int>();
+        passListValue = new List<bool>();
         BGMVolime = 1.0f;
         SEVolime = 1.0f;
         skipPassPuzzle = false;
