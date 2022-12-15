@@ -9,7 +9,7 @@ public class Book : MonoBehaviour
     public Image puzzleImage, bookImage;
     Button button;
     CellData _data;
-    const string PUZZLE_IMAGE_FORMAT = "puzzle/puzzle_{0}_1";
+    const string PUZZLE_IMAGE_FORMAT = "puzzle/puzzle_{0}_{1}";
     const string BOOK_IMAGE_FORMAT = "UI/book_{0}";
     const string BOOK_IMAGE_UNABLED = "UI/book_unable";
 
@@ -29,7 +29,7 @@ public class Book : MonoBehaviour
 
     public void UpdateTitle(string title)
     {
-        _data.title = title;//TODO?
+        _data.title = title;
         titleText.text = title;
     }
 
@@ -46,9 +46,17 @@ public class Book : MonoBehaviour
         string fileName;
         if (!_data.isLock)
         {
-            fileName = string.Format(PUZZLE_IMAGE_FORMAT, _data.episodeId);
+            
+            if (_data.isUnlockCG)
+            {
+                List<Hashtable> levelList = LoadExcel.instance.getObjectList("all", "episodeId", _data.episodeId.ToString());
+                fileName = string.Format(PUZZLE_IMAGE_FORMAT, _data.episodeId, levelList.Count + 1);
+            }
+            else
+                fileName = string.Format(PUZZLE_IMAGE_FORMAT, _data.episodeId, 1);
             puzzleImage.sprite = Resources.Load<Sprite>(fileName);
         }
+        
         fileName = _data.isLock ? BOOK_IMAGE_UNABLED : string.Format(BOOK_IMAGE_FORMAT, _data.episodeId);
         bookImage.sprite = Resources.Load<Sprite>(fileName);        
     }

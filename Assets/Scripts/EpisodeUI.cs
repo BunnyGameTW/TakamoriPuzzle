@@ -8,6 +8,7 @@ public struct CellData
     public int episodeId;
     public string title;
     public bool isLock;
+    public bool isUnlockCG;
 }
 
 public class EpisodeUI : MonoBehaviour
@@ -48,6 +49,8 @@ public class EpisodeUI : MonoBehaviour
             {                
                 string message = (string)data[language + TITLE_SUFFIX_NAME];
                 storyDatas[i].title = message;
+                List<Hashtable> levelList = LoadExcel.instance.getObjectList("all", "episodeId", storyDatas[i].episodeId.ToString());
+                storyDatas[i].isUnlockCG = DataManager.instance.isUnlockLevel(storyDatas[i].episodeId, levelList.Count + 1);
             }
 
             //create ui

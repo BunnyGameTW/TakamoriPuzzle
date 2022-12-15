@@ -7,7 +7,7 @@ public class GameManager : MonoBehaviour
     public SlidingPuzzle slidingPuzzle = null;
     public DialogBox dialogBox = null;
     public AwardPopup awardPopup = null;
-
+    const int UNLOCK_CG_STRING_NUMBER = 13;
     private string language;
     
     // 生命週期 --------------------------------------------------------------------------------------------------------------
@@ -190,7 +190,7 @@ public class GameManager : MonoBehaviour
         DataManager.instance.unlockLevel(episode, ID);
         DataManager.instance.levelId = ID;
     }
-
+    
     /** 處理完成關卡 */
     private void handleFinishLevel(int nextLevel) {
         if (nextLevel != 0) {
@@ -207,8 +207,15 @@ public class GameManager : MonoBehaviour
             string puzzleImagePath = ResManager.getPuzzleImagePath(episodeId, awardID);
             Sprite puzzleImage = ResManager.loadSprite(puzzleImagePath);
             DataManager.instance.unlockLevel(episodeId, awardID);
-            awardPopup.init(puzzleImage);
-            awardPopup.setTouchCallback(() => {
+
+            Hashtable contentData = LoadExcel.instance.getObject("uiText", "id", UNLOCK_CG_STRING_NUMBER);            
+            string unlockString = (string)contentData[language];
+            contentData = LoadExcel.instance.getObject("episodeTitle", "id", episodeId);
+            string episodeTitle = (string)contentData[language + "_title"];
+            unlockString = string.Format(unlockString, episodeTitle);
+            MySceneManager.Instance.ShowButtons(false);
+            awardPopup.init(puzzleImage, unlockString);
+            awardPopup.setTouchCallback(() => {                
                 MySceneManager.Instance.SetLoadSceneState(SceneState.SelectLevel);
                 MySceneManager.Instance.LoadScene();
             });

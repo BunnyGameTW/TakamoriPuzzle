@@ -2,18 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using TMPro;
 public class AwardPopup : MonoBehaviour
 {
     public Image awardImage;       // 獎勵cg
-
+    public TextMeshProUGUI textTitle;
     private bool isAnimate = false;         // 是否在動畫中
     private System.Action touchCallback;    // 觸碰事件
 
     // 生命週期 --------------------------------------------------------------------------------------------------------------
 
-    public void init(Sprite image) {
+    public void init(Sprite image, string titleString) {
         awardImage.sprite = image;
+        textTitle.text = titleString;
     }
 
     // Start is called before the first frame update

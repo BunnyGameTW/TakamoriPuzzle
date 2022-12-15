@@ -99,6 +99,10 @@ public class MySceneManager : MonoBehaviour
         }
     }
 
+    public void ShowButtons(bool show)
+    {
+        gameObjectButtons.SetActive(show);
+    }
     public void LoadScene()
     {
         if (isLoading)
