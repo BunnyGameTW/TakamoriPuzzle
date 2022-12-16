@@ -1065,8 +1065,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: '- Touch to start -'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 489f51990de14ce48b7dac12debb61d1, type: 2}
-  m_sharedMaterial: {fileID: -7814338361455833629, guid: 489f51990de14ce48b7dac12debb61d1, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 7b3d34a660796d745a609a53f1438e5b, type: 2}
+  m_sharedMaterial: {fileID: -5872890435080129620, guid: 7b3d34a660796d745a609a53f1438e5b, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
