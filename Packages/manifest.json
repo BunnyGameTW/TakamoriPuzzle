@@ -1,9 +1,9 @@
 {
   "dependencies": {
     "com.coffee.softmask-for-ugui": "https://github.com/mob-sakai/SoftMaskForUGUI.git#1.0.2",
+    "com.unity.adaptiveperformance": "3.0.3",
     "com.unity.collab-proxy": "1.15.15",
     "com.unity.feature.2d": "1.0.0",
-    "com.unity.feature.mobile": "1.0.0",
     "com.unity.ide.visualstudio": "2.0.14",
     "com.unity.ide.vscode": "1.2.5",
     "com.unity.test-framework": "1.1.31",
