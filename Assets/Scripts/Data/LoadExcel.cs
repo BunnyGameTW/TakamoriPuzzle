@@ -23,13 +23,14 @@ public class LoadExcel: SingletonMono<LoadExcel>
     /** 讀取excel檔案 */
     public void loadFile(string path) {
         path = Application.streamingAssetsPath + "/" + path;
-#if UNITY_WEBGL        
-        StartCoroutine(GetText(path));
-#else
-        FileStream stream = File.Open(path, FileMode.Open, FileAccess.Read);
-        DirectRead(stream);
-#endif
+        #if UNITY_WEBGL        
+            StartCoroutine(GetText(path));
+        #else
+            FileStream stream = File.Open(path, FileMode.Open, FileAccess.Read);
+            DirectRead(stream);
+        #endif
     }
+
     IEnumerator GetText(string path)
     {
         UnityWebRequest uwr = UnityWebRequest.Get(path);
@@ -40,15 +41,12 @@ public class LoadExcel: SingletonMono<LoadExcel>
         else
         {
             byte[] results = uwr.downloadHandler.data;
-            using (var stream = new MemoryStream(results))
-            {
-                var fileStream = new FileStream(Application.persistentDataPath + "/temp.txt", FileMode.Create);
-                stream.WriteTo(fileStream);
-                DirectRead(fileStream);
-            }
+            Stream stream = new MemoryStream(results);
+            DirectRead(stream);
         }
     }
-    void DirectRead(FileStream stream)
+    
+    void DirectRead(Stream stream)
     {
         IExcelDataReader reader = ExcelReaderFactory.CreateReader(stream);
         System.Data.DataSet result = reader.AsDataSet();
@@ -61,6 +59,7 @@ public class LoadExcel: SingletonMono<LoadExcel>
         stream.Close();
         reader.Close();
     }
+    
     /** 取得表單 */
     public Dictionary<string, Hashtable> getTable(string sheet) {
         return data[sheet];
