@@ -9,12 +9,14 @@ public class AwardPopup : MonoBehaviour
     public TextMeshProUGUI textTitle;
     private bool isAnimate = false;         // 是否在動畫中
     private System.Action touchCallback;    // 觸碰事件
+    Animator ani;
 
     // 生命週期 --------------------------------------------------------------------------------------------------------------
 
     public void init(Sprite image, string titleString) {
         awardImage.sprite = image;
         textTitle.text = titleString;
+        ani = GetComponent<Animator>();
     }
 
     // Start is called before the first frame update
@@ -36,6 +38,7 @@ public class AwardPopup : MonoBehaviour
         isAnimate = true;
         this.gameObject.SetActive(true);
         StartCoroutine(handleShowEffect());
+        ani.SetBool("isShow", false);
     }
 
     /** 觸碰螢幕 */

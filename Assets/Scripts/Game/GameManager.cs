@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using DG.Tweening;
 public class GameManager : MonoBehaviour
 {
     public SlidingPuzzle slidingPuzzle = null;
@@ -165,6 +165,7 @@ public class GameManager : MonoBehaviour
     private void handleFinishPuzzle() {
         SoundManager.instance.playSE(SoundManager.instance.SE_finish);
         //TODO 圖片往上移動到定點再顯示對話
+        slidingPuzzle.transform.parent.DOMove(new Vector3(0, 0.74f, 0), 1).From(Vector3.zero);
         dialogBox.playMessage();
     }
 
