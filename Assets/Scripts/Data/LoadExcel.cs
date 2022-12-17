@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using ExcelDataReader;
 using System.IO;
-
+using UnityEngine.Networking;
 /**
     跨場景用，共用讀取excel資料(單例)
 */
 
-public class LoadExcel: Singleton<LoadExcel>
+public class LoadExcel: SingletonMono<LoadExcel>
 {
     const string arrayTag = "[]";   // 陣列標記
     private string firstSheet = ""; // 第一個表單頁簽名稱
@@ -23,10 +23,37 @@ public class LoadExcel: Singleton<LoadExcel>
     /** 讀取excel檔案 */
     public void loadFile(string path) {
         path = Application.streamingAssetsPath + "/" + path;
+#if UNITY_WEBGL        
+        StartCoroutine(GetText(path));
+#else
         FileStream stream = File.Open(path, FileMode.Open, FileAccess.Read);
+        DirectRead(stream);
+#endif
+    }
+    IEnumerator GetText(string path)
+    {
+        UnityWebRequest uwr = UnityWebRequest.Get(path);
+        yield return uwr.SendWebRequest();
+
+        if (uwr.result != UnityWebRequest.Result.Success)
+            Debug.LogError(uwr.error);
+        else
+        {
+            byte[] results = uwr.downloadHandler.data;
+            using (var stream = new MemoryStream(results))
+            {
+                var fileStream = new FileStream(Application.persistentDataPath + "/temp.txt", FileMode.Create);
+                stream.WriteTo(fileStream);
+                DirectRead(fileStream);
+            }
+        }
+    }
+    void DirectRead(FileStream stream)
+    {
         IExcelDataReader reader = ExcelReaderFactory.CreateReader(stream);
         System.Data.DataSet result = reader.AsDataSet();
-        if (result.Tables.Count <= 0) {
+        if (result.Tables.Count <= 0)
+        {
             Debug.LogError("Error: 表單讀取失敗");
             return;
         }
@@ -34,7 +61,6 @@ public class LoadExcel: Singleton<LoadExcel>
         stream.Close();
         reader.Close();
     }
-
     /** 取得表單 */
     public Dictionary<string, Hashtable> getTable(string sheet) {
         return data[sheet];
