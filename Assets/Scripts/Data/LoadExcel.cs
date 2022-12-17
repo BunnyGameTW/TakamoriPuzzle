@@ -22,7 +22,7 @@ public class LoadExcel: Singleton<LoadExcel>
 
     /** 讀取excel檔案 */
     public void loadFile(string path) {
-        path = Application.dataPath + "/Resources/" + path;
+        path = Application.streamingAssetsPath + "/" + path;
         FileStream stream = File.Open(path, FileMode.Open, FileAccess.Read);
         IExcelDataReader reader = ExcelReaderFactory.CreateReader(stream);
         System.Data.DataSet result = reader.AsDataSet();
