@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using DG.Tweening;
 
 public class SlidingPuzzle : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public class SlidingPuzzle : MonoBehaviour
 	private SlidingPuzzleTile emptyTile;            // 空方塊
     private bool isPuzzleActive = false;            // 謎題是否開始
     private System.Action finishCallback = null;    // 謎題完成callback
+    Sequence tweener = null;    // 補間事件
 
     // 生命週期 --------------------------------------------------------------------------------------------------------------
 
@@ -61,13 +63,13 @@ public class SlidingPuzzle : MonoBehaviour
     // 結束遊戲
     public void finishPuzzle() {
         isPuzzleActive = false;
-        StartCoroutine(runFinishEffect(() => {
+        runFinishEffect(() => {
             Debug.Log("Puzzle complete!");
             clearPuzzleTile();
             if (finishCallback != null) {
                 finishCallback();
             }
-        }));
+        });
     }
 
     // 觸碰處理 --------------------------------------------------------------------------------------------------------------
@@ -130,8 +132,8 @@ public class SlidingPuzzle : MonoBehaviour
     public void quickFinishPuzzle() {
         SlidingPuzzleTile tmepTile;
         Vector2Int goalPos;
-        for(int j = 0; j < puzzleGridX; j++){
-			for(int i = 0; i < puzzleGridY; i++) {
+        for(int j = 0; j < puzzleGridY; j++){
+			for(int i = 0; i < puzzleGridX; i++) {
                 tmepTile = tileObjectArray[i, j].GetComponent<SlidingPuzzleTile>();
                 goalPos = tmepTile.getGoalGridPos();
                 tmepTile.setNowGridPos(goalPos);
@@ -157,8 +159,8 @@ public class SlidingPuzzle : MonoBehaviour
         tileObjectArray = new GameObject[puzzleGridX, puzzleGridY];
         tilePosArray = new Vector3[puzzleGridX, puzzleGridY];
 
-        for(int j = 0; j < puzzleGridX; j++) {
-			for(int i = 0; i < puzzleGridY; i++) {
+        for(int j = 0; j < puzzleGridY; j++) {
+			for(int i = 0; i < puzzleGridX; i++) {
                 Sprite tempSprite = Sprite.Create(
                     puzzleImage.texture,
                     new Rect(
@@ -231,9 +233,14 @@ public class SlidingPuzzle : MonoBehaviour
         GameObject tempObject = tileB.gameObject;
         Vector2Int tempPos = tileB.getNowGridPos();
         Vector2Int targetPos = tileA.getNowGridPos();
+        bool isTargetPos = false;
+
+        if (tileA.getGoalGridPos() == tileB.getNowGridPos()) {
+            isTargetPos = true;
+        }
 
         if (isTween) {
-            tileA.runPositionTween(tilePosArray[tempPos.x, tempPos.y], 1.0f, callback);
+            tileA.runMoveEffect(tilePosArray[tempPos.x, tempPos.y], isTargetPos, callback);
         }
         else {
             tileA.transform.localPosition = tilePosArray[tempPos.x, tempPos.y];
@@ -266,8 +273,8 @@ public class SlidingPuzzle : MonoBehaviour
         int completeCount = puzzleGridX * puzzleGridY;
         SlidingPuzzleTile tmepTile;
 
-        for(int j = 0; j < puzzleGridX; j++){
-			for(int i = 0; i < puzzleGridY; i++) {
+        for(int j = 0; j < puzzleGridY; j++){
+			for(int i = 0; i < puzzleGridX; i++) {
                 tmepTile = tileObjectArray[i, j].GetComponent<SlidingPuzzleTile>();
                 if (tmepTile.checkGridCorrect()) {
                     completeCount--;
@@ -282,8 +289,8 @@ public class SlidingPuzzle : MonoBehaviour
 
     /** 清除拼圖 */
     private void clearPuzzleTile() {
-        for(int j = 0; j < puzzleGridX; j++) {
-			for(int i = 0; i < puzzleGridY; i++) {
+        for(int j = 0; j < puzzleGridY; j++) {
+			for(int i = 0; i < puzzleGridX; i++) {
                 GameObject temp = tileObjectArray[i, j].gameObject;
                 Destroy(temp);
                 tileObjectArray[i, j] = null;
@@ -292,19 +299,55 @@ public class SlidingPuzzle : MonoBehaviour
     }
 
     /** 結束效果 */
-    private IEnumerator runFinishEffect(System.Action callback = null) {
-        emptyTile.gameObject.SetActive(true);
-        yield return emptyTile.updateFadeInTween(0.75f);
-        this.GetComponent<SpriteRenderer>().enabled = true;
-        yield return updateFadeInTween(0.25f);
+    private void runFinishEffect(System.Action callback = null) {
+        emptyTile.runFadeInEffect(() => {
+            SoundManager.instance.playSE(SoundManager.instance.SE_finish);
+            handleFinishEffect(() => {
+                SpriteRenderer sprite = this.GetComponent<SpriteRenderer>();
+                sprite.color = new Color(1, 1, 1, 0);
+                sprite.enabled = true;
+                handleFadeIn(callback);
+            });
+        });
+    }
 
-        if (callback != null) {
-            callback();
+    /** 處理結束效果 */
+    private void handleFinishEffect(System.Action callback = null) {
+        SlidingPuzzleTile tmepTile;
+        float delay = 0.02f;
+        int count = 0;
+        for(int j = puzzleGridY-1; j >= 0; j--){
+			for(int i = 0; i < puzzleGridX; i++) {
+                float delayTime = delay * count;
+                tmepTile = tileObjectArray[i, j].GetComponent<SlidingPuzzleTile>();
+                if (count + 1 < (puzzleGridY * puzzleGridX)) {
+                    tmepTile.runShineEffect(delayTime);
+                }
+                else {
+                    tmepTile.runShineEffect(delayTime, callback);
+                }
+                count++;
+            }
         }
     }
 
-    /** 更新補間淡入 */
-    private IEnumerator updateFadeInTween(float time, System.Action callback = null) {
-        yield return SpriteTween.updateFadeInTween(this.gameObject, time, EASE_TYPE.QuartInOut, callback);
+    /** 處理淡入動畫 */
+    private void handleFadeIn(System.Action callback = null) {
+        tweener = DOTween.Sequence();
+        tweener.AppendInterval(0.1f);
+        tweener.Append(DOTween.To(
+            () => { return this.GetComponent<SpriteRenderer>().color; },
+            (value) => { this.GetComponent<SpriteRenderer>().color = value; },
+            new Color(1, 1, 1, 1),
+            0.5f
+        ).SetEase(Ease.InOutQuart));
+        tweener.AppendInterval(0.1f);
+        tweener.AppendCallback(() => {
+            tweener = null;
+            if (callback != null) {
+                callback();
+            }
+        });
+        tweener.Play();
     }
 }
