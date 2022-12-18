@@ -112,7 +112,7 @@ public class DialogBox : MonoBehaviour
     /** 開始對話 */
     public void playMessage() {
         if (!isReadyPlay) {
-            Debug.LogError("DialogBox: playMessage is not ReadyPlay");
+            Debug.Log("DialogBox: playMessage is not ReadyPlay");
             return;
         }
         isReadyPlay = false;

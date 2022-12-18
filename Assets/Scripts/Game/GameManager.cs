@@ -163,10 +163,18 @@ public class GameManager : MonoBehaviour
 
     /** 處理完成謎題 */
     private void handleFinishPuzzle() {
-        SoundManager.instance.playSE(SoundManager.instance.SE_finish);
-        //TODO 圖片往上移動到定點再顯示對話
-        slidingPuzzle.transform.parent.DOMove(new Vector3(0, 0.74f, 0), 1).From(Vector3.zero);
-        dialogBox.playMessage();
+        Sequence tweener = DOTween.Sequence();
+        tweener.AppendInterval(0.1f);
+        tweener.InsertCallback(0.5f, () => {
+            dialogBox.playMessage();
+        });
+        tweener.Join(DOTween.To(
+            () => { return slidingPuzzle.transform.parent.position; },
+            (value) => { slidingPuzzle.transform.parent.position = value; },
+            new Vector3(0, 0.74f, 0),
+            1.0f
+        ).SetEase(Ease.OutCubic));
+        tweener.Play();
     }
 
     /** 處理選擇選項 */
