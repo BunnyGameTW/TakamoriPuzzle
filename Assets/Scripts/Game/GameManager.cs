@@ -16,13 +16,14 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         language = DataManager.instance.getLanguageCode();
-        initSlidingPuzzle();
-        initDialogBox();
-        DataManager.instance.LanguageChanged += onLanguageChanged;
-        if (DataManager.instance.skipPassPuzzle
-        && DataManager.instance.isPassLevel(DataManager.instance.episodeId, DataManager.instance.levelId)) {
-            slidingPuzzle.quickFinishPuzzle();
-        }
+        initSlidingPuzzle(() => {
+            initDialogBox();
+            DataManager.instance.LanguageChanged += onLanguageChanged;
+            if (DataManager.instance.skipPassPuzzle
+            && DataManager.instance.isPassLevel(DataManager.instance.episodeId, DataManager.instance.levelId)) {
+                slidingPuzzle.quickFinishPuzzle();
+            }
+        });
     }
 
     // Update is called once per frame
@@ -39,17 +40,20 @@ public class GameManager : MonoBehaviour
     // 內部呼叫 --------------------------------------------------------------------------------------------------------------
 
     /** 初始化謎題 */
-    private void initSlidingPuzzle() {
+    private void initSlidingPuzzle(System.Action callback) {
         int episodeId = DataManager.instance.episodeId;
         int levelId = DataManager.instance.levelId;
         int puzzleGridX = DataManager.instance.puzzleGridX;
         int puzzleGridY = DataManager.instance.puzzleGridY;
         string puzzleImagePath = ResManager.getPuzzleImagePath(episodeId, levelId);
-        Sprite puzzleImage = ResManager.loadSprite(puzzleImagePath);
-
-        slidingPuzzle.init(puzzleImage, puzzleGridX, puzzleGridY);
-        slidingPuzzle.startPuzzle();
-        slidingPuzzle.setFinishPuzzleCallback(handleFinishPuzzle);
+        StartCoroutine(ResManager.asyncLoadSprite(puzzleImagePath, (sprite) => {
+            slidingPuzzle.init(sprite, puzzleGridX, puzzleGridY);
+            slidingPuzzle.startPuzzle();
+            slidingPuzzle.setFinishPuzzleCallback(handleFinishPuzzle);
+            if (callback != null) {
+                callback();
+            }
+        }));
     }
 
     /** 初始化對話 */
@@ -214,21 +218,22 @@ public class GameManager : MonoBehaviour
         if (unlockList.Count >= levelList.Count) {
             int awardID = levelList.Count + 1;
             string puzzleImagePath = ResManager.getPuzzleImagePath(episodeId, awardID);
-            Sprite puzzleImage = ResManager.loadSprite(puzzleImagePath);
-            DataManager.instance.unlockLevel(episodeId, awardID);
+            StartCoroutine(ResManager.asyncLoadSprite(puzzleImagePath, (sprite) => {
+                DataManager.instance.unlockLevel(episodeId, awardID);
 
-            Hashtable contentData = LoadExcel.instance.getObject("uiText", "id", UNLOCK_CG_STRING_NUMBER);            
-            string unlockString = (string)contentData[language];
-            contentData = LoadExcel.instance.getObject("episodeTitle", "id", episodeId);
-            string episodeTitle = (string)contentData[language + "_title"];
-            unlockString = string.Format(unlockString, episodeTitle);
-            MySceneManager.Instance.ShowButtons(false);
-            awardPopup.init(puzzleImage, unlockString);
-            awardPopup.setTouchCallback(() => {                
-                MySceneManager.Instance.SetLoadSceneState(SceneState.SelectLevel);
-                MySceneManager.Instance.LoadScene();
-            });
-            awardPopup.show();
+                Hashtable contentData = LoadExcel.instance.getObject("uiText", "id", UNLOCK_CG_STRING_NUMBER);            
+                string unlockString = (string)contentData[language];
+                contentData = LoadExcel.instance.getObject("episodeTitle", "id", episodeId);
+                string episodeTitle = (string)contentData[language + "_title"];
+                unlockString = string.Format(unlockString, episodeTitle);
+                MySceneManager.Instance.ShowButtons(false);
+                awardPopup.init(sprite, unlockString);
+                awardPopup.setTouchCallback(() => {                
+                    MySceneManager.Instance.SetLoadSceneState(SceneState.SelectLevel);
+                    MySceneManager.Instance.LoadScene();
+                });
+                awardPopup.show();
+            }));
 
             Debug.Log("已解鎖全部關卡");
             Debug.Log("解鎖第" + (levelList.Count+1) + "張cg");

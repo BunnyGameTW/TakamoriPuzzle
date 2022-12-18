@@ -54,10 +54,14 @@ public class Book : MonoBehaviour
             }
             else
                 fileName = string.Format(PUZZLE_IMAGE_FORMAT, _data.episodeId, 1);
-            puzzleImage.sprite = Resources.Load<Sprite>(fileName);
+            StartCoroutine(ResManager.asyncLoadSprite(fileName, (sprite) => {
+                puzzleImage.sprite = sprite;
+            }));
         }
         
         fileName = _data.isLock ? BOOK_IMAGE_UNABLED : string.Format(BOOK_IMAGE_FORMAT, _data.episodeId);
-        bookImage.sprite = Resources.Load<Sprite>(fileName);        
+        StartCoroutine(ResManager.asyncLoadSprite(fileName, (sprite) => {
+            bookImage.sprite = sprite;
+        }));
     }
 }

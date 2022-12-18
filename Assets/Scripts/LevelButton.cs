@@ -37,7 +37,9 @@ public class LevelButton : MonoBehaviour
         if (!_data.isLock)
         {
             string fileName = string.Format(IMAGE_FORMAT, _data.episodeId, _data.levelId);
-            levelImage.sprite = Resources.Load<Sprite>(fileName);
+            StartCoroutine(ResManager.asyncLoadSprite(fileName, (sprite) => {
+                levelImage.sprite = sprite;
+            }));
         }
     }
 }

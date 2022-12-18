@@ -26,7 +26,24 @@ static class ResManager
         return Resources.Load<Sprite>(path);
     }
 
-    // 預讀內部音檔AudioClip
+    // 讀取內部音檔AudioClip
+    static public AudioClip loadAudioClip(string path) {
+        return Resources.Load<AudioClip>(path);
+    }
+
+    // 非同步讀內部圖片Sprite
+    static public IEnumerator asyncLoadSprite(string path, System.Action<Sprite> callback = null) {
+        ResourceRequest resRequest = Resources.LoadAsync<Sprite>(path);
+        while(!resRequest.isDone) {
+            yield return null;
+        }
+        if (callback != null) {
+            Sprite sprite = resRequest.asset as Sprite;
+            callback(sprite);
+        }
+    }
+
+    // 非同步讀內部音檔AudioClip
     static public IEnumerator asyncLoadAudioClip(string path, System.Action<AudioClip> callback = null) {
         ResourceRequest resRequest = Resources.LoadAsync<AudioClip>(path);
         while(!resRequest.isDone) {
@@ -36,11 +53,6 @@ static class ResManager
             AudioClip audioClip = resRequest.asset as AudioClip;
             callback(audioClip);
         }
-    }
-
-    // 讀取內部音檔AudioClip
-    static public AudioClip loadAudioClip(string path) {
-        return Resources.Load<AudioClip>(path);
     }
 
     /** 取得謎題圖片 */
