@@ -722,7 +722,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Skip playing puzzle when it has done once
+  m_text: "\u30D1\u30BA\u30EB\u3092\u5B8C\u6210\u3055\u305B\u305F\u5F8C\u3001\u30EC\u30D9\u30EB\u3092\u7E70\u308A\u8FD4\u3057\u3066\u30B2\u4E00\u30E0\u3092\u30B9\u30AD\u30C3\u30D7\u3057\u307E\u3059"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 7b3d34a660796d745a609a53f1438e5b, type: 2}
   m_sharedMaterial: {fileID: -5872890435080129620, guid: 7b3d34a660796d745a609a53f1438e5b, type: 2}
@@ -801,6 +801,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6703051177718646896}
   - component: {fileID: 1338731477942770726}
+  - component: {fileID: 6421735080095008152}
   m_Layer: 5
   m_Name: SettingPopup
   m_TagString: Untagged
@@ -861,6 +862,27 @@ MonoBehaviour:
   textProgramming: {fileID: 497902787490811329}
   textArt: {fileID: 5894157641895379794}
   textTranslation: {fileID: 1958951821731811105}
+  scroll: {fileID: 4634764150525020405}
+--- !u!95 &6421735080095008152
+Animator:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1678571638003024819}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 94fa0fa47372ac046bdd96edf2260454, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &1832476680019837760
 GameObject:
   m_ObjectHideFlags: 0
@@ -895,7 +917,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -1423}
+  m_AnchoredPosition: {x: 0, y: -1444}
   m_SizeDelta: {x: 878.1, y: 109}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &2000903473802452279
@@ -1159,7 +1181,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -1160}
+  m_AnchoredPosition: {x: 0, y: -1139}
   m_SizeDelta: {x: 878.1, y: 109}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &2413895489324251247
@@ -2610,7 +2632,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Auto Play Story
+  m_text: "\u30B9\u30C8\u4E00\u30EA\u4E00\u30AA\u4E00\u30C8\u30C0\u30A4\u30A2\u30ED\u30B0"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 7b3d34a660796d745a609a53f1438e5b, type: 2}
   m_sharedMaterial: {fileID: -5872890435080129620, guid: 7b3d34a660796d745a609a53f1438e5b, type: 2}
@@ -3969,7 +3991,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 514.20013}
   m_SizeDelta: {x: 0, y: 2069.2}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &7052282000275105831
@@ -4430,7 +4452,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -1290}
+  m_AnchoredPosition: {x: 0, y: -1310}
   m_SizeDelta: {x: 878.1, y: 109}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &8250026056142041829

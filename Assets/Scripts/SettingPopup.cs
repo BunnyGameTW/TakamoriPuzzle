@@ -23,7 +23,7 @@ public class SettingPopup : MonoBehaviour
     public TMP_Text textProgramming;
     public TMP_Text textArt;
     public TMP_Text textTranslation;
-
+    public ScrollRect scroll;
     private float BGMVolime = 1.0f;
     private float SEVolime = 1.0f;
     private SystemLanguage language = SystemLanguage.English;
@@ -35,6 +35,7 @@ public class SettingPopup : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        animator = GetComponent<Animator>();
         onOpenPopup();
     }
 
@@ -104,7 +105,7 @@ public class SettingPopup : MonoBehaviour
         toggleSkipPuzzle.isOn = skipPassPuzzle;
         toggleAutoPlay.isOn = autoPlayDialog;
     }
-
+    Animator animator;
     /** 開啟視窗 */
     public void onOpenPopup() {
         BGMVolime = DataManager.instance.BGMVolime;
@@ -120,6 +121,10 @@ public class SettingPopup : MonoBehaviour
         toggleAutoPlay.isOn = autoPlayDialog;
         
         changeUIText(DataManager.instance.getLanguageCode(language));
+
+        animator.SetBool("isShow", true);
+        scroll.content.GetComponent<RectTransform>().anchoredPosition =
+            new Vector3(scroll.content.GetComponent<RectTransform>().anchoredPosition.x, 0);
     }
 
     /** 關閉視窗 */
@@ -129,7 +134,8 @@ public class SettingPopup : MonoBehaviour
         DataManager.instance.language = language;
         DataManager.instance.skipPassPuzzle = skipPassPuzzle;
         DataManager.instance.autoPlayDialog = autoPlayDialog;
-        this.gameObject.SetActive(false);
+        animator.SetBool("isShow", false);
+        //this.gameObject.SetActive(false);
     }
 
     // 內部呼叫 --------------------------------------------------------------------------------------------------------------
