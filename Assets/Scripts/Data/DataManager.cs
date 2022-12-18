@@ -38,6 +38,7 @@ public class GameData
         autoPlayDialog = false;
 
         switch(Application.systemLanguage) {
+            case SystemLanguage.Chinese:
             case SystemLanguage.ChineseTraditional:
             case SystemLanguage.ChineseSimplified: {
                 language = SystemLanguage.ChineseTraditional;

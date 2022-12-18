@@ -292,7 +292,15 @@ public class DialogBox : MonoBehaviour
 
     /** 結束對話自動播放 */
     private IEnumerator runAutoWaitEffect() {
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(3.0f);
+        waitIcon.SetActive(true);
+        yield return new WaitForSeconds(1.0f);
+        for(int i = 0; i < 5; i++) {
+            yield return new WaitForSeconds(0.1f);
+            waitIcon.SetActive(true);
+            yield return new WaitForSeconds(0.1f);
+            waitIcon.SetActive(false);
+        }
         onClickDialogBox();
     }
 }
