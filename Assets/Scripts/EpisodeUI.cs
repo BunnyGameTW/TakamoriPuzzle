@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using TMPro;
 public struct CellData
 {
     public int episodeId;
@@ -14,6 +15,7 @@ public struct CellData
 public class EpisodeUI : MonoBehaviour
 {
     public GameObject cellPrefab, scrollContent;
+    public TextMeshProUGUI titleText;
     CellData[] storyDatas;
     Book[] books;
     const string EXCEL_TAG_NAME = "episodeTitle";
@@ -70,7 +72,10 @@ public class EpisodeUI : MonoBehaviour
             //set ui
             books[i] = goBook.GetComponent<Book>();
             books[i].SetData(storyDatas[i]);
-        }                
+        }
+
+        Hashtable data2 = LoadExcel.instance.getObject("uiText", INDEX_NAME, 1);
+        titleText.text = (string)data2[language];
     }
     private void OnDestroy()
     {
@@ -88,6 +93,7 @@ public class EpisodeUI : MonoBehaviour
                 books[i].UpdateTitle(title);
             }
         }
-        
+        Hashtable data2 = LoadExcel.instance.getObject("uiText", INDEX_NAME, 1);
+        titleText.text = (string)data2[languageCode];
     }
 }

@@ -366,7 +366,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -1091}
-  m_SizeDelta: {x: 1080, y: 1600}
+  m_SizeDelta: {x: 1080, y: 1800}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &841520144
 MonoBehaviour:
@@ -525,6 +525,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cellPrefab: {fileID: 6955969062319745643, guid: 37f428d3c2f9eef46a6645eb02ad0658, type: 3}
   scrollContent: {fileID: 564480998}
+  titleText: {fileID: 2143736856}
 --- !u!1 &1120237188
 GameObject:
   m_ObjectHideFlags: 0

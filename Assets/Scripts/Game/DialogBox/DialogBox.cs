@@ -22,8 +22,7 @@ public class DialogBox : MonoBehaviour
 {
     const string newlineChar = "<block>";    // 分段標記
     
-    private Color SELECTED_COLOR = new Color(0.8f, 0.7f, 0.3f); // 已選擇過選項
-
+    private Color SELECTED_COLOR = new Color(0.64f, 0.64f, 0.64f); // 已選擇過選項    
     public Typewriter typewriter = null;        // 打字機物件
     public Button btnNext = null;               // 下一句按鈕物件
     public GameObject waitIcon = null;          // 等待下一句圖示
@@ -203,12 +202,14 @@ public class DialogBox : MonoBehaviour
             tmepButton.onClick.AddListener(() => {
                 this.onClickSelect(selectID);
             });
-            textChild.GetComponent<TMP_Text>().text = selectList[i].selectText;
+
+            TMP_Text t = textChild.GetComponent<TMP_Text>();
+            t.text = selectList[i].selectText;
             tmepButton.transform.SetParent(selectGroup.transform);
             tmepButton.transform.localScale = selectGroup.transform.localScale;
 
             if (DataManager.instance.isUnlockLevel(DataManager.instance.episodeId, selectID)) {
-                tmepButton.image.color = SELECTED_COLOR;
+                t.color = SELECTED_COLOR;
             }
         }
         state = DIALOG_BOX_STATE.SELECT;

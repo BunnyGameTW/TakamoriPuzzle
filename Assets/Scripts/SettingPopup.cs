@@ -29,13 +29,13 @@ public class SettingPopup : MonoBehaviour
     private SystemLanguage language = SystemLanguage.English;
     private bool skipPassPuzzle = false;
     private bool autoPlayDialog = false;
-
+    Animator animator;
     // 生命週期 --------------------------------------------------------------------------------------------------------------
 
     // Start is called before the first frame update
     void Start()
     {
-        animator = GetComponent<Animator>();
+        
         onOpenPopup();
     }
 
@@ -105,7 +105,7 @@ public class SettingPopup : MonoBehaviour
         toggleSkipPuzzle.isOn = skipPassPuzzle;
         toggleAutoPlay.isOn = autoPlayDialog;
     }
-    Animator animator;
+    
     /** 開啟視窗 */
     public void onOpenPopup() {
         BGMVolime = DataManager.instance.BGMVolime;
@@ -122,11 +122,17 @@ public class SettingPopup : MonoBehaviour
         
         changeUIText(DataManager.instance.getLanguageCode(language));
 
+        if (animator == null)
+            animator = GetComponent<Animator>();
         animator.SetBool("isShow", true);
-        scroll.content.GetComponent<RectTransform>().anchoredPosition =
-            new Vector3(scroll.content.GetComponent<RectTransform>().anchoredPosition.x, 0);
+        Invoke("SetScrollContentPosition", 0.1f);
     }
 
+    void SetScrollContentPosition()
+    {
+        scroll.content.GetComponent<RectTransform>().anchoredPosition =
+           new Vector3(scroll.content.GetComponent<RectTransform>().anchoredPosition.x, 0);
+    }
     /** 關閉視窗 */
     public void onClosePopup() {
         DataManager.instance.BGMVolime = BGMVolime;

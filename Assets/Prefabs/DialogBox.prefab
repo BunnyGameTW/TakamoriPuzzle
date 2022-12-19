@@ -623,11 +623,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7766329350232574899, guid: 4f4eb08e3f9a5ef47b89d2a8fd7b6563, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 440
+      value: 500
       objectReference: {fileID: 0}
     - target: {fileID: 7766329350232574899, guid: 4f4eb08e3f9a5ef47b89d2a8fd7b6563, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -140
+      value: -320
       objectReference: {fileID: 0}
     - target: {fileID: 7766329350232574899, guid: 4f4eb08e3f9a5ef47b89d2a8fd7b6563, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -655,6 +655,22 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 205838196586623315}
     m_Modifications:
+    - target: {fileID: 641969697931400931, guid: 4f4eb08e3f9a5ef47b89d2a8fd7b6563, type: 3}
+      propertyPath: m_fontColor.b
+      value: 0.22352941
+      objectReference: {fileID: 0}
+    - target: {fileID: 641969697931400931, guid: 4f4eb08e3f9a5ef47b89d2a8fd7b6563, type: 3}
+      propertyPath: m_fontColor.g
+      value: 0.22352941
+      objectReference: {fileID: 0}
+    - target: {fileID: 641969697931400931, guid: 4f4eb08e3f9a5ef47b89d2a8fd7b6563, type: 3}
+      propertyPath: m_fontColor.r
+      value: 0.50980395
+      objectReference: {fileID: 0}
+    - target: {fileID: 641969697931400931, guid: 4f4eb08e3f9a5ef47b89d2a8fd7b6563, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4281940354
+      objectReference: {fileID: 0}
     - target: {fileID: 6041893914472750509, guid: 4f4eb08e3f9a5ef47b89d2a8fd7b6563, type: 3}
       propertyPath: m_Name
       value: DialogSelect
@@ -725,11 +741,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7766329350232574899, guid: 4f4eb08e3f9a5ef47b89d2a8fd7b6563, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 440
+      value: 500
       objectReference: {fileID: 0}
     - target: {fileID: 7766329350232574899, guid: 4f4eb08e3f9a5ef47b89d2a8fd7b6563, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -54.666656
+      value: -114.666664
       objectReference: {fileID: 0}
     - target: {fileID: 7766329350232574899, guid: 4f4eb08e3f9a5ef47b89d2a8fd7b6563, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -827,11 +843,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7766329350232574899, guid: 4f4eb08e3f9a5ef47b89d2a8fd7b6563, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 440
+      value: 500
       objectReference: {fileID: 0}
     - target: {fileID: 7766329350232574899, guid: 4f4eb08e3f9a5ef47b89d2a8fd7b6563, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -225.33331
+      value: -525.3333
       objectReference: {fileID: 0}
     - target: {fileID: 7766329350232574899, guid: 4f4eb08e3f9a5ef47b89d2a8fd7b6563, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
