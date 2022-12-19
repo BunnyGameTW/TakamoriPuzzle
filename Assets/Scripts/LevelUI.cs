@@ -46,12 +46,16 @@ public class LevelUI : MonoBehaviour
             //create buttons
             if (i == 0) 
             {
-                FindObjectOfType<LevelButton>().SetData(levelDatas[i]);
+                LevelButton button = FindObjectOfType<LevelButton>();
+                button.SetData(levelDatas[i]);
+                button.OnStart();
             }
             else
             {            
                 GameObject go = Instantiate(levelButtonPrefab, layouts[index].transform);
-                go.GetComponent<LevelButton>().SetData(levelDatas[i]);
+                LevelButton button = go.GetComponent<LevelButton>();
+                button.SetData(levelDatas[i]);
+                button.OnStart();
             }
             if (i != 0)
                 counter++;
