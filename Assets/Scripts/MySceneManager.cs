@@ -141,10 +141,19 @@ public class MySceneManager : MonoBehaviour
             asyncLoad.allowSceneActivation = true;
             gameObjectButtons.SetActive(sceneState != SceneState.Login);
             SoundManager.instance.playSE(SoundManager.instance.SE_transitionOut, 0.5f);
-            if ((preSceneState == SceneState.SelectEpisode) && sceneState == (SceneState.SelectLevel))
-                SoundManager.instance.playBGM(SoundManager.instance.BGM_xmas);
-            else if ((preSceneState == SceneState.SelectLevel) && sceneState == (SceneState.SelectEpisode))
-                SoundManager.instance.playBGM(SoundManager.instance.BGM_title);
+            switch(sceneState) {
+                case SceneState.Login:
+                case SceneState.SelectEpisode: {
+                    SoundManager.instance.playBGM(SoundManager.instance.BGM_title);
+                } break;
+                case SceneState.SelectLevel:
+                case SceneState.Game: {
+                    SoundManager.instance.playBGM(SoundManager.instance.BGM_xmas);
+                } break;
+                default: {
+                    SoundManager.instance.playBGM(SoundManager.instance.BGM_title);
+                } break;
+            }
             isLoading = false;
         }
     }

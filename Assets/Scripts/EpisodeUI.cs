@@ -52,7 +52,7 @@ public class EpisodeUI : MonoBehaviour
                 string message = (string)data[language + TITLE_SUFFIX_NAME];
                 storyDatas[i].title = message;
                 List<Hashtable> levelList = LoadExcel.instance.getObjectList("all", "episodeId", storyDatas[i].episodeId.ToString());
-                storyDatas[i].isUnlockCG = DataManager.instance.isUnlockLevel(storyDatas[i].episodeId, levelList.Count + 1);
+                storyDatas[i].isUnlockCG = DataManager.instance.isPassLevel(storyDatas[i].episodeId, levelList.Count + 1);
             }
 
             //create ui

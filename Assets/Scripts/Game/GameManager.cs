@@ -6,8 +6,6 @@ public class GameManager : MonoBehaviour
 {
     public SlidingPuzzle slidingPuzzle = null;
     public DialogBox dialogBox = null;
-    public AwardPopup awardPopup = null;
-    const int UNLOCK_CG_STRING_NUMBER = 13;
     private string language;
     
     // 生命週期 --------------------------------------------------------------------------------------------------------------
@@ -198,45 +196,35 @@ public class GameManager : MonoBehaviour
     /** 處理解鎖關卡 */
     private void handleUnlockLevel(int ID) {
         int episode = DataManager.instance.episodeId;
-        int levelId = DataManager.instance.levelId;
-        DataManager.instance.passLevel(episode, levelId);
         DataManager.instance.unlockLevel(episode, ID);
-        DataManager.instance.levelId = ID;
     }
     
     /** 處理完成關卡 */
     private void handleFinishLevel(int nextLevel) {
+        int episode = DataManager.instance.episodeId;
+        int levelId = DataManager.instance.levelId;
+        List<Hashtable> levelList = LoadExcel.instance.getObjectList("all", "episodeId", episode.ToString());
+        List<int> passList = DataManager.instance.getPassLevelList(episode);
+        int beforePass, nowPass;
+
+        beforePass = passList.Count;
+        DataManager.instance.passLevel(episode, levelId);
+        DataManager.instance.levelId = nextLevel;
+        passList = DataManager.instance.getPassLevelList(episode);
+        nowPass = passList.Count;
+
+        if ((nowPass >= levelList.Count)
+        && (beforePass == levelList.Count - 1 || nextLevel == 0)) {
+            int awardID = levelList.Count + 1;
+            DataManager.instance.passLevel(episode, awardID);
+            DataManager.instance.episodeClear = true;
+            Debug.Log("已通過全部關卡");
+            Debug.Log("解鎖第" + (levelList.Count+1) + "張cg");
+        }
+
         if (nextLevel != 0) {
             MySceneManager.Instance.SetLoadSceneState(SceneState.Game);
             MySceneManager.Instance.LoadScene();
-            return;
-        }
-        int episodeId = DataManager.instance.episodeId;
-        List<Hashtable> levelList = LoadExcel.instance.getObjectList("all", "episodeId", episodeId.ToString());
-        List<int> unlockList = DataManager.instance.getUnlockLevelList(episodeId);
-
-        if (unlockList.Count >= levelList.Count) {
-            int awardID = levelList.Count + 1;
-            string puzzleImagePath = ResManager.getPuzzleImagePath(episodeId, awardID);
-            StartCoroutine(ResManager.asyncLoadSprite(puzzleImagePath, (sprite) => {
-                DataManager.instance.unlockLevel(episodeId, awardID);
-
-                Hashtable contentData = LoadExcel.instance.getObject("uiText", "id", UNLOCK_CG_STRING_NUMBER);            
-                string unlockString = (string)contentData[language];
-                contentData = LoadExcel.instance.getObject("episodeTitle", "id", episodeId);
-                string episodeTitle = (string)contentData[language + "_title"];
-                unlockString = string.Format(unlockString, episodeTitle);
-                MySceneManager.Instance.ShowButtons(false);
-                awardPopup.init(sprite, unlockString);
-                awardPopup.setTouchCallback(() => {                
-                    MySceneManager.Instance.SetLoadSceneState(SceneState.SelectLevel);
-                    MySceneManager.Instance.LoadScene();
-                });
-                awardPopup.show();
-            }));
-
-            Debug.Log("已解鎖全部關卡");
-            Debug.Log("解鎖第" + (levelList.Count+1) + "張cg");
         }
         else {
             MySceneManager.Instance.SetLoadSceneState(SceneState.SelectLevel);

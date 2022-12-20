@@ -7,15 +7,25 @@ public class AwardPopup : MonoBehaviour
 {
     public Image awardImage;       // 獎勵cg
     public TextMeshProUGUI textTitle;
+
     private bool isAnimate = false;         // 是否在動畫中
     private System.Action touchCallback;    // 觸碰事件
     Animator ani;
 
     // 生命週期 --------------------------------------------------------------------------------------------------------------
 
-    public void init(Sprite image, string titleString) {
-        awardImage.sprite = image;
-        textTitle.text = titleString;
+    public void init(Sprite sprite) {
+        int episodeId = DataManager.instance.episodeId;
+        Hashtable uiTextData = LoadExcel.instance.getObject("uiText", "name", "unlockCG");
+        Hashtable contentData = LoadExcel.instance.getObject("episodeTitle", "id", episodeId);
+        string language, episodeTitle, unlockString;
+
+        language = DataManager.instance.getLanguageCode();
+        episodeTitle = (string)contentData[language + "_title"];
+        unlockString = (string)uiTextData[language];
+        unlockString = string.Format(unlockString, episodeTitle);
+        textTitle.text = unlockString;
+        awardImage.sprite = sprite;
         ani = GetComponent<Animator>();
     }
 

@@ -108,7 +108,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4521864821188558328}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -244,7 +244,7 @@ RectTransform:
   - {fileID: 4521864820779269470}
   - {fileID: 8049391109222786661}
   m_Father: {fileID: 4521864821188558328}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -393,14 +393,13 @@ GameObject:
   - component: {fileID: 4521864821188558328}
   - component: {fileID: 4521864821188558331}
   - component: {fileID: 7757650133326194113}
-  - component: {fileID: 613373722057203998}
   m_Layer: 5
   m_Name: AwardPopup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4521864821188558328
 RectTransform:
   m_ObjectHideFlags: 0
@@ -414,8 +413,8 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4521864821484570648}
-  - {fileID: 8851824081556478921}
   - {fileID: 5593964845102110681}
+  - {fileID: 8851824081556478921}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -446,7 +445,7 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4521864821188558329}
-  m_Enabled: 0
+  m_Enabled: 1
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: a865f7115398fbf498fa1cacdc7da3ac, type: 2}
   m_CullingMode: 0
@@ -458,22 +457,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!111 &613373722057203998
-Animation:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4521864821188558329}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Animation: {fileID: 7400000, guid: ff66e0229c570d6439143596a5b40e3e, type: 2}
-  m_Animations:
-  - {fileID: 7400000, guid: ff66e0229c570d6439143596a5b40e3e, type: 2}
-  m_WrapMode: 0
-  m_PlayAutomatically: 0
-  m_AnimatePhysics: 0
-  m_CullingType: 0
 --- !u!1 &4521864821484570649
 GameObject:
   m_ObjectHideFlags: 0

@@ -15,6 +15,8 @@ public class LevelUI : MonoBehaviour
     public GameObject[] layouts;
     public GameObject levelButtonPrefab;
     public TextMeshProUGUI textTitle;
+    public AwardPopup awardPopup;
+
     int[] sections = {1, 2, 4, 1};
     Hashtable data;
     const string EXCEL_TAG_NAME = "episodeTitle";
@@ -25,6 +27,10 @@ public class LevelUI : MonoBehaviour
     {
         DataManager.instance.LanguageChanged += OnLanguageChanged;
         int episodeId = DataManager.instance.episodeId;
+
+        if (DataManager.instance.isUnlockLevel(episodeId, 1) == false) {
+            DataManager.instance.unlockLevel(episodeId, 1);
+        }
 
         //set title
         data = LoadExcel.instance.getObject(EXCEL_TAG_NAME, INDEX_NAME, episodeId);
@@ -37,11 +43,6 @@ public class LevelUI : MonoBehaviour
             levelDatas[i].episodeId = episodeId;
             levelDatas[i].levelId = i + 1;
             levelDatas[i].isLock = !DataManager.instance.isUnlockLevel(levelDatas[i].episodeId, levelDatas[i].levelId);
-            
-            if (levelDatas[i].levelId == 1) {
-                levelDatas[i].isLock = false;
-            }
-
 
             //create buttons
             if (i == 0) 
@@ -61,6 +62,11 @@ public class LevelUI : MonoBehaviour
                 index++;
             }
         }
+
+        if (DataManager.instance.episodeClear == true) {
+            DataManager.instance.episodeClear = false;
+            showAwardPopup();
+        }
     }
 
     private void OnDestroy()
@@ -77,5 +83,27 @@ public class LevelUI : MonoBehaviour
     {
         string message = (string)data[language + TITLE_SUFFIX_NAME];
         textTitle.text = message;
+    }
+
+    /** 顯示獎勵CG彈窗 */
+    private void showAwardPopup() {
+        int episodeId = DataManager.instance.episodeId;
+        Hashtable uiTextData = LoadExcel.instance.getObject("uiText", "name", "unlockCG");
+        Hashtable contentData = LoadExcel.instance.getObject("episodeTitle", "id", episodeId);
+        List<Hashtable> levelList = LoadExcel.instance.getObjectList("all", "episodeId", episodeId.ToString());
+        string puzzleImagePath;
+        int awardID;
+
+        awardID = levelList.Count + 1;
+        puzzleImagePath = ResManager.getPuzzleImagePath(episodeId, awardID);
+        StartCoroutine(ResManager.asyncLoadSprite(puzzleImagePath, (sprite) => {
+            MySceneManager.Instance.ShowButtons(false);
+            awardPopup.init(sprite);
+            awardPopup.show();
+        }));
+        awardPopup.setTouchCallback(() => {
+            MySceneManager.Instance.SetLoadSceneState(SceneState.Login);
+            MySceneManager.Instance.LoadScene();
+        });
     }
 }

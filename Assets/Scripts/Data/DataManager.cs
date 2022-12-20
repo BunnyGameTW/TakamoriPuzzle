@@ -60,9 +60,10 @@ public class GameData
 // 資料管理器
 public class DataManager: Singleton<DataManager>
 {
-    public int puzzleGridX = 0;     // 謎題格數X
-    public int puzzleGridY = 0;     // 謎題格數Y
-    private GameData gameData;      // 遊戲資料(用func呼叫+自動存檔)
+    public int puzzleGridX = 0;         // 謎題格數X
+    public int puzzleGridY = 0;         // 謎題格數Y
+    public bool episodeClear = false;   // 章節關卡全解
+    private GameData gameData;          // 遊戲資料(用func呼叫+自動存檔)
     public event System.EventHandler<string> LanguageChanged;
 
     /** 建構子 */
@@ -74,6 +75,7 @@ public class DataManager: Singleton<DataManager>
 
         puzzleGridX = 3;
         puzzleGridY = 3;
+        episodeClear = false;
     }
 
     /** 最後選擇的章節 */
@@ -214,6 +216,22 @@ public class DataManager: Singleton<DataManager>
 
     public bool isPassLevel(int level) {
         return isPassLevel(gameData.episodeId, level);
+    }
+
+    /** 取得已通關level清單 */
+    public List<int> getPassLevelList(int episode) {
+        List<int> list = new List<int>();
+        int index = 0;
+        foreach(Vector2Int item in gameData.passListKey) {
+            if (item.x != episode) {
+                continue;
+            }
+            if (gameData.passListValue[index]) {
+                list.Add(item.y);
+            }
+            index++;
+        }
+        return list;
     }
 
     // 內部呼叫 --------------------------------------------------------------------------------------------------------------
