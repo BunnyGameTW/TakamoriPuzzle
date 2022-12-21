@@ -52,6 +52,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 277979a92b53f0b4c8b50452823d2824, type: 3}
   - {fileID: 21300000, guid: 94f0f31a27b0bbb42a1378805131949a, type: 3}
   - {fileID: 21300000, guid: f471212a0f6494b4a8825130030bd133, type: 3}
+  - {fileID: 21300000, guid: 1c88dcdace9ba1e4390fc16601dd4fa0, type: 3}
   - {fileID: 21300000, guid: 5de9161b6b4f119498e9f5764b1c2853, type: 3}
   - {fileID: 21300000, guid: e658f9bc80a298446a19a15e5f13782e, type: 3}
   - {fileID: 21300000, guid: 3218f29d6b543f244b212d770d7cd05c, type: 3}
@@ -77,6 +78,7 @@ SpriteAtlas:
   - buttonBack
   - buttonClose
   - title
+  - ballFrame
   - maskCricle
   - buttonClosePress
   - buttonCommon

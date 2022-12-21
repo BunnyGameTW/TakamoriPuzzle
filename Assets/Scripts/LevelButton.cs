@@ -13,9 +13,7 @@ public class LevelButton : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        button = GetComponent<Button>();
-        button.onClick.AddListener(OnClick);
-        UpdateUI();
+
     }
     void OnClick()
     {
@@ -27,10 +25,15 @@ public class LevelButton : MonoBehaviour
     }
     public void SetData(LevelData data)
     {
-        _data = data;      
+        _data = data;
     }
 
-    void UpdateUI()
+    public void OnStart()
+    {
+        button = GetComponent<Button>();
+        button.onClick.AddListener(OnClick);        
+    }
+    public void UpdateUI()
     {
         button.interactable = !_data.isLock;
 
