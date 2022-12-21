@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
     public SlidingPuzzle slidingPuzzle = null;
     public DialogBox dialogBox = null;
     private string language;
+    Sequence tweener;
     
     // 生命週期 --------------------------------------------------------------------------------------------------------------
 
@@ -32,6 +33,9 @@ public class GameManager : MonoBehaviour
 
     void OnDestroy()
     {
+        if (tweener != null) {
+            tweener.Kill();
+        }
         DataManager.instance.LanguageChanged -= onLanguageChanged;
     }
     
@@ -165,7 +169,7 @@ public class GameManager : MonoBehaviour
 
     /** 處理完成謎題 */
     private void handleFinishPuzzle() {
-        Sequence tweener = DOTween.Sequence();
+        tweener = DOTween.Sequence();
         tweener.AppendInterval(0.1f);
         tweener.InsertCallback(0.5f, () => {
             dialogBox.playMessage();

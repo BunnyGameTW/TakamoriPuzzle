@@ -18,6 +18,12 @@ public class SlidingPuzzleTile : MonoBehaviour
 
     }
 
+    void OnDestroy() {
+        if (tweener != null) {
+            tweener.Kill();
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {

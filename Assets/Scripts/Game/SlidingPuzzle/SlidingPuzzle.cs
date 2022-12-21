@@ -27,6 +27,12 @@ public class SlidingPuzzle : MonoBehaviour
         this.GetComponent<SpriteRenderer>().enabled = false;
     }
 
+    void OnDestroy() {
+        if (tweener != null) {
+            tweener.Kill();
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
