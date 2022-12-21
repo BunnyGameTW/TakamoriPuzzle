@@ -209,17 +209,15 @@ public class GameManager : MonoBehaviour
         int levelId = DataManager.instance.levelId;
         List<Hashtable> levelList = LoadExcel.instance.getObjectList("all", "episodeId", episode.ToString());
         List<int> passList = DataManager.instance.getPassLevelList(episode);
-        int beforePass, nowPass;
+        int awardID = levelList.Count + 1;
+        int nowPass;
 
-        beforePass = passList.Count;
         DataManager.instance.passLevel(episode, levelId);
         DataManager.instance.levelId = nextLevel;
         passList = DataManager.instance.getPassLevelList(episode);
         nowPass = passList.Count;
 
-        if ((nowPass >= levelList.Count)
-        && (beforePass == levelList.Count - 1 || nextLevel == 0)) {
-            int awardID = levelList.Count + 1;
+        if (DataManager.instance.isPassLevel(awardID) == false && (nowPass >= levelList.Count)) {
             DataManager.instance.passLevel(episode, awardID);
             DataManager.instance.episodeClear = true;
             Debug.Log("已通過全部關卡");
