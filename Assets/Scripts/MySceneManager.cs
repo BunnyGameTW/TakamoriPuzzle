@@ -33,6 +33,8 @@ public class MySceneManager : MonoBehaviour
     }
     public void SetLoadSceneState(SceneState _state)
     {
+        if (isLoading)
+            return;
         preSceneState = sceneState;
         sceneState = _state;
     }
@@ -51,6 +53,8 @@ public class MySceneManager : MonoBehaviour
     }
     void OnClickBack()
     {
+        if (isLoading)
+            return;
         switch (sceneState)
         {
             case SceneState.Login:
@@ -109,52 +113,59 @@ public class MySceneManager : MonoBehaviour
             return;
 
         isLoading = true;
-        ani.SetInteger("state", 1);
         StartCoroutine(LoadYourAsyncScene());
-
         SoundManager.instance.playSE(SoundManager.instance.SE_transitionIn, 0.5f);
     }
     
     IEnumerator LoadYourAsyncScene()
     {
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneNameMap[sceneState]);
+        yield return updateLoadSceneStart(asyncLoad);
+        yield return updateLoadSceneComplete(asyncLoad);
+        yield return updateLoadSceneEnd();
+        isLoading = false;
+    }
+
+    /** 更新切換場景開始 */
+    IEnumerator updateLoadSceneStart(AsyncOperation asyncLoad) {
         asyncLoad.allowSceneActivation = false;
-        // Wait until the asynchronous scene fully loads
-        while (!asyncLoad.isDone)
-        {            
+        ani.SetInteger("state", 1);
+        yield return null;
+        while (ani.GetCurrentAnimatorStateInfo(0).normalizedTime < 1.0f) {
             yield return null;
-
-            StartCoroutine(LoadSceneCallback(asyncLoad));
-
         }
     }
 
-
-    IEnumerator LoadSceneCallback(AsyncOperation asyncLoad)
-    {
-     
-        while (ani.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f)
-        {
+    /** 更新切換場景成功 */
+    IEnumerator updateLoadSceneComplete(AsyncOperation asyncLoad) {
+        asyncLoad.allowSceneActivation = true;
+        while (!asyncLoad.isDone) {            
             yield return null;
+        }
 
-            ani.SetInteger("state", 2);
-            asyncLoad.allowSceneActivation = true;
-            gameObjectButtons.SetActive(sceneState != SceneState.Login);
-            SoundManager.instance.playSE(SoundManager.instance.SE_transitionOut, 0.5f);
-            switch(sceneState) {
-                case SceneState.Login:
-                case SceneState.SelectEpisode: {
-                    SoundManager.instance.playBGM(SoundManager.instance.BGM_title);
-                } break;
-                case SceneState.SelectLevel:
-                case SceneState.Game: {
-                    SoundManager.instance.playBGM(SoundManager.instance.BGM_xmas);
-                } break;
-                default: {
-                    SoundManager.instance.playBGM(SoundManager.instance.BGM_title);
-                } break;
-            }
-            isLoading = false;
+        gameObjectButtons.SetActive(sceneState != SceneState.Login);
+        switch(sceneState) {
+            case SceneState.Login:
+            case SceneState.SelectEpisode: {
+                SoundManager.instance.playBGM(SoundManager.instance.BGM_title);
+            } break;
+            case SceneState.SelectLevel:
+            case SceneState.Game: {
+                SoundManager.instance.playBGM(SoundManager.instance.BGM_xmas);
+            } break;
+            default: {
+                SoundManager.instance.playBGM(SoundManager.instance.BGM_title);
+            } break;
+        }
+        SoundManager.instance.playSE(SoundManager.instance.SE_transitionOut, 0.5f);
+    }
+
+    /** 更新切換場景結束 */
+    IEnumerator updateLoadSceneEnd() {
+        ani.SetInteger("state", 2);
+        yield return null;
+        while (ani.GetCurrentAnimatorStateInfo(0).normalizedTime < 0.5f) {
+            yield return null;
         }
     }
 }
