@@ -16,6 +16,7 @@ public class LevelUI : MonoBehaviour
     public GameObject levelButtonPrefab;
     public TextMeshProUGUI textTitle;
     public AwardPopup awardPopup;
+    public LevelButton levelButton;
 
     int[] sections = {1, 2, 4, 1};
     Hashtable data;
@@ -47,9 +48,8 @@ public class LevelUI : MonoBehaviour
             //create buttons
             if (i == 0) 
             {
-                LevelButton button = FindObjectOfType<LevelButton>();
-                button.SetData(levelDatas[i]);
-                button.OnStart();
+                levelButton.SetData(levelDatas[i]);
+                levelButton.OnStart();
             }
             else
             {            
@@ -57,7 +57,9 @@ public class LevelUI : MonoBehaviour
                 LevelButton button = go.GetComponent<LevelButton>();
                 button.SetData(levelDatas[i]);
                 button.OnStart();
+                button.UpdateUI();
             }
+
             if (i != 0)
                 counter++;
             if (counter >= sections[index + 1])

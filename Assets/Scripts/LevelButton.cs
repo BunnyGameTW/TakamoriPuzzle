@@ -31,10 +31,9 @@ public class LevelButton : MonoBehaviour
     public void OnStart()
     {
         button = GetComponent<Button>();
-        button.onClick.AddListener(OnClick);
-        UpdateUI();
+        button.onClick.AddListener(OnClick);        
     }
-    void UpdateUI()
+    public void UpdateUI()
     {
         button.interactable = !_data.isLock;
 
