@@ -4,14 +4,14 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using DG.Tweening;
 
-public class SlidingPuzzle : BasePuzzle
+public class RotatingPuzzle : BasePuzzle
 {
     public float tileBetweenPx = 3.0f;  // 方塊之間間隔
     public GameObject tile;             // 方塊預置物
 
     private GameObject[,] tileObjectArray;          // 方塊物件清單
 	private Vector3[,] tilePosArray;                // 方塊座標陣列
-	private SlidingPuzzleTile emptyTile;            // 空方塊
+	private RotatingPuzzleTile emptyTile;            // 空方塊
     Sequence tweener = null;    // 補間事件
 
     // 生命週期 --------------------------------------------------------------------------------------------------------------
@@ -30,7 +30,7 @@ public class SlidingPuzzle : BasePuzzle
 
     // 開始遊戲
     public override void startPuzzle() {
-        Debug.Log("Start Sliding Puzzle!");
+        Debug.Log("Start Rotating Puzzle!");
         createPuzzleTiles();
         jugglePuzzle();
         isPuzzleActive = true;
@@ -55,7 +55,7 @@ public class SlidingPuzzle : BasePuzzle
         if (!hit) {
             return;
         }
-        SlidingPuzzleTile tmepTile = hit.transform.gameObject.GetComponent<SlidingPuzzleTile>();
+        RotatingPuzzleTile tmepTile = hit.transform.gameObject.GetComponent<RotatingPuzzleTile>();
         if (tmepTile) {
             moveTileToEmptyPos(tmepTile, () => {
                 SoundManager.instance.playSE(
@@ -74,11 +74,11 @@ public class SlidingPuzzle : BasePuzzle
 
     /** 快速完成謎題 */
     public override void quickFinishPuzzle() {
-        SlidingPuzzleTile tmepTile;
+        RotatingPuzzleTile tmepTile;
         Vector2Int goalPos;
         for(int j = 0; j < puzzleGridY; j++){
 			for(int i = 0; i < puzzleGridX; i++) {
-                tmepTile = tileObjectArray[i, j].GetComponent<SlidingPuzzleTile>();
+                tmepTile = tileObjectArray[i, j].GetComponent<RotatingPuzzleTile>();
                 goalPos = tmepTile.getGoalGridPos();
                 tmepTile.setNowGridPos(goalPos);
                 tmepTile.transform.localPosition = tilePosArray[goalPos.x, goalPos.y];
@@ -98,7 +98,7 @@ public class SlidingPuzzle : BasePuzzle
         Vector3 scale = this.transform.localScale;
 	    Vector3 position;
         GameObject tmepObject;
-        SlidingPuzzleTile tmepTile;
+        RotatingPuzzleTile tmepTile;
 
         tileObjectArray = new GameObject[puzzleGridX, puzzleGridY];
         tilePosArray = new Vector3[puzzleGridX, puzzleGridY];
@@ -127,7 +127,7 @@ public class SlidingPuzzle : BasePuzzle
                 tileObjectArray[i,j] = tmepObject;
                 tmepObject.transform.localPosition = position;
 
-                tmepTile = tmepObject.GetComponent<SlidingPuzzleTile>();
+                tmepTile = tmepObject.GetComponent<RotatingPuzzleTile>();
                 tmepTile.init(new Vector2Int(i,j), tempSprite, gridUnit);
             }
         }
@@ -140,16 +140,16 @@ public class SlidingPuzzle : BasePuzzle
         Vector2Int randTile = new Vector2Int(0, 0);
         Vector2Int beforeTile = new Vector2Int(-1, -1);
         GameObject tmepObject = tileObjectArray[puzzleGridX - 1, 0]; // 右下角為空格
-        SlidingPuzzleTile tmepTile;
+        RotatingPuzzleTile tmepTile;
 
-        emptyTile = tmepObject.GetComponent<SlidingPuzzleTile>();
+        emptyTile = tmepObject.GetComponent<RotatingPuzzleTile>();
         emptyTile.gameObject.SetActive(false);
 
         count = 0;
         while(count < juggleCount) {
             randTile.x = UnityEngine.Random.Range(0, puzzleGridX);
             randTile.y = UnityEngine.Random.Range(0, puzzleGridY);
-            tmepTile = tileObjectArray[randTile.x, randTile.y].GetComponent<SlidingPuzzleTile>();
+            tmepTile = tileObjectArray[randTile.x, randTile.y].GetComponent<RotatingPuzzleTile>();
             if (randTile != beforeTile && checkTileCanMove(tmepTile)) {
                 beforeTile = emptyTile.getNowGridPos();
                 exchangeTilePos(tmepTile, emptyTile);
@@ -160,7 +160,7 @@ public class SlidingPuzzle : BasePuzzle
     }
 
     /** 互換方塊資料 */
-    private void exchangeTileData(SlidingPuzzleTile tileA, SlidingPuzzleTile tileB) {
+    private void exchangeTileData(RotatingPuzzleTile tileA, RotatingPuzzleTile tileB) {
         GameObject tempObject = tileB.gameObject;
         Vector2Int tempPos = tileB.getNowGridPos();
         Vector2Int targetPos = tileA.getNowGridPos();
@@ -173,7 +173,7 @@ public class SlidingPuzzle : BasePuzzle
     }
 
     /** 互換方塊位置 */
-    private void exchangeTilePos(SlidingPuzzleTile tileA, SlidingPuzzleTile tileB, bool isTween = false, System.Action callback = null) {
+    private void exchangeTilePos(RotatingPuzzleTile tileA, RotatingPuzzleTile tileB, bool isTween = false, System.Action callback = null) {
         GameObject tempObject = tileB.gameObject;
         Vector2Int tempPos = tileB.getNowGridPos();
         Vector2Int targetPos = tileA.getNowGridPos();
@@ -193,7 +193,7 @@ public class SlidingPuzzle : BasePuzzle
     }
 
     /** 移動方塊到空位置 */
-    private bool moveTileToEmptyPos(SlidingPuzzleTile thisTile, System.Action callback = null) {
+    private bool moveTileToEmptyPos(RotatingPuzzleTile thisTile, System.Action callback = null) {
         if (checkTileCanMove(thisTile)) {
             exchangeTilePos(thisTile, emptyTile, true, callback);
             exchangeTileData(thisTile, emptyTile);
@@ -203,7 +203,7 @@ public class SlidingPuzzle : BasePuzzle
     }
 
     /** 檢查方塊是否可移動 */
-    private bool checkTileCanMove(SlidingPuzzleTile thisTile)
+    private bool checkTileCanMove(RotatingPuzzleTile thisTile)
 	{
         if (thisTile != emptyTile
         && Vector2.Distance(thisTile.getNowGridPos(), emptyTile.getNowGridPos()) == 1) {
@@ -215,11 +215,11 @@ public class SlidingPuzzle : BasePuzzle
     /** 檢查是否獲勝 */
     private bool checkPuzzleComplete() {
         int completeCount = puzzleGridX * puzzleGridY;
-        SlidingPuzzleTile tmepTile;
+        RotatingPuzzleTile tmepTile;
 
         for(int j = 0; j < puzzleGridY; j++){
 			for(int i = 0; i < puzzleGridX; i++) {
-                tmepTile = tileObjectArray[i, j].GetComponent<SlidingPuzzleTile>();
+                tmepTile = tileObjectArray[i, j].GetComponent<RotatingPuzzleTile>();
                 if (tmepTile.checkGridCorrect()) {
                     completeCount--;
                 }
@@ -257,13 +257,13 @@ public class SlidingPuzzle : BasePuzzle
 
     /** 處理結束效果 */
     private void handleFinishEffect(System.Action callback = null) {
-        SlidingPuzzleTile tmepTile;
+        RotatingPuzzleTile tmepTile;
         float delay = 0.02f;
         int count = 0;
         for(int j = puzzleGridY-1; j >= 0; j--){
 			for(int i = 0; i < puzzleGridX; i++) {
                 float delayTime = delay * count;
-                tmepTile = tileObjectArray[i, j].GetComponent<SlidingPuzzleTile>();
+                tmepTile = tileObjectArray[i, j].GetComponent<RotatingPuzzleTile>();
                 if (count + 1 < (puzzleGridY * puzzleGridX)) {
                     tmepTile.runShineEffect(delayTime);
                 }

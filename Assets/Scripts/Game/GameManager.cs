@@ -4,9 +4,15 @@ using UnityEngine;
 using DG.Tweening;
 public class GameManager : MonoBehaviour
 {
-    public SlidingPuzzle slidingPuzzle = null;
+    [System.Serializable] public struct GamePuzzleData {
+        public PuzzleType type;
+        public GameObject rootNode;
+        public BasePuzzle puzzle;
+    }
+    public GamePuzzleData[] puzzleList;
     public DialogBox dialogBox = null;
     private string language;
+    private BasePuzzle nowPuzzle = null;
     Sequence tweener;
     
     // 生命週期 --------------------------------------------------------------------------------------------------------------
@@ -15,12 +21,13 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         language = DataManager.instance.getLanguageCode();
-        initSlidingPuzzle(() => {
+        initPuzzleType();
+        initPuzzle(() => {
             initDialogBox();
             DataManager.instance.LanguageChanged += onLanguageChanged;
             if (DataManager.instance.skipPassPuzzle
             && DataManager.instance.isPassLevel(DataManager.instance.episodeId, DataManager.instance.levelId)) {
-                slidingPuzzle.quickFinishPuzzle();
+                nowPuzzle.quickFinishPuzzle();
             }
         });
     }
@@ -41,17 +48,31 @@ public class GameManager : MonoBehaviour
     
     // 內部呼叫 --------------------------------------------------------------------------------------------------------------
 
+    /** 初始化謎題類型 */
+    private void initPuzzleType() {
+        PuzzleType puzzleType = DataManager.instance.puzzleType;
+        foreach(var item in puzzleList) {
+            if (item.type == puzzleType) {
+                item.rootNode.SetActive(true);
+                nowPuzzle = item.puzzle;
+            }
+            else {
+                item.rootNode.SetActive(false);
+            }
+        }
+    }
+
     /** 初始化謎題 */
-    private void initSlidingPuzzle(System.Action callback) {
+    private void initPuzzle(System.Action callback) {
         int episodeId = DataManager.instance.episodeId;
         int levelId = DataManager.instance.levelId;
         int puzzleGridX = DataManager.instance.puzzleGridX;
         int puzzleGridY = DataManager.instance.puzzleGridY;
         string puzzleImagePath = ResManager.getPuzzleImagePath(episodeId, levelId);
         StartCoroutine(ResManager.asyncLoadSprite(puzzleImagePath, (sprite) => {
-            slidingPuzzle.init(sprite, puzzleGridX, puzzleGridY);
-            slidingPuzzle.startPuzzle();
-            slidingPuzzle.setFinishPuzzleCallback(handleFinishPuzzle);
+            nowPuzzle.init(sprite, puzzleGridX, puzzleGridY);
+            nowPuzzle.startPuzzle();
+            nowPuzzle.setFinishPuzzleCallback(handleFinishPuzzle);
             if (callback != null) {
                 callback();
             }
@@ -175,8 +196,8 @@ public class GameManager : MonoBehaviour
             dialogBox.playMessage();
         });
         tweener.Join(DOTween.To(
-            () => { return slidingPuzzle.transform.parent.position; },
-            (value) => { slidingPuzzle.transform.parent.position = value; },
+            () => { return nowPuzzle.transform.parent.position; },
+            (value) => { nowPuzzle.transform.parent.position = value; },
             new Vector3(0, 0.74f, 0),
             1.0f
         ).SetEase(Ease.OutCubic));

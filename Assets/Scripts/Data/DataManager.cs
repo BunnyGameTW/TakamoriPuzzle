@@ -60,6 +60,7 @@ public class GameData
 // 資料管理器
 public class DataManager: Singleton<DataManager>
 {
+    public PuzzleType puzzleType = PuzzleType.SlidingPuzzle;
     public int puzzleGridX = 0;         // 謎題格數X
     public int puzzleGridY = 0;         // 謎題格數Y
     public bool episodeClear = false;   // 章節關卡全解
@@ -73,6 +74,7 @@ public class DataManager: Singleton<DataManager>
             gameData = new GameData();
         }
 
+        puzzleType = PuzzleType.RotatingPuzzle;
         puzzleGridX = 3;
         puzzleGridY = 3;
         episodeClear = false;
