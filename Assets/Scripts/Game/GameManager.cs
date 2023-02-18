@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
         public BasePuzzle puzzle;
     }
     public GamePuzzleData[] puzzleList;
+    public GameObject puzzleFinishPosition;
     public DialogBox dialogBox = null;
     private string language;
     private BasePuzzle nowPuzzle = null;
@@ -66,11 +67,9 @@ public class GameManager : MonoBehaviour
     private void initPuzzle(System.Action callback) {
         int episodeId = DataManager.instance.episodeId;
         int levelId = DataManager.instance.levelId;
-        int puzzleGridX = DataManager.instance.puzzleGridX;
-        int puzzleGridY = DataManager.instance.puzzleGridY;
         string puzzleImagePath = ResManager.getPuzzleImagePath(episodeId, levelId);
         StartCoroutine(ResManager.asyncLoadSprite(puzzleImagePath, (sprite) => {
-            nowPuzzle.init(sprite, puzzleGridX, puzzleGridY);
+            nowPuzzle.init(sprite);
             nowPuzzle.startPuzzle();
             nowPuzzle.setFinishPuzzleCallback(handleFinishPuzzle);
             if (callback != null) {
@@ -198,7 +197,7 @@ public class GameManager : MonoBehaviour
         tweener.Join(DOTween.To(
             () => { return nowPuzzle.transform.parent.position; },
             (value) => { nowPuzzle.transform.parent.position = value; },
-            new Vector3(0, 0.74f, 0),
+            puzzleFinishPosition.transform.position,
             1.0f
         ).SetEase(Ease.OutCubic));
         tweener.Play();

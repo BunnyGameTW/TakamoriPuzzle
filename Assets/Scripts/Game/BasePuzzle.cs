@@ -6,12 +6,9 @@ using DG.Tweening;
 
 public abstract class BasePuzzle : MonoBehaviour
 {
-    public Sprite puzzleImage;       // 謎題貼圖
-	public int puzzleGridX = 3;         // 格子X軸數量
-	public int puzzleGridY = 3;         // 格子Y軸數量
-
-    protected bool isPuzzleActive = false;            // 謎題是否開始
-    protected System.Action finishCallback = null;    // 謎題完成callback
+    protected Sprite puzzleImage;                   // 謎題貼圖
+    protected bool isPuzzleActive = false;          // 謎題是否開始
+    protected System.Action finishCallback = null;  // 謎題完成callback
 
     // 生命週期 --------------------------------------------------------------------------------------------------------------
 
@@ -40,10 +37,8 @@ public abstract class BasePuzzle : MonoBehaviour
     }
 
     // 初始化
-    public virtual void init(Sprite image, int gridX = 3, int gridY = 3) {
+    public virtual void init(Sprite image) {
         puzzleImage = image;
-        puzzleGridX = gridX;
-        puzzleGridY = gridY;
         this.GetComponent<SpriteRenderer>().sprite = puzzleImage;
     }
 
@@ -90,7 +85,16 @@ public abstract class BasePuzzle : MonoBehaviour
     }
 
     /** 處理方塊碰撞 */
-    protected abstract void handleTileHit(RaycastHit2D hit);
+    protected void handleTileHit(RaycastHit2D hit) {
+        if (!hit) {
+            return;
+        }
+        GameObject tmepTile = hit.transform.gameObject;
+        handleTouchTile(tmepTile);
+    }
+
+    /** 處理觸碰方塊 */
+    protected abstract void handleTouchTile(GameObject obj);
     
     // 外部呼叫 --------------------------------------------------------------------------------------------------------------
 

@@ -4,12 +4,8 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using DG.Tweening;
 
-public class SlidingPuzzle : BasePuzzle
+public class SlidingPuzzle : BaseGridPuzzle
 {
-    public float tileBetweenPx = 3.0f;  // 方塊之間間隔
-    public GameObject tile;             // 方塊預置物
-
-    private GameObject[,] tileObjectArray;          // 方塊物件清單
 	private Vector3[,] tilePosArray;                // 方塊座標陣列
 	private SlidingPuzzleTile emptyTile;            // 空方塊
     Sequence tweener = null;    // 補間事件
@@ -28,14 +24,6 @@ public class SlidingPuzzle : BasePuzzle
     // Update is called once per frame
     // void Update() {}
 
-    // 開始遊戲
-    public override void startPuzzle() {
-        Debug.Log("Start Sliding Puzzle!");
-        createPuzzleTiles();
-        jugglePuzzle();
-        isPuzzleActive = true;
-    }
-
     // 結束遊戲
     public override void finishPuzzle() {
         isPuzzleActive = false;
@@ -50,23 +38,21 @@ public class SlidingPuzzle : BasePuzzle
 
     // 觸碰處理 --------------------------------------------------------------------------------------------------------------
 
-    /** 處理方塊碰撞 */
-    protected override void handleTileHit(RaycastHit2D hit) {
-        if (!hit) {
+    /** 處理觸碰方塊 */
+    protected override void handleTouchTile(GameObject obj) {
+        SlidingPuzzleTile tmepTile = obj.GetComponent<SlidingPuzzleTile>();
+        if (tmepTile == null) {
             return;
         }
-        SlidingPuzzleTile tmepTile = hit.transform.gameObject.GetComponent<SlidingPuzzleTile>();
-        if (tmepTile) {
-            moveTileToEmptyPos(tmepTile, () => {
-                SoundManager.instance.playSE(
-                    SoundManager.instance.SE_puzzles[Random.Range(0, SoundManager.instance.SE_puzzles.Length)]);
-                if (!isPuzzleActive) {
-                    finishPuzzle();
-                }
-            });
-            if (checkPuzzleComplete()) {
-                isPuzzleActive = false;
+        moveTileToEmptyPos(tmepTile, () => {
+            SoundManager.instance.playSE(
+                SoundManager.instance.SE_puzzles[Random.Range(0, SoundManager.instance.SE_puzzles.Length)]);
+            if (!isPuzzleActive) {
+                finishPuzzle();
             }
+        });
+        if (checkPuzzleComplete()) {
+            isPuzzleActive = false;
         }
     }
     
@@ -90,51 +76,22 @@ public class SlidingPuzzle : BasePuzzle
     // 內部呼叫 --------------------------------------------------------------------------------------------------------------
 
     /** 創造謎題方塊 */
-    private void createPuzzleTiles()
-    {
-        float gridWidth = puzzleImage.rect.width/puzzleGridX;
-        float gridHeight = puzzleImage.rect.height/puzzleGridY;
-        Vector2 gridUnit = new Vector2(gridWidth/puzzleImage.pixelsPerUnit, gridHeight/puzzleImage.pixelsPerUnit);
-        Vector3 scale = this.transform.localScale;
-	    Vector3 position;
-        GameObject tmepObject;
+    protected override void createPuzzleTiles() {
+        base.createPuzzleTiles();
         SlidingPuzzleTile tmepTile;
-
-        tileObjectArray = new GameObject[puzzleGridX, puzzleGridY];
         tilePosArray = new Vector3[puzzleGridX, puzzleGridY];
-
         for(int j = 0; j < puzzleGridY; j++) {
 			for(int i = 0; i < puzzleGridX; i++) {
-                Sprite tempSprite = Sprite.Create(
-                    puzzleImage.texture,
-                    new Rect(
-                        i * gridWidth + tileBetweenPx * 0.5f,
-                        j * gridHeight + tileBetweenPx * 0.5f,
-                        gridWidth - tileBetweenPx,
-                        gridHeight - tileBetweenPx
-                    ),
-                    new Vector2(0.5f, 0.5f)
-                );
-
-                position = new Vector3((i - (puzzleGridX - 1) * 0.5f) * gridUnit.x, 
-                                        (j - (puzzleGridY - 1) * 0.5f) * gridUnit.y, 
-                                        0.0f);
-                tmepObject = Instantiate(tile, Vector3.zero, Quaternion.identity) as GameObject;
-                tmepObject.transform.localScale = scale;
-				tmepObject.gameObject.transform.parent = this.transform;
-
-                tilePosArray[i,j] = position;
-                tileObjectArray[i,j] = tmepObject;
-                tmepObject.transform.localPosition = position;
-
-                tmepTile = tmepObject.GetComponent<SlidingPuzzleTile>();
-                tmepTile.init(new Vector2Int(i,j), tempSprite, gridUnit);
+                tilePosArray[i,j] = tileObjectArray[i,j].transform.localPosition;
+                tmepTile = tileObjectArray[i,j].GetComponent<SlidingPuzzleTile>();
+                tmepTile.setGoalGridPos(new Vector2Int(i,j));
+                tmepTile.setNowGridPos(new Vector2Int(i,j));
             }
         }
     }
 
     /** 洗謎題盤面 */
-    private void jugglePuzzle() {
+    protected override void jugglePuzzle() {
         int juggleCount = 2 * puzzleGridX * puzzleGridY; // 洗牌次數
         int count;
         Vector2Int randTile = new Vector2Int(0, 0);
@@ -211,36 +168,6 @@ public class SlidingPuzzle : BasePuzzle
         }
 		return false;
 	}
-
-    /** 檢查是否獲勝 */
-    private bool checkPuzzleComplete() {
-        int completeCount = puzzleGridX * puzzleGridY;
-        SlidingPuzzleTile tmepTile;
-
-        for(int j = 0; j < puzzleGridY; j++){
-			for(int i = 0; i < puzzleGridX; i++) {
-                tmepTile = tileObjectArray[i, j].GetComponent<SlidingPuzzleTile>();
-                if (tmepTile.checkGridCorrect()) {
-                    completeCount--;
-                }
-            }
-        }
-        if (completeCount <= 0) {
-            return true;
-        }
-        return false;
-    }
-
-    /** 清除拼圖 */
-    private void clearPuzzleTile() {
-        for(int j = 0; j < puzzleGridY; j++) {
-			for(int i = 0; i < puzzleGridX; i++) {
-                GameObject temp = tileObjectArray[i, j].gameObject;
-                Destroy(temp);
-                tileObjectArray[i, j] = null;
-            }
-        }
-    }
 
     /** 結束效果 */
     private void runFinishEffect(System.Action callback = null) {
