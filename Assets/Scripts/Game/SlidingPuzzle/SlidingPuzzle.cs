@@ -91,7 +91,7 @@ public class SlidingPuzzle : BaseGridPuzzle
     }
 
     /** 洗謎題盤面 */
-    protected override void jugglePuzzle() {
+    protected override void jugglePuzzle(System.Action callback) {
         int juggleCount = 2 * puzzleGridX * puzzleGridY; // 洗牌次數
         int count;
         Vector2Int randTile = new Vector2Int(0, 0);
@@ -114,6 +114,9 @@ public class SlidingPuzzle : BaseGridPuzzle
                 count++;
             }
 		}
+        if (callback != null) {
+            callback();
+        }
     }
 
     /** 互換方塊資料 */

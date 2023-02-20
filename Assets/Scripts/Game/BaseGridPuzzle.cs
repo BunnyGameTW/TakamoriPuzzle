@@ -25,8 +25,9 @@ public abstract class BaseGridPuzzle : BasePuzzle
     public override void startPuzzle() {
         Debug.Log("Start Sliding Puzzle!");
         createPuzzleTiles();
-        jugglePuzzle();
-        isPuzzleActive = true;
+        jugglePuzzle(() => {
+            isPuzzleActive = true;
+        });
     }
 
     // 結束遊戲
@@ -88,7 +89,11 @@ public abstract class BaseGridPuzzle : BasePuzzle
 
     
     /** 洗謎題盤面 */
-    protected abstract void jugglePuzzle();
+    protected virtual void jugglePuzzle(System.Action callback) {
+        if (callback != null) {
+            callback();
+        }
+    }
 
     /** 檢查是否獲勝 */
     protected virtual bool checkPuzzleComplete() {

@@ -40,17 +40,30 @@ public class RotatingPuzzle : BaseGridPuzzle
     /** 處理觸碰方塊 */
     protected override void handleTouchTile(GameObject obj) {
         RotatingPuzzleTile tmepTile = obj.GetComponent<RotatingPuzzleTile>();
+        SpriteRenderer tmepSpr = obj.GetComponent<SpriteRenderer>();
         if (tmepTile == null) {
             return;
         }
-        tmepTile.runRotateTile(() => {
+        tmepSpr.sortingOrder = 1;
+        tmepTile.runRotateTile(90, () => {
+            tmepSpr.sortingOrder = 0;
             SoundManager.instance.playSE(
                 SoundManager.instance.SE_puzzles[Random.Range(0, SoundManager.instance.SE_puzzles.Length)]);
-            if (checkPuzzleComplete()) {
-                isPuzzleActive = false;
-                finishPuzzle();
-            }
+            checkTileCorrect(tmepTile);
         });
+    }
+
+    /** 檢查方塊是否正確 */
+    private void checkTileCorrect(RotatingPuzzleTile tile) {
+        if (checkPuzzleComplete()) {
+            isPuzzleActive = false;
+            tile.runCorrectEffect(() => {
+                finishPuzzle();
+            });
+        }
+        else {
+            tile.runMistakeEffect();
+        }
     }
     
     // 外部呼叫 --------------------------------------------------------------------------------------------------------------
@@ -61,6 +74,7 @@ public class RotatingPuzzle : BaseGridPuzzle
         for(int j = 0; j < puzzleGridY; j++){
 			for(int i = 0; i < puzzleGridX; i++) {
                 tmepTile = tileObjectArray[i, j].GetComponent<RotatingPuzzleTile>();
+                tmepTile.clearTweener();
                 tmepTile.setTileAngle(0);
             }
         }
@@ -75,16 +89,25 @@ public class RotatingPuzzle : BaseGridPuzzle
     }
 
     /** 洗謎題盤面 */
-    protected override void jugglePuzzle() {
-        Vector2Int randRange = new Vector2Int(8, 7);
+    protected override void jugglePuzzle(System.Action callback) {
+        Vector2Int randRange = new Vector2Int(1, 8);
         int ROTATE_ANGLE = 90;
         RotatingPuzzleTile tmepTile;
-        int randCount;
+        int randAngle;
+        int count = puzzleGridX * puzzleGridY;
         for(int j = 0; j < puzzleGridY; j++) {
 			for(int i = 0; i < puzzleGridX; i++) {
                 tmepTile = tileObjectArray[i, j].GetComponent<RotatingPuzzleTile>();
-                randCount = randRange.x + UnityEngine.Random.Range(0, randRange.y);
-                tmepTile.setTileAngle(ROTATE_ANGLE * randCount);
+                randAngle = UnityEngine.Random.Range(randRange.x, randRange.y);
+                tmepTile.setTileAngle(ROTATE_ANGLE * randAngle);
+                tmepTile.runJuggleEffect(() => {
+                    count--;
+                    if (count <= 0) {
+                        if (callback != null) {
+                            callback();
+                        }
+                    }
+                });
             }
         }
     }
