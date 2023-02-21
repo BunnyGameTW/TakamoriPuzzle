@@ -99,6 +99,10 @@ public class RotatingPuzzle : BaseGridPuzzle
 			for(int i = 0; i < puzzleGridX; i++) {
                 tmepTile = tileObjectArray[i, j].GetComponent<RotatingPuzzleTile>();
                 randAngle = UnityEngine.Random.Range(randRange.x, randRange.y);
+                if (DataManager.instance.cheatingMode
+                && (i != 0 || j != 0)) {
+                    randAngle = 0;
+                }
                 tmepTile.setTileAngle(ROTATE_ANGLE * randAngle);
                 tmepTile.runJuggleEffect(() => {
                     count--;

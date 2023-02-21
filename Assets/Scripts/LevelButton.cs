@@ -17,9 +17,14 @@ public class LevelButton : MonoBehaviour
     }
     void OnClick()
     {
+        int episodeId = DataManager.instance.episodeId;
         DataManager.instance.levelId = _data.levelId;
-        DataManager.instance.puzzleGridX = 3;
-        DataManager.instance.puzzleGridY = 3;
+        if (!DataManager.instance.ignoreLevelConfigMode) {
+            DataManager.instance.storyType = Config.instance.episodeList[episodeId].storyType;
+            DataManager.instance.puzzleType = Config.instance.episodeList[episodeId].puzzleType;
+            DataManager.instance.puzzleGridX = Config.instance.episodeList[episodeId].puzzleGrid.x;
+            DataManager.instance.puzzleGridY = Config.instance.episodeList[episodeId].puzzleGrid.y;
+        }
         MySceneManager.Instance.SetLoadSceneState(SceneState.Game);
         MySceneManager.Instance.LoadScene();
     }

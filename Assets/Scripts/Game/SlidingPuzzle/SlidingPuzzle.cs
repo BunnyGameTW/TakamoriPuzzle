@@ -102,6 +102,10 @@ public class SlidingPuzzle : BaseGridPuzzle
         emptyTile = tmepObject.GetComponent<SlidingPuzzleTile>();
         emptyTile.gameObject.SetActive(false);
 
+        if (DataManager.instance.cheatingMode) {
+            juggleCount = 1;
+        }
+
         count = 0;
         while(count < juggleCount) {
             randTile.x = UnityEngine.Random.Range(0, puzzleGridX);

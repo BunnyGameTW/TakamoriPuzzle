@@ -187,11 +187,27 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 925255085}
     - target: {fileID: 4120187565609440370, guid: fa6af8516fb1c754ab82622fcbebb1c8, type: 3}
+      propertyPath: storyList.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4120187565609440370, guid: fa6af8516fb1c754ab82622fcbebb1c8, type: 3}
       propertyPath: puzzleList.Array.size
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4120187565609440370, guid: fa6af8516fb1c754ab82622fcbebb1c8, type: 3}
+      propertyPath: storyBgList.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4120187565609440370, guid: fa6af8516fb1c754ab82622fcbebb1c8, type: 3}
+      propertyPath: puzzleList.Array.data[0].type
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4120187565609440370, guid: fa6af8516fb1c754ab82622fcbebb1c8, type: 3}
       propertyPath: puzzleList.Array.data[1].type
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4120187565609440370, guid: fa6af8516fb1c754ab82622fcbebb1c8, type: 3}
+      propertyPath: storyBgList.Array.data[0].type
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4120187565609440370, guid: fa6af8516fb1c754ab82622fcbebb1c8, type: 3}
@@ -210,6 +226,10 @@ PrefabInstance:
       propertyPath: puzzleList.Array.data[1].rootNode
       value: 
       objectReference: {fileID: 1804021436}
+    - target: {fileID: 4120187565609440370, guid: fa6af8516fb1c754ab82622fcbebb1c8, type: 3}
+      propertyPath: storyBgList.Array.data[0].rootNode
+      value: 
+      objectReference: {fileID: 732875277}
     - target: {fileID: 6303858737620996210, guid: fa6af8516fb1c754ab82622fcbebb1c8, type: 3}
       propertyPath: m_Name
       value: GameManager

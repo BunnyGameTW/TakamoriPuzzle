@@ -151,7 +151,7 @@ public class MySceneManager : MonoBehaviour
             } break;
             case SceneState.SelectLevel:
             case SceneState.Game: {
-                SoundManager.instance.playBGM(SoundManager.instance.BGM_xmas);
+                SoundManager.instance.playBGM(Config.instance.episodeList[DataManager.instance.episodeId].bgm);
             } break;
             default: {
                 SoundManager.instance.playBGM(SoundManager.instance.BGM_title);

@@ -2,13 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// 語言code值
-static class LANGUAGE_CODE {
-    public const string ENGLISH = "en";
-    public const string JAPANESE = "jp";
-    public const string CHINESE = "zh";
-}
-
 // 遊戲資料(需儲存)
 public class GameData
 {
@@ -60,12 +53,17 @@ public class GameData
 // 資料管理器
 public class DataManager: Singleton<DataManager>
 {
-    public PuzzleType puzzleType = PuzzleType.SlidingPuzzle;
-    public int puzzleGridX = 0;         // 謎題格數X
-    public int puzzleGridY = 0;         // 謎題格數Y
+    readonly public bool cheatingMode = false;               // 作弊模式
+    readonly public bool ignoreLevelConfigMode = true;      // 忽略關卡配置模式(使用下面預設參數)
+    
+    public PuzzleType puzzleType = PuzzleType.RotatingPuzzle;   // 謎題種類
+    public StoryType storyType = StoryType.XMas;                // 情境種類
+    public int puzzleGridX = 3;                                 // 謎題格數X
+    public int puzzleGridY = 3;                                 // 謎題格數Y
+
     public bool episodeClear = false;   // 章節關卡全解
     private GameData gameData;          // 遊戲資料(用func呼叫+自動存檔)
-    public event System.EventHandler<string> LanguageChanged;
+    public event System.EventHandler<string> LanguageChanged;   // 語言訂閱事件
 
     /** 建構子 */
     public DataManager() {
@@ -73,11 +71,14 @@ public class DataManager: Singleton<DataManager>
         if (gameData == null) {
             gameData = new GameData();
         }
-
-        puzzleType = PuzzleType.RotatingPuzzle;
-        puzzleGridX = 3;
-        puzzleGridY = 3;
         episodeClear = false;
+
+        #if !UNITY_EDITOR
+        if (!Debug.isDebugBuild) {
+            cheatingMode = false;
+            ignoreLevelConfigMode = false;
+        }
+		#endif
     }
 
     /** 最後選擇的章節 */
@@ -148,6 +149,7 @@ public class DataManager: Singleton<DataManager>
     public string getLanguageCode(SystemLanguage languageValue) {
         string language = LANGUAGE_CODE.ENGLISH;
         switch(languageValue) {
+            case SystemLanguage.Chinese:
             case SystemLanguage.ChineseTraditional:
             case SystemLanguage.ChineseSimplified: {
                 language = LANGUAGE_CODE.CHINESE;

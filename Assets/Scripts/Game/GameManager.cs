@@ -10,6 +10,11 @@ public class GameManager : MonoBehaviour
         public BasePuzzle puzzle;
     }
     public GamePuzzleData[] puzzleList;
+    [System.Serializable] public struct StorySceneData {
+        public StoryType type;
+        public GameObject rootNode;
+    }
+    public StorySceneData[] storyBgList;
     public GameObject puzzleFinishPosition;
     public DialogBox dialogBox = null;
     private string language;
@@ -22,6 +27,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         language = DataManager.instance.getLanguageCode();
+        initStoryType();
         initPuzzleType();
         initPuzzle(() => {
             initDialogBox();
@@ -48,6 +54,19 @@ public class GameManager : MonoBehaviour
     }
     
     // 內部呼叫 --------------------------------------------------------------------------------------------------------------
+
+    /** 初始化情境類型 */
+    private void initStoryType() {
+        StoryType storyType = DataManager.instance.storyType;
+        foreach(var item in storyBgList) {
+            if (item.type == storyType) {
+                item.rootNode.SetActive(true);
+            }
+            else {
+                item.rootNode.SetActive(false);
+            }
+        }
+    }
 
     /** 初始化謎題類型 */
     private void initPuzzleType() {

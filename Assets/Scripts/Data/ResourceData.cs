@@ -9,7 +9,6 @@ using UnityEngine;
 // 資源路徑
 static class RES_PATH
 {
-
     static public string PUZZLE_EXCEL = "excel/TAKAMORIPuzzleScripts.xlsx";
     static private string spritePath = "puzzle/";
     static public string SPRITE_PUZZLE_IMAGE = spritePath + "puzzle_";

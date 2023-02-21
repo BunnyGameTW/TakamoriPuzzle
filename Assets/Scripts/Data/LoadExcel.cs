@@ -10,7 +10,7 @@ using UnityEngine.Networking;
 
 public class LoadExcel: SingletonMono<LoadExcel>
 {
-    const string arrayTag = "[]";   // 陣列標記
+    const string ARRAY_TAG = "[]";   // 陣列標記
     private string firstSheet = ""; // 第一個表單頁簽名稱
     private Dictionary<string, Dictionary<string, Hashtable>> data = null;// excel原始資料
 
@@ -218,7 +218,7 @@ public class LoadExcel: SingletonMono<LoadExcel>
                 tableData.Add(j.ToString(), contentData);
                 for(int k = 0; k < table.Columns.Count; k++) {
                     string key = table.Rows[0][k].ToString();
-                    int index = key.IndexOf(arrayTag);
+                    int index = key.IndexOf(ARRAY_TAG);
                     if (index > 0) {
                         key = key.Substring(0, index);
                         if (!contentData.ContainsKey(key)) {
