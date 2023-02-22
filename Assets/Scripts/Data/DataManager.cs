@@ -60,6 +60,7 @@ public class DataManager: Singleton<DataManager>
     public StoryType storyType = StoryType.XMas;                // 情境種類
     public int puzzleGridX = 3;                                 // 謎題格數X
     public int puzzleGridY = 3;                                 // 謎題格數Y
+    public RectInt puzzleJuggleRect = new RectInt(1, 0, 2, 2);  // 謎題洗牌範圍
 
     public bool episodeClear = false;   // 章節關卡全解
     private GameData gameData;          // 遊戲資料(用func呼叫+自動存檔)

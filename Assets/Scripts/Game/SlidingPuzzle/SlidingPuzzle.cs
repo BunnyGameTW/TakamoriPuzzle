@@ -107,9 +107,9 @@ public class SlidingPuzzle : BaseGridPuzzle
         }
 
         count = 0;
-        while(count < juggleCount) {
-            randTile.x = UnityEngine.Random.Range(0, puzzleGridX);
-            randTile.y = UnityEngine.Random.Range(0, puzzleGridY);
+        while(count < juggleCount || checkPuzzleComplete()) {
+            randTile.x = UnityEngine.Random.Range(juggleRect.x, juggleRect.x + juggleRect.width);
+            randTile.y = UnityEngine.Random.Range(juggleRect.y, juggleRect.y + juggleRect.height);
             tmepTile = tileObjectArray[randTile.x, randTile.y].GetComponent<SlidingPuzzleTile>();
             if (randTile != beforeTile && checkTileCanMove(tmepTile)) {
                 beforeTile = emptyTile.getNowGridPos();

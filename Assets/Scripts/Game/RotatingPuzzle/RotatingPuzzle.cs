@@ -94,26 +94,29 @@ public class RotatingPuzzle : BaseGridPuzzle
         int ROTATE_ANGLE = 90;
         RotatingPuzzleTile tmepTile;
         int randAngle;
-        int count = puzzleGridX * puzzleGridY;
-        for(int j = 0; j < puzzleGridY; j++) {
-			for(int i = 0; i < puzzleGridX; i++) {
-                tmepTile = tileObjectArray[i, j].GetComponent<RotatingPuzzleTile>();
-                randAngle = UnityEngine.Random.Range(randRange.x, randRange.y);
-                if (DataManager.instance.cheatingMode
-                && (i != 0 || j != 0)) {
-                    randAngle = 0;
-                }
-                tmepTile.setTileAngle(ROTATE_ANGLE * randAngle);
-                tmepTile.runJuggleEffect(() => {
-                    count--;
-                    if (count <= 0) {
-                        if (callback != null) {
-                            callback();
-                        }
+        int count = juggleRect.width * juggleRect.height;
+
+        do {
+            for(int j = juggleRect.y; j < juggleRect.y + juggleRect.height; j++) {
+                for(int i = juggleRect.x; i < juggleRect.x + juggleRect.width; i++) {
+                    tmepTile = tileObjectArray[i, j].GetComponent<RotatingPuzzleTile>();
+                    randAngle = UnityEngine.Random.Range(randRange.x, randRange.y);
+                    if (DataManager.instance.cheatingMode
+                    && (i != juggleRect.x + juggleRect.width - 1 || j != juggleRect.y)) {
+                        randAngle = 0;
                     }
-                });
+                    tmepTile.setTileAngle(ROTATE_ANGLE * randAngle);
+                    tmepTile.runJuggleEffect(() => {
+                        count--;
+                        if (count <= 0) {
+                            if (callback != null) {
+                                callback();
+                            }
+                        }
+                    });
+                }
             }
-        }
+        } while (checkPuzzleComplete());
     }
 
     /** 結束效果 */

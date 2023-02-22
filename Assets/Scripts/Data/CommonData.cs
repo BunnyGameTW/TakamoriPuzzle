@@ -28,7 +28,6 @@ public class Config: Singleton<Config>{
         public AudioClip bgm;           // BGM
         public StoryType storyType;     // 情境種類
         public PuzzleType puzzleType;   // 謎題種類
-        public Vector2Int puzzleGrid;   // 謎題格子數
     }
     readonly public Dictionary<int, EpisodeData> episodeList = new Dictionary<int, EpisodeData>();
 
@@ -39,14 +38,12 @@ public class Config: Singleton<Config>{
             bgm = SoundManager.instance.BGM_xmas,
             storyType = StoryType.XMas,
             puzzleType = PuzzleType.SlidingPuzzle,
-            puzzleGrid = new Vector2Int(3, 3),
         };
         episodeList[2] = new EpisodeData() {
             episodeId = 2,
             bgm = SoundManager.instance.BGM_xmas,
             storyType = StoryType.XMas,
             puzzleType = PuzzleType.RotatingPuzzle,
-            puzzleGrid = new Vector2Int(3, 3),
         };
     }
 }

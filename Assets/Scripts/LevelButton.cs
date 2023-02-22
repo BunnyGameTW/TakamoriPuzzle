@@ -22,8 +22,6 @@ public class LevelButton : MonoBehaviour
         if (!DataManager.instance.ignoreLevelConfigMode) {
             DataManager.instance.storyType = Config.instance.episodeList[episodeId].storyType;
             DataManager.instance.puzzleType = Config.instance.episodeList[episodeId].puzzleType;
-            DataManager.instance.puzzleGridX = Config.instance.episodeList[episodeId].puzzleGrid.x;
-            DataManager.instance.puzzleGridY = Config.instance.episodeList[episodeId].puzzleGrid.y;
         }
         MySceneManager.Instance.SetLoadSceneState(SceneState.Game);
         MySceneManager.Instance.LoadScene();

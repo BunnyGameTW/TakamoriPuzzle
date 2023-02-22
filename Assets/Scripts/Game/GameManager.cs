@@ -17,9 +17,10 @@ public class GameManager : MonoBehaviour
     public StorySceneData[] storyBgList;
     public GameObject puzzleFinishPosition;
     public DialogBox dialogBox = null;
-    private string language;
+    private string language = "";
     private BasePuzzle nowPuzzle = null;
-    Sequence tweener;
+    private Hashtable levelConfigData = null;
+    private Sequence tweener = null;
     
     // 生命週期 --------------------------------------------------------------------------------------------------------------
 
@@ -27,6 +28,8 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         language = DataManager.instance.getLanguageCode();
+        levelConfigData = getLevelAllData();
+        Debug.Log(levelConfigData);
         initStoryType();
         initPuzzleType();
         initPuzzle(() => {
@@ -87,6 +90,15 @@ public class GameManager : MonoBehaviour
         int episodeId = DataManager.instance.episodeId;
         int levelId = DataManager.instance.levelId;
         string puzzleImagePath = ResManager.getPuzzleImagePath(episodeId, levelId);
+        if (!DataManager.instance.ignoreLevelConfigMode) {
+            DataManager.instance.puzzleGridX = int.Parse((string)levelConfigData["puzzleGridX"]);
+            DataManager.instance.puzzleGridY = int.Parse((string)levelConfigData["puzzleGridY"]);
+            DataManager.instance.puzzleJuggleRect = new RectInt(
+                int.Parse((string)levelConfigData["puzzleRectX"]), int.Parse((string)levelConfigData["puzzleRectY"]),
+                int.Parse((string)levelConfigData["puzzleRectW"]), int.Parse((string)levelConfigData["puzzleRectH"])
+            );
+        }
+        
         StartCoroutine(ResManager.asyncLoadSprite(puzzleImagePath, (sprite) => {
             nowPuzzle.init(sprite);
             nowPuzzle.startPuzzle();
@@ -100,23 +112,23 @@ public class GameManager : MonoBehaviour
     /** 初始化對話 */
     private void initDialogBox() {
         dialogBox.init();
-        initDialogData(getLevelAllData());
+        initDialogData();
     }
 
     /** 初始化對話資料 */
-    private void initDialogData(Hashtable objectAllData) {
-        if (objectAllData == null) {
+    private void initDialogData() {
+        if (levelConfigData == null) {
             Debug.LogError("Error initDialogBox : episodeId & levelId can not find.");
             return;
         }
-        setDialogTextData(objectAllData);
-        if(setDialogSelectData(objectAllData)) {
+        setDialogTextData();
+        if(setDialogSelectData()) {
             dialogBox.setSelectCallback((ID) => {
                 handleDialogSelect(ID);
             });
         }
         else {
-            object unlockLevel = objectAllData["unlockLevelId"];
+            object unlockLevel = levelConfigData["unlockLevelId"];
             if ((string)unlockLevel != "") {
                 int unlockID = int.Parse((string)unlockLevel);
                 dialogBox.setFinishCallback(() => {
@@ -140,25 +152,25 @@ public class GameManager : MonoBehaviour
     }
 
     /** 設定對話資料 */
-    private void setDialogTextData(Hashtable objectAllData) {
-        string contentId = (string)objectAllData["contentId"];
+    private void setDialogTextData() {
+        string contentId = (string)levelConfigData["contentId"];
         Hashtable contentData = LoadExcel.instance.getObject("content", "id", contentId);
         string message = (string)contentData[language + "_story"];
         dialogBox.setMessageData(message);
     }
 
     /** 設定選項資料 */
-    private bool setDialogSelectData(Hashtable objectAllData) {
-        string contentId = (string)objectAllData["contentId"];
+    private bool setDialogSelectData() {
+        string contentId = (string)levelConfigData["contentId"];
         Hashtable contentData = LoadExcel.instance.getObject("content", "id", contentId);
         int selectCount = 0;
         while(true) {
             int count = selectCount + 1;
             string chioceKey = "chioceId_" + count.ToString();
-            if ((string)objectAllData[chioceKey] != "") {
+            if ((string)levelConfigData[chioceKey] != "") {
                 string contentKey = language + "_chioce_" + count.ToString();
                 string selectText = (string)contentData[contentKey];
-                int selectID = int.Parse((string)objectAllData[chioceKey]);
+                int selectID = int.Parse((string)levelConfigData[chioceKey]);
                 dialogBox.addSelectData(selectText, selectID);
                 selectCount++;
             }
@@ -181,24 +193,21 @@ public class GameManager : MonoBehaviour
         DIALOG_BOX_STATE state = dialogBox.getState();
         switch(state) {
             case DIALOG_BOX_STATE.NONE: {
-                Hashtable objectAllData = getLevelAllData();
                 dialogBox.clearAllTextData();
                 dialogBox.clearAllSelectData();
-                setDialogTextData(objectAllData);
-                setDialogSelectData(objectAllData);
+                setDialogTextData();
+                setDialogSelectData();
             } break;
             case DIALOG_BOX_STATE.PLAYING: {
-                Hashtable objectAllData = getLevelAllData();
                 dialogBox.clearAllTextData();
                 dialogBox.clearAllSelectData();
-                setDialogTextData(objectAllData);
-                setDialogSelectData(objectAllData);
+                setDialogTextData();
+                setDialogSelectData();
                 dialogBox.playMessage();
             } break;
             case DIALOG_BOX_STATE.SELECT: {
-                Hashtable objectAllData = getLevelAllData();
                 dialogBox.clearAllSelectData();
-                setDialogSelectData(objectAllData);
+                setDialogSelectData();
                 dialogBox.showSelect();
             } break;
             default: {

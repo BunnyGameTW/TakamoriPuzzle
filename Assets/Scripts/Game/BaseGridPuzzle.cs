@@ -11,6 +11,7 @@ public abstract class BaseGridPuzzle : BasePuzzle
     protected float tileBetweenPx = 3.0f;       // 方塊之間間隔
 	protected int puzzleGridX = 3;              // 格子X軸數量
 	protected int puzzleGridY = 3;              // 格子Y軸數量
+    protected RectInt juggleRect = new RectInt(0, 0, 3, 3);   // 謎題洗牌範圍
 
     // 生命週期 --------------------------------------------------------------------------------------------------------------
 
@@ -19,6 +20,7 @@ public abstract class BaseGridPuzzle : BasePuzzle
         base.init(image);
         puzzleGridX = DataManager.instance.puzzleGridX;
         puzzleGridY = DataManager.instance.puzzleGridY;
+        juggleRect = DataManager.instance.puzzleJuggleRect;
     }
     
     // 開始遊戲
