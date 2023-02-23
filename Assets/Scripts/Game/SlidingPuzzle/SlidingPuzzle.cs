@@ -96,7 +96,7 @@ public class SlidingPuzzle : BaseGridPuzzle
         int count;
         Vector2Int randTile = new Vector2Int(0, 0);
         Vector2Int beforeTile = new Vector2Int(-1, -1);
-        GameObject tmepObject = tileObjectArray[puzzleGridX - 1, 0]; // 右下角為空格
+        GameObject tmepObject = tileObjectArray[juggleRect.x + juggleRect.width - 1, juggleRect.y]; // 右下角為空格
         SlidingPuzzleTile tmepTile;
 
         emptyTile = tmepObject.GetComponent<SlidingPuzzleTile>();
