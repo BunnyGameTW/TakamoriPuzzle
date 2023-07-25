@@ -1,8 +1,8 @@
 # TakamoriPuzzle
-👉Introduction👈  
+【Introduction】  
 A puzzle-story fan game about Calli & Kiara, TAKAMORI Forever!
 
-✏️Dev log✏️  
+【Dev log】  
 https://bunnygame.tw/takamori-puzzle/
 
 ![](imagePath)
